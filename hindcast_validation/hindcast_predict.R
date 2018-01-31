@@ -402,17 +402,18 @@ empty$blsh_percent=percentblsh
 w4=empty
 
 hist_table=do.call("rbind",list(w1,w2,w3,w4))
-write.csv(hist_table,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/hist_table.csv")
+#write.csv(hist_table,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/hist_table.csv")
 
 ### histogram tables ratios ####
+hist_table=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/hist_table.csv")
 new=hist_table %>% select(-ends_with("counts")) %>% mutate(lbstDIFF=lbst_percent-swor_percent)%>% mutate(caslDIFF=casl_percent-swor_percent)%>% mutate(blshDIFF=blsh_percent-swor_percent)
-new=new[,2:ncol(new)]
+new=new[,3:ncol(new)]
 new_gather=new %>% gather("Species","Percent",-weighting,-thresholds,-ends_with("DIFF"),-swor_percent) %>%select(-ends_with('DIFF')) %>% mutate(spp=gsub("_percent","",Species))   #%>% spread(weighting,Percent)
 
 weightings<-c(-0.1,-0.1,-0.05,-0.9,0.9)
 col=paste0(weightings,collapse="_")
 subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
-a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1.5)
 a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
 a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
 png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
@@ -422,7 +423,7 @@ dev.off()
 weightings<-c(-0.1,-0.1,-0.05,-0.9,.5)  # testing the effect of swor weighting
 col=paste0(weightings,collapse="_")
 subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
-a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1.5)
 a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
 a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
 png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
@@ -433,7 +434,7 @@ dev.off()
 weightings<-c(-0.1,-0.1,-0.05,-0.9,0)  # testing the effect of swor weighting
 col=paste0(weightings,collapse="_")
 subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
-a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1.5)
 a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
 a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
 png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
@@ -444,7 +445,7 @@ dev.off()
 weightings<-c(-1,-1,-1,-1,1)  # test raw weightings w sign-age
 col=paste0(weightings,collapse="_")
 subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
-a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1.5)
 a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
 a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
 png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
