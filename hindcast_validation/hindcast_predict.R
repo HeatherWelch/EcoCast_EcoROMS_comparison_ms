@@ -292,4 +292,161 @@ plot(c,col=rgb(0.5,0.5,0.5,0.3),xlim=c(-1,1),ylim=c(0,60),main=paste0("Blueshark
 plot(d,col=rgb(0,0.5,0,0.5),xlim=c(-1,1),ylim=c(0,60),main=paste0("Sea lion: ",weightings[3]),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
 dev.off()
 
+### histogram tables ####
+weightings<-c(-0.1,-0.1,-0.05,-0.9,0.9)
+thresholds=c(-0.75,-0.50,-0.25,0.00,0.25,0.50,0.75) 
+col=paste0("^eco_",paste0(weightings,collapse="_"),"$")
+index=NULL
+index=grep(print(col),names(species))
+countslbst=list(sum(lbstDat[,index]>thresholds[1]),sum(lbstDat[,index]>thresholds[2]),sum(lbstDat[,index]>thresholds[3]),sum(lbstDat[,index]>thresholds[4]),sum(lbstDat[,index]>thresholds[5]),sum(lbstDat[,index]>thresholds[6]),sum(lbstDat[,index]>thresholds[7])) %>% unlist()
+percentlbst=countslbst/nrow(lbstDat)*100
+countsswor=list(sum(sworDat[,index]>thresholds[1]),sum(sworDat[,index]>thresholds[2]),sum(sworDat[,index]>thresholds[3]),sum(sworDat[,index]>thresholds[4]),sum(sworDat[,index]>thresholds[5]),sum(sworDat[,index]>thresholds[6]),sum(sworDat[,index]>thresholds[7])) %>% unlist()
+percentswor=countsswor/nrow(sworDat)*100
+countscasl=list(sum(caslDat[,index]>thresholds[1]),sum(caslDat[,index]>thresholds[2]),sum(caslDat[,index]>thresholds[3]),sum(caslDat[,index]>thresholds[4]),sum(caslDat[,index]>thresholds[5]),sum(caslDat[,index]>thresholds[6]),sum(caslDat[,index]>thresholds[7])) %>% unlist()
+percentcasl=countscasl/nrow(caslDat)*100
+countsblsh=list(sum(blshDat[,index]>thresholds[1]),sum(blshDat[,index]>thresholds[2]),sum(blshDat[,index]>thresholds[3]),sum(blshDat[,index]>thresholds[4]),sum(blshDat[,index]>thresholds[5]),sum(blshDat[,index]>thresholds[6]),sum(blshDat[,index]>thresholds[7])) %>% unlist()
+percentblsh=countsblsh/nrow(blshDat)*100
+empty=data.frame(matrix(NA,nrow=length(thresholds),ncol=10))
+empty=data.frame(matrix(nrow=7))
+empty$thresholds=thresholds
+empty$weighting=paste0(weightings,collapse="_")
+empty$lbst_counts=countslbst
+empty$lbst_percent=percentlbst
+empty$swor_counts=countsswor
+empty$swor_percent=percentswor
+empty$casl_counts=countscasl
+empty$casl_percent=percentcasl
+empty$blsh_counts=countsblsh
+empty$blsh_percent=percentblsh
+w1=empty
 
+weightings<-c(-0.1,-0.1,-0.05,-0.9,.5)  # testing the effect of swor weighting
+thresholds=c(-0.75,-0.50,-0.25,0.00,0.25,0.50,0.75) 
+col=paste0("^eco_",paste0(weightings,collapse="_"),"$")
+index=NULL
+index=grep(print(col),names(species))
+countslbst=list(sum(lbstDat[,index]>thresholds[1]),sum(lbstDat[,index]>thresholds[2]),sum(lbstDat[,index]>thresholds[3]),sum(lbstDat[,index]>thresholds[4]),sum(lbstDat[,index]>thresholds[5]),sum(lbstDat[,index]>thresholds[6]),sum(lbstDat[,index]>thresholds[7])) %>% unlist()
+percentlbst=countslbst/nrow(lbstDat)*100
+countsswor=list(sum(sworDat[,index]>thresholds[1]),sum(sworDat[,index]>thresholds[2]),sum(sworDat[,index]>thresholds[3]),sum(sworDat[,index]>thresholds[4]),sum(sworDat[,index]>thresholds[5]),sum(sworDat[,index]>thresholds[6]),sum(sworDat[,index]>thresholds[7])) %>% unlist()
+percentswor=countsswor/nrow(sworDat)*100
+countscasl=list(sum(caslDat[,index]>thresholds[1]),sum(caslDat[,index]>thresholds[2]),sum(caslDat[,index]>thresholds[3]),sum(caslDat[,index]>thresholds[4]),sum(caslDat[,index]>thresholds[5]),sum(caslDat[,index]>thresholds[6]),sum(caslDat[,index]>thresholds[7])) %>% unlist()
+percentcasl=countscasl/nrow(caslDat)*100
+countsblsh=list(sum(blshDat[,index]>thresholds[1]),sum(blshDat[,index]>thresholds[2]),sum(blshDat[,index]>thresholds[3]),sum(blshDat[,index]>thresholds[4]),sum(blshDat[,index]>thresholds[5]),sum(blshDat[,index]>thresholds[6]),sum(blshDat[,index]>thresholds[7])) %>% unlist()
+percentblsh=countsblsh/nrow(blshDat)*100
+empty=data.frame(matrix(NA,nrow=length(thresholds),ncol=10))
+empty=data.frame(matrix(nrow=7))
+empty$thresholds=thresholds
+empty$weighting=paste0(weightings,collapse="_")
+empty$lbst_counts=countslbst
+empty$lbst_percent=percentlbst
+empty$swor_counts=countsswor
+empty$swor_percent=percentswor
+empty$casl_counts=countscasl
+empty$casl_percent=percentcasl
+empty$blsh_counts=countsblsh
+empty$blsh_percent=percentblsh
+w2=empty
+
+weightings<-c(-0.1,-0.1,-0.05,-0.9,0)  # testing the effect of swor weighting
+thresholds=c(-0.75,-0.50,-0.25,0.00,0.25,0.50,0.75) 
+col=paste0("^eco_",paste0(weightings,collapse="_"),"$")
+index=NULL
+index=grep(print(col),names(species))
+countslbst=list(sum(lbstDat[,index]>thresholds[1]),sum(lbstDat[,index]>thresholds[2]),sum(lbstDat[,index]>thresholds[3]),sum(lbstDat[,index]>thresholds[4]),sum(lbstDat[,index]>thresholds[5]),sum(lbstDat[,index]>thresholds[6]),sum(lbstDat[,index]>thresholds[7])) %>% unlist()
+percentlbst=countslbst/nrow(lbstDat)*100
+countsswor=list(sum(sworDat[,index]>thresholds[1]),sum(sworDat[,index]>thresholds[2]),sum(sworDat[,index]>thresholds[3]),sum(sworDat[,index]>thresholds[4]),sum(sworDat[,index]>thresholds[5]),sum(sworDat[,index]>thresholds[6]),sum(sworDat[,index]>thresholds[7])) %>% unlist()
+percentswor=countsswor/nrow(sworDat)*100
+countscasl=list(sum(caslDat[,index]>thresholds[1]),sum(caslDat[,index]>thresholds[2]),sum(caslDat[,index]>thresholds[3]),sum(caslDat[,index]>thresholds[4]),sum(caslDat[,index]>thresholds[5]),sum(caslDat[,index]>thresholds[6]),sum(caslDat[,index]>thresholds[7])) %>% unlist()
+percentcasl=countscasl/nrow(caslDat)*100
+countsblsh=list(sum(blshDat[,index]>thresholds[1]),sum(blshDat[,index]>thresholds[2]),sum(blshDat[,index]>thresholds[3]),sum(blshDat[,index]>thresholds[4]),sum(blshDat[,index]>thresholds[5]),sum(blshDat[,index]>thresholds[6]),sum(blshDat[,index]>thresholds[7])) %>% unlist()
+percentblsh=countsblsh/nrow(blshDat)*100
+empty=data.frame(matrix(NA,nrow=length(thresholds),ncol=10))
+empty=data.frame(matrix(nrow=7))
+empty$thresholds=thresholds
+empty$weighting=paste0(weightings,collapse="_")
+empty$lbst_counts=countslbst
+empty$lbst_percent=percentlbst
+empty$swor_counts=countsswor
+empty$swor_percent=percentswor
+empty$casl_counts=countscasl
+empty$casl_percent=percentcasl
+empty$blsh_counts=countsblsh
+empty$blsh_percent=percentblsh
+w3=empty
+
+weightings<-c(-1,-1,-1,-1,1)  # test raw weightings w sign-age
+thresholds=c(-0.75,-0.50,-0.25,0.00,0.25,0.50,0.75) 
+col=paste0("^eco_",paste0(weightings,collapse="_"),"$")
+index=NULL
+index=grep(print(col),names(species))
+countslbst=list(sum(lbstDat[,index]>thresholds[1]),sum(lbstDat[,index]>thresholds[2]),sum(lbstDat[,index]>thresholds[3]),sum(lbstDat[,index]>thresholds[4]),sum(lbstDat[,index]>thresholds[5]),sum(lbstDat[,index]>thresholds[6]),sum(lbstDat[,index]>thresholds[7])) %>% unlist()
+percentlbst=countslbst/nrow(lbstDat)*100
+countsswor=list(sum(sworDat[,index]>thresholds[1]),sum(sworDat[,index]>thresholds[2]),sum(sworDat[,index]>thresholds[3]),sum(sworDat[,index]>thresholds[4]),sum(sworDat[,index]>thresholds[5]),sum(sworDat[,index]>thresholds[6]),sum(sworDat[,index]>thresholds[7])) %>% unlist()
+percentswor=countsswor/nrow(sworDat)*100
+countscasl=list(sum(caslDat[,index]>thresholds[1]),sum(caslDat[,index]>thresholds[2]),sum(caslDat[,index]>thresholds[3]),sum(caslDat[,index]>thresholds[4]),sum(caslDat[,index]>thresholds[5]),sum(caslDat[,index]>thresholds[6]),sum(caslDat[,index]>thresholds[7])) %>% unlist()
+percentcasl=countscasl/nrow(caslDat)*100
+countsblsh=list(sum(blshDat[,index]>thresholds[1]),sum(blshDat[,index]>thresholds[2]),sum(blshDat[,index]>thresholds[3]),sum(blshDat[,index]>thresholds[4]),sum(blshDat[,index]>thresholds[5]),sum(blshDat[,index]>thresholds[6]),sum(blshDat[,index]>thresholds[7])) %>% unlist()
+percentblsh=countsblsh/nrow(blshDat)*100
+empty=data.frame(matrix(NA,nrow=length(thresholds),ncol=10))
+empty=data.frame(matrix(nrow=7))
+empty$thresholds=thresholds
+empty$weighting=paste0(weightings,collapse="_")
+empty$lbst_counts=countslbst
+empty$lbst_percent=percentlbst
+empty$swor_counts=countsswor
+empty$swor_percent=percentswor
+empty$casl_counts=countscasl
+empty$casl_percent=percentcasl
+empty$blsh_counts=countsblsh
+empty$blsh_percent=percentblsh
+w4=empty
+
+hist_table=do.call("rbind",list(w1,w2,w3,w4))
+write.csv(hist_table,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/hist_table.csv")
+
+### histogram tables ratios ####
+new=hist_table %>% select(-ends_with("counts")) %>% mutate(lbstDIFF=lbst_percent-swor_percent)%>% mutate(caslDIFF=casl_percent-swor_percent)%>% mutate(blshDIFF=blsh_percent-swor_percent)
+new=new[,2:ncol(new)]
+new_gather=new %>% gather("Species","Percent",-weighting,-thresholds,-ends_with("DIFF"),-swor_percent) %>%select(-ends_with('DIFF')) %>% mutate(spp=gsub("_percent","",Species))   #%>% spread(weighting,Percent)
+
+weightings<-c(-0.1,-0.1,-0.05,-0.9,0.9)
+col=paste0(weightings,collapse="_")
+subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
+png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
+a
+dev.off()
+
+weightings<-c(-0.1,-0.1,-0.05,-0.9,.5)  # testing the effect of swor weighting
+col=paste0(weightings,collapse="_")
+subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
+png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
+a
+dev.off()
+
+
+weightings<-c(-0.1,-0.1,-0.05,-0.9,0)  # testing the effect of swor weighting
+col=paste0(weightings,collapse="_")
+subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
+png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
+a
+dev.off()
+
+
+weightings<-c(-1,-1,-1,-1,1)  # test raw weightings w sign-age
+col=paste0(weightings,collapse="_")
+subtitle=paste0(namesrisk[1],": ",weightings[1],", ",namesrisk[2],": ",weightings[2],", ",namesrisk[3],": ",weightings[3],", ",namesrisk[4],": ",weightings[4],", ",namesrisk[5],": ",weightings[5])
+a=ggplot()+geom_point(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,color=spp),shape=1)+geom_text(data=new_gather[new$weighting==col,],aes(x=Percent,y=swor_percent,label=thresholds),vjust=2,hjust=1,size=1)
+a=a+ggtitle(label = "Avoided swordfish catch and bycatch at different EcoROMS thresholds",subtitle = subtitle)+labs(x="Avoided percent of bycatch")+labs(y="Avoided percent of swordfish catch")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank())                                                                                                          
+png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/ratio_",paste0(weightings,collapse="_"),".png"),width=6,height=6,units='in',res=400)
+a
+dev.off()
