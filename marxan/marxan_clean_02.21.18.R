@@ -136,12 +136,12 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
 }
 
 ##### demo run ####
-get_date="2011-09-01"
-biofeats=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat")
-cost="swor"
-dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
-namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
-weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
-outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
-scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# get_date="2011-09-01"
+# biofeats=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat")
+# cost="swor"
+# dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
+# namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+# weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
+# outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
+# scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 
