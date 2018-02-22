@@ -78,13 +78,17 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
   a@data$status=0L
   a@data=a@data[,2:4]
   
-  ## format targets
+  ## format targets for conservation features
   targets=weightings[1:4]
   targets=unlist(lapply(targets,function(x)x*-1)) %>% lapply(.,function(x)x*100) %>% unlist() %>% lapply(.,function(x)paste0(x,"%")) %>% unlist()
   
+  ## format targets for cost
+  spf=(1-weightings[5])*10
+  
+  
   ## run marxan
   print("running marxan algorithm")
-  results<-marxan(a, fullnames, targets=targets, spf=100, NUMREPS=1000L, NCORES=2L, BLM=0, lengthFactor=1e-5)
+  results<-marxan(a, fullnames, targets=targets, spf=spf, NUMREPS=1000L, NCORES=2L, BLM=0, lengthFactor=1e-5)
   
   b=results@results@selections %>% as.matrix()
   c=b*1
@@ -137,7 +141,7 @@ biofeats=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat")
 cost="swor"
 dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
-weightings<-c(-0.1,-0.1,-0.05,-0.2,0.9)
+weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
 outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
 scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 
