@@ -32,7 +32,7 @@ alt_rasterRescale=function(r){ ## -1 to native max
 }
 
 #http://stackoverflow.com/questions/12959371/how-to-scale-numbers-values
-alt_rasterRescale2=function(r){
+alt_rasterRescale2=function(r){ #-1 to 0)
   r.min = cellStats(r, "min")
   r.max = cellStats(r, "max")
   r.scale <--1+(0--1)*(r-r.min)/(r.max-r.min)
@@ -124,7 +124,7 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
   cc=aa
   values(cc)[values(cc)<100]=NA 
   tt=cc*-1
-  tt=alt_rasterRescale(tt)
+  tt=alt_rasterRescale2(tt)
   
   xx=mask(cost,tt,inverse=T) %>% inv_alt_rasterRescale()
   dd=cover(tt,xx)
@@ -166,7 +166,7 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
     aa=rasterize(a,cost,"selection_freq")
     
     print("writing out results")
-    ## produce mgmt: rescale between -1 and 1, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 1=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
+    ## produce mgmt: rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 1=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
     bb=inv_alt_rasterRescale(aa)*-1
     writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw"),overwrite=T)
     make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings)
