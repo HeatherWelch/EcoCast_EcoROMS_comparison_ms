@@ -1,8 +1,9 @@
 # step 3. run marxan_clean_02.21.18.R for all days (different script)
-
+source("load_functions.R")
+source("marxan/marxan_clean_02.21.18.R")
 ## load marxan_clean_02.21.18.R
 
-get_date="2011-09-01"
+#get_date="2011-09-01"
 biofeats=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat")
 cost="swor"
 dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
@@ -17,6 +18,10 @@ weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
 #   get_date=d
 # scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 # }
+
+weightings<-c(-0.1,-0.1,-0.05,-0.2,0)
+get_date=dates[1]
+scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 
 weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
 get_date=dates[1]

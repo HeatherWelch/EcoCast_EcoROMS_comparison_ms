@@ -4,12 +4,12 @@
 ### load functions library(marxan) ####
 library(marxan)
 library(tidyverse)
-source("load_functions.R")
+#source("load_functions.R")
 
 # ------------------------------------------- > helper functions
-vignette('quickstart', package='marxan')
-vignette('tutorial', package='marxan')
-vignette('classes', package='marxan')
+# vignette('quickstart', package='marxan')
+# vignette('tutorial', package='marxan')
+# vignette('classes', package='marxan')
 
 # install.packages("marxan")
 # if (!require('devtools'))
@@ -183,7 +183,7 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
 # namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 # weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
 # outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
- scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+#scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 
 
  make_png_marxan_old=function(r,get_date,outdir,type,weightings,namesrisk){ ### does what it says, original function, scale bar on bottom + annotation

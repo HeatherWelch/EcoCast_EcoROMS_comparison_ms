@@ -1,5 +1,5 @@
 ####### step 2. run plot_EcoROMS_temporary.R for all days (but first fix this function) ####
-source("Extracto_Scripts/load_functions.R")
+source("load_functions.R")
 source("/Volumes/SeaGate/EcoROMS/Eco-ROMS-private/EcoROMs/plot_EcoROMS_temporary.R",chdir = T)
 
 moddir="~/Dropbox/Eco-ROMS/Model Outputs/Final EcoROMS models"
