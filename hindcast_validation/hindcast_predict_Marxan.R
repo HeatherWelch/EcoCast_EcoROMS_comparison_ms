@@ -9,32 +9,36 @@ cost="swor"
 dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
-dates=seq(as.Date("2005-08-01",format="%Y-%m-%d"),as.Date("2005-08-20",format="%Y-%m-%d"),by="day") %>% as.character()
+dates=seq(as.Date("2005-08-01",format="%Y-%m-%d"),as.Date("2005-11-30",format="%Y-%m-%d"),by="day") %>% as.character()
 
 
 weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
-# for(d in dates){
-#   print(d)
-#   get_date=d
+for(d in dates){
+  print(d)
+  get_date=d
+  scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+
+
+
+
+
+# weightings<-c(-0.1,-0.1,-0.05,-0.2,0)=============================# get_date=dates[1]
 # scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
-# }
-
-weightings<-c(-0.1,-0.1,-0.05,-0.2,0)
-get_date=dates[1]
-scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
-
-weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
-get_date=dates[1]
-scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
-
-weightings<-c(-0.1,-0.1,-0.05,-0.2,0.5)
-get_date=dates[1]
-scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
-
-weightings<-c(-0.1,-0.1,-0.05,-0.2,0.9)
-get_date=dates[1]
-scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
-
-weightings<-c(-0.1,-0.1,-0.05,-0.3,0.5)
-get_date=dates[1]
-scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# 
+# weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
+# get_date=dates[1]
+# scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# 
+# weightings<-c(-0.1,-0.1,-0.05,-0.2,0.5)
+# get_date=dates[1]
+# scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# 
+# weightings<-c(-0.1,-0.1,-0.05,-0.2,0.9)
+# get_date=dates[1]
+# scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# 
+# weightings<-c(-0.1,-0.1,-0.05,-0.3,0.5)
+# get_date=dates[1]
+# scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
