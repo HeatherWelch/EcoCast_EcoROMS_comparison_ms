@@ -19,6 +19,13 @@ for(d in dates){
   scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
 
+weightings<-c(-0.1,-0.1,-0.05,-0.3,0.6)
+for(d in dates){
+  print(d)
+  get_date=d
+  scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
 
 
 
