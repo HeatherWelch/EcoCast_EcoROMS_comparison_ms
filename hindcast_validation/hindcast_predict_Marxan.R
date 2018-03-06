@@ -12,20 +12,27 @@ outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
 dates=seq(as.Date("2005-08-01",format="%Y-%m-%d"),as.Date("2005-11-30",format="%Y-%m-%d"),by="day") %>% as.character()
 
 
-weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
+weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1) ## (run 1)
 for(d in dates){
   print(d)
   get_date=d
   scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
 
-weightings<-c(-0.1,-0.1,-0.05,-0.3,0.6)
+weightings<-c(-0.1,-0.1,-0.05,-0.3,0.6) # testing swor at it's most extreme ## (run 2)
 for(d in dates){
   print(d)
   get_date=d
   scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
 
+
+weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 3)
+for(d in dates){
+  print(d)
+  get_date=d
+  scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
 
 
 
