@@ -13,11 +13,21 @@ dates=seq(as.Date("2005-08-01",format="%Y-%m-%d"),as.Date("2005-08-20",format="%
 
 
 weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
-# for(d in dates){
-#   print(d)
-#   get_date=d
-# scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
-# }
+for(d in dates){
+  print(d)
+  get_date=d
+scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+
+
+
+
+
+
+
+
+
 
 weightings<-c(-0.1,-0.1,-0.05,-0.2,0)
 get_date=dates[1]
