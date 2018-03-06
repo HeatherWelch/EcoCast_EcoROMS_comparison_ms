@@ -97,9 +97,9 @@ hist(species_roms_2005$dt,"month",freq = T)
 dev.off()
 
 ## 08-11 looks like a good month
-blsh_trk_2005_10=blsh_trk_2005 %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d"))
-lbst_trk_2005_10=lbst_trk_2005 %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d"))
-casl_trk_2005_10=casl_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d"))
+blsh_trk_2005_10=blsh_trk_2005 %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% select(-c(X,iter,ptt,flag)) %>% add_column(sp_name="blshtrk")
+lbst_trk_2005_10=lbst_trk_2005 %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="lbst")
+casl_trk_2005_10=casl_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="casl")
 species_roms_2005_10=species_roms %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d"))
 
 png(paste0("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/plots/hist_all_data_2005_08-11.png"),width=7,height=5,units='in',res=400)
@@ -109,3 +109,8 @@ hist(lbst_trk_2005_10$dt,"day",freq = T)
 hist(casl_trk_2005_10$dt,"day",freq = T,ylim=c(0,1000))
 hist(species_roms_2005_10$dt,"day",freq = T)
 dev.off()
+
+### write out final data files for 08-11 extraction
+trk=do.call("rbind",list(blsh_trk_2005_10,lbst_trk_2005_10,casl_trk_2005_10))
+write.csv(trk,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/trk_casl_blsh_lbst_roms_2005_08_10.csv") ## trking
+write.csv(species_roms_2005_10,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms_2005_08_10.csv") ## observer
