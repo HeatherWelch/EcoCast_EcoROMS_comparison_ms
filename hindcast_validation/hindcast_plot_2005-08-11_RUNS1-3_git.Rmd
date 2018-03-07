@@ -1,0 +1,924 @@
+---
+title: "EcoROMS & EcoMarxan"
+author: "Heather Welch"
+date:  "`r format(Sys.Date())`"
+output: 
+  html_document:
+    keep_md: true
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(raster)
+library(sp)
+library(tidyverse)
+library(rworldmap)
+library(rgdal)
+library(rasterVis)
+library(RColorBrewer)
+library(ggmap)
+library(grid)
+library(lattice)
+library(gridExtra)
+library(maptools)
+library(dplyr)
+library(reshape)
+library(tidyverse)
+library(magick)
+library(png)
+library(maps)
+
+## follows hindcast_extract_plot.R
+
+```
+# Introduction
+This is a hindcast test of the EcoVerse - a sweet of algorithms to reduce bycatch while maximizing target catch in near real-time. The hindcast was run between **2005-08-01 and 2005-11-31**, a time period for which there are historical observer and tracking records for each species in the EcoVerse. 
+
+Number of records: <br>
+-blueshark observer = 28 <br>
+-blueshark track = 909 <br>
+-California sea lion = 37101 <br>
+-Leatherback = 2921 <br>
+-Swordfish = 89 <br>
+
+```{r,echo=FALSE,message=F, warning=F}
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_2005_08_10_run1.csv")
+clean=master[complete.cases(master),]
+map.US <- map_data(map="state")
+a=ggplot()+geom_point(data = clean,aes(lon,lat,color=sp_name),size=.7,alpha=.4)+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+```
+
+
+**How the Marxan algorithm works**  <br>
+Marxan attempts to solve a min set cover problem, i.e. what is the minimum set of planning units (here 10x10 pixels) needed to meet **targets** for **conservation features** while minimizing **costs**. <br>
+-targets: the bycatch species weightings <br>
+-conservation features: the bycatch species  <br>
+-costs: avoided swordfish  <br>
+
+How Marxan is run in EcoMarxan <br>
+Species habitat suitability layers HSL are input into Marxan with the three bycatch species as conservation features and swordfish as a cost. The bycatch species weightings used to set targets for the conservation features (e.g. blsh = .4 ---> protect 40% of blsh habitat). The swordfish weighting is used to set a penalty for failing to meet targets for the conservation features, e.g. when swor is high, the penalty is low, therefor we get a less conservative (in terms of avoiding bycatch) solution. For a given day, Marxan is run 1000 times to create an output of selection frequency, i.e. the number of times / 1000 each pixel was selected for a solution.
+
+Four algorithms were tested:  <br>
+**1. EcoROMS** - species habitat suitability layers (HSL) are weighted, summed, and then normalized between -1 and 1  <br>
+**2. Marxan raw** - the raw selection frequency output (0-1000) rescaled to (-1,1)  <br>
+**3. Marxan mosaic** - remove marxan pixels selected in < 100 solutions, rescale remaining pixels between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch), fill in removed areas w raw swordfish values from HSL (scaled between 0,1)  <br>
+**4. Marxan mosaic 01** - remove marxan pixels selected in < 100 solutions, rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch), fill in removed areas w swordfish values (unscaled), rescale whole thing between -1,1  <br>
+
+
+# Run 1 - "generic weightings"
+The generic EcoROMS weightings (-0.1,-0.1,-0.05,-0.9,0.9), and Marxan weightings that produce similar outputs (-0.1,-0.1,-0.05,-0.2,0.1). <br>
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+
+## Example alorithm solutions
+From 2005-08-01 <br>
+```{r , echo=FALSE, out.width='25%'}
+#### also set up generic stuff for run
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+ER_weightings<-c(-0.1,-0.1,-0.05,-0.9,0.9)
+M_weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_2005_08_10_run1.csv")
+
+
+ER=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_",paste0(ER_weightings,collapse="_"),"_2005-08-01_mean.png")
+M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_raw.png")
+M_m=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_mosaic.png")
+M_m01=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_mosaic01.png")
+
+image_list=list(ER,M_raw,M_m,M_m01) %>% unlist
+knitr::include_graphics(image_list)
+
+
+```
+
+
+```{r , echo=FALSE, out.width='20%'}
+## print raw species files
+swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_2005-08-01_mean.png")
+lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png")
+casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_2005-08-01_mean.png")
+blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png")
+blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png")
+
+image_list2=list(swor,lbst,casl,blshobs,blshtrk) %>% unlist
+knitr::include_graphics(image_list2)
+
+
+```
+
+
+## Box plots
+Algorithm values at historical records
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+ecoroms=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+ecoroms=ecoroms+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+ecoroms
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_r=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_r=marxan_r+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_r
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_m=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_m=marxan_m+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_m
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_m01=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_m01=marxan_m01+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_m01
+
+```
+
+## Histograms by species
+
+### Swordfish
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+EcoROMS=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_raw=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic$density=Marxan_mosaic$counts/sum(Marxan_mosaic$counts)*100
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic01=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic01$density=Marxan_mosaic01$counts/sum(Marxan_mosaic01$counts)*100
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold'}
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic01, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
+### Leatherbacks
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+EcoROMS=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_raw=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic$density=Marxan_mosaic$counts/sum(Marxan_mosaic$counts)*100
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic01=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic01$density=Marxan_mosaic01$counts/sum(Marxan_mosaic01$counts)*100
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold'}
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic01, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
+## Maps by species
+
+### Swordfish
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+clean=master[complete.cases(master),] %>% filter(sp_name=="SWOR")
+map.US <- map_data(map="state")
+
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+
+```
+
+### Leatherbacks
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+clean=master[complete.cases(master),] %>% filter(sp_name=="lbst")
+map.US <- map_data(map="state")
+
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+
+```
+
+
+# Run 2 - "SWOR and LBST at their most extremes"
+Weightings in this run were select to seperate swordfish and leatherbacks as much as possible, keeping all other species weightings constant with Run 1. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,2 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.6 <br>
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+
+## Example alorithm solutions
+From 2005-08-01 <br>
+```{r, echo=FALSE, out.width='25%'}
+#### also set up generic stuff for run
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+ER_weightings<-c(-0.1,-0.1,-0.05,-1.5,2)
+M_weightings<-c(-0.1,-0.1,-0.05,-0.3,0.6)
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_2005_08_10_run2.csv")
+
+
+ER=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_",paste0(ER_weightings,collapse="_"),"_2005-08-01_mean.png")
+M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_raw.png")
+M_m=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_mosaic.png")
+M_m01=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_mosaic01.png")
+
+image_list=list(ER,M_raw,M_m,M_m01) %>% unlist
+knitr::include_graphics(image_list)
+
+```
+
+
+```{r, echo=FALSE, out.width='20%'}
+## print raw species files
+swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_2005-08-01_mean.png")
+lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png")
+casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_2005-08-01_mean.png")
+blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png")
+blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png")
+
+image_list2=list(swor,lbst,casl,blshobs,blshtrk) %>% unlist
+knitr::include_graphics(image_list2)
+
+
+```
+
+## Box plots
+Algorithm values at historical records
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+ecoroms=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+ecoroms=ecoroms+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+ecoroms
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_r=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_r=marxan_r+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_r
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_m=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_m=marxan_m+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_m
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_m01=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_m01=marxan_m01+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_m01
+
+```
+
+## Histograms by species
+
+### Swordfish
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+EcoROMS=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_raw=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic$density=Marxan_mosaic$counts/sum(Marxan_mosaic$counts)*100
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic01=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic01$density=Marxan_mosaic01$counts/sum(Marxan_mosaic01$counts)*100
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold'}
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic01, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
+### Leatherbacks
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+EcoROMS=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_raw=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic$density=Marxan_mosaic$counts/sum(Marxan_mosaic$counts)*100
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic01=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic01$density=Marxan_mosaic01$counts/sum(Marxan_mosaic01$counts)*100
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold'}
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic01, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
+## Maps by species
+
+### Swordfish
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+clean=master[complete.cases(master),] %>% filter(sp_name=="SWOR")
+map.US <- map_data(map="state")
+
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+
+```
+
+### Leatherbacks
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+clean=master[complete.cases(master),] %>% filter(sp_name=="lbst")
+map.US <- map_data(map="state")
+
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+
+```
+
+
+# Run 3 - "extreme LBST, neutral SWOR"
+Weightings in this run were select to seperate swordfish and leatherbacks as much as possible, keeping all other species weightings constant with Run 1. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,.1 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.1 <br>
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+
+## Example alorithm solutions
+From 2005-08-01 <br>
+```{r, echo=FALSE, out.width='25%'}
+#### also set up generic stuff for run
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+ER_weightings<-c(-0.1,-0.1,-0.05,-1.5,.1)
+M_weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1)
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_2005_08_10_run3.csv")
+
+
+ER=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_",paste0(ER_weightings,collapse="_"),"_2005-08-01_mean.png")
+M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_raw.png")
+M_m=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_mosaic.png")
+M_m01=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_mosaic01.png")
+
+image_list=list(ER,M_raw,M_m,M_m01) %>% unlist
+knitr::include_graphics(image_list)
+
+```
+
+
+```{r , echo=FALSE, out.width='20%'}
+## print raw species files
+swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_2005-08-01_mean.png")
+lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png")
+casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_2005-08-01_mean.png")
+blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png")
+blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png")
+
+image_list2=list(swor,lbst,casl,blshobs,blshtrk) %>% unlist
+knitr::include_graphics(image_list2)
+
+
+```
+
+
+## Box plots
+Algorithm values at historical records
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+ecoroms=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+ecoroms=ecoroms+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+ecoroms
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_r=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_r=marxan_r+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_r
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_m=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_m=marxan_m+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_m
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_m01=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_m01=marxan_m01+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="EcoROMS prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_m01
+
+```
+
+## Histograms by species
+
+### Swordfish
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+EcoROMS=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_raw=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic$density=Marxan_mosaic$counts/sum(Marxan_mosaic$counts)*100
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic01=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic01$density=Marxan_mosaic01$counts/sum(Marxan_mosaic01$counts)*100
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold'}
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic01, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
+### Leatherbacks
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+EcoROMS=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_raw=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic$density=Marxan_mosaic$counts/sum(Marxan_mosaic$counts)*100
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_mosaic01=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_mosaic01$density=Marxan_mosaic01$counts/sum(Marxan_mosaic01$counts)*100
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold'}
+plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+
+plot(Marxan_mosaic01,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan mosaic01, weightings: ",paste0(M_weightings,collapse = "_")),xlab="EcoROMS product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
+## Maps by species
+
+### Swordfish
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+clean=master[complete.cases(master),] %>% filter(sp_name=="SWOR")
+map.US <- map_data(map="state")
+
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+
+```
+
+### Leatherbacks
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+clean=master[complete.cases(master),] %>% filter(sp_name=="lbst")
+map.US <- map_data(map="state")
+
+algorithm="EcoROMS"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+algorithm="^Marxan_mosaic01$"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+geom_point(data=clean,aes(lon,lat,color=clean[,index]),size=.7,alpha=.4)+coord_cartesian()+scale_color_gradientn(colours=rainbow(7),na.value = "transparent",
+                           breaks=c(-.5,0,.5),
+                           limits=c(-1,1))
+a=a+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data from 2005: lbst"),subtitle = subtitle)+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)
+a
+
+
+```
+
