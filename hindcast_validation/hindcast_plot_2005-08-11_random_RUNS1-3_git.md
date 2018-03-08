@@ -4,14 +4,8 @@ Heather Welch
 
 
 # Introduction
-This is a hindcast test of the EcoVerse - a sweet of algorithms to reduce bycatch while maximizing target catch in near real-time. The hindcast was run between **2005-08-01 and 2005-11-31**, a time period for which there are historical observer and tracking records for each species in the EcoVerse. 
+This is a hindcast test of the EcoVerse - a sweet of algorithms to reduce bycatch while maximizing target catch in near real-time. The hindcast consists of 1000 random points between **2005-08-01 and 2005-11-31**. At each random point, all algorithm values were compared to all species habitat suitabilities.
 
-Number of records: <br>
--blueshark observer = 28 <br>
--blueshark track = 909 <br>
--California sea lion = 37101 <br>
--Leatherback = 2921 <br>
--Swordfish = 89 <br>
 
 ![](hindcast_plot_2005-08-11_random_RUNS1-3_git_files/figure-html/unnamed-chunk-1-1.png)<!-- -->
 
