@@ -114,3 +114,15 @@ dev.off()
 trk=do.call("rbind",list(blsh_trk_2005_10,lbst_trk_2005_10,casl_trk_2005_10))
 write.csv(trk,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/trk_casl_blsh_lbst_roms_2005_08_10.csv") ## trking
 write.csv(species_roms_2005_10,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms_2005_08_10.csv") ## observer
+
+
+#### ---------> new code 03-08-18 to select more swordfish data
+species_roms=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt))
+hist(species_roms$dt,"year",freq = T)
+species_1997=species_roms %>% dplyr::filter(dt>="1997-01-01"& dt<="1997-12-31")
+hist(species_1997$dt,"month",freq = T)
+species_1997_10=species_1997 %>% dplyr::filter(dt>="1997-10-01"& dt<="1997-11-30")
+hist(species_1997_10$dt,"day",freq = T)
+
+### write out final data files for 1997 10-11 extraction
+write.csv(species_1997_10,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms_1997_10_11.csv") ## observer

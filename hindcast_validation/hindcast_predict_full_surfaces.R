@@ -12,8 +12,9 @@
 
 ####### step 1. run Predict_ROMS_mean_se_CIs.R for all days (species hab suitability) ####
 source("/Volumes/SeaGate/EcoROMS/Eco-ROMS-private/EcoROMs/Predict_ROMS_mean_se_CIs.R")
-dates=seq(as.Date("2005-08-01",format="%Y-%m-%d"),as.Date("2005-11-30",format="%Y-%m-%d"),by="day")
+dates=seq(as.Date("2005-08-01",format="%Y-%m-%d"),as.Date("2005-11-30",format="%Y-%m-%d"),by="day") ##### hindcasting 2005 08-11 run
 #dates=seq(as.Date("2005-08-20",format="%Y-%m-%d"),as.Date("2005-11-30",format="%Y-%m-%d"),by="day") ## only here cuz im fixing blueshark obs
+dates=seq(from=as.Date("1997-10-01",format="%Y-%m-%d"),to=as.Date("1997-11-30",format="%Y-%m-%d"),by="day")  ##### hindcasting 1997 10-11 run
 outDir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
 
 caslmod=readRDS('~/Dropbox/Eco-ROMS/Model Outputs/Final EcoROMS models/casl.res1.tc4.lr.1.10models.noLat.rds') # 10 unique models
