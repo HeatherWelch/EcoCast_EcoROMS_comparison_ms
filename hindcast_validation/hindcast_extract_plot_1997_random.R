@@ -182,11 +182,11 @@ a=extracto_raster(pts=a,algorithm="Marxan_mosaic",solution_list = marxan_mosaic,
 a=extracto_raster(pts=a,algorithm="Marxan_mosaic01",solution_list = marxan_mosaic01,weightings = M_weightings) #%>% dplyr::select(-SpCd)
 
 ##### c. run extracto (species habitat suitability layers) ####
-swor=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/",pattern=".grd",full.names = T)# %>% grep("mean",.,value=T)%>% grep("_2005-",.,value=T)
-lbst=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/",pattern=".grd",full.names = T)# %>% grep("mean",.,value=T)%>% grep("_2005-",.,value=T)
-casl=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/",pattern=".grd",full.names = T) #%>% grep("mean",.,value=T)%>% grep("_2005-",.,value=T)
-blshobs=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/",pattern=".grd",full.names = T) #%>% grep("mean",.,value=T)%>% grep("_2005-",.,value=T)
-blshtrk=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/",pattern=".grd",full.names = T)# %>% grep("mean",.,value=T)%>% grep("_2005-",.,value=T)
+swor=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)#%>% grep("_2005-",.,value=T)
+lbst=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)#%>% grep("_2005-",.,value=T)
+casl=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)#%>% grep("_2005-",.,value=T)
+blshobs=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)#%>% grep("_2005-",.,value=T)
+blshtrk=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)#%>% grep("_2005-",.,value=T)
 
 a=extracto_raster(pts=a,algorithm="swor",solution_list = swor,weightings = M_weightings)
 a=extracto_raster(pts=a,algorithm="lbst",solution_list = lbst,weightings = M_weightings)
