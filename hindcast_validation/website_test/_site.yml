@@ -1,4 +1,5 @@
 name: "EcoROMS & EcoMarxan hindcast comparison"
+output_dir: "docs"
 
 output: 
   html_document:

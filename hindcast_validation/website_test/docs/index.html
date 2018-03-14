@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>EcoROMS &amp; EcoMarxan hindcast comparison</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">EcoROMS &amp; EcoMarxan hindcast comparison</h1>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This is a hindcast test of the EcoVerse - a suite of algorithms to reduce bycatch while maximizing target catch in near real-time. The hindcast was run between <strong>1997-10-01 and 1997-11-31</strong> and <strong>2005-08-01 and 2005-11-31</strong> in conjunction, two time periods for which there are historical observer and tracking records for each species in the EcoVerse.</p>
+<p>Number of records: <br> -blueshark observer = 280 <br> -blueshark track = 814 <br> -California sea lion = 34176 <br> -Leatherback = 2562 <br> -Swordfish = 348 <br></p>
+<p>Additionally, a random point hindcast was conducted, consisting of 1400 random points between <strong>1997-10-01 and 1997-11-31</strong> and <strong>2005-08-01 and 2005-11-31</strong>. At each random point, all algorithm values were compared to all species habitat suitabilities.</p>
+<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-1-2.png" width="50%" /></p>
+<p><strong>How the Marxan algorithm works</strong> <br> Marxan attempts to solve a min set cover problem, i.e. what is the minimum set of planning units (here 10x10 pixels) needed to meet <strong>targets</strong> for <strong>conservation features</strong> while minimizing <strong>costs</strong>. <br> -targets: the bycatch species weightings <br> -conservation features: the bycatch species <br> -costs: avoided swordfish <br></p>
+<p>How Marxan is run in EcoMarxan <br> Species habitat suitability layers HSL are input into Marxan with the three bycatch species as conservation features and swordfish as a cost. The bycatch species weightings used to set targets for the conservation features (e.g. blsh = .4 —&gt; protect 40% of blsh habitat). The swordfish weighting is used to set a penalty for failing to meet targets for the conservation features, e.g. when swor is high, the penalty is low, therefor we get a less conservative (in terms of avoiding bycatch) solution. For a given day, Marxan is run 1000 times to create an output of selection frequency, i.e. the number of times / 1000 each pixel was selected for a solution.</p>
+<p>Four algorithms were tested: <br> <strong>1. EcoROMS</strong> - species habitat suitability layers (HSL) are weighted, summed, and then normalized between -1 and 1 <br> <strong>2. Marxan raw</strong> - the raw selection frequency output (0-1000) rescaled to (-1,1) <br> <strong>3. Marxan mosaic</strong> - remove marxan pixels selected in &lt; 100 solutions, rescale remaining pixels between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch), fill in removed areas w raw swordfish values from HSL (scaled between 0,1) <br> <strong>4. Marxan mosaic 01</strong> - remove marxan pixels selected in &lt; 100 solutions, rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch), fill in removed areas w swordfish values (unscaled), rescale whole thing between -1,1 <br></p>
+</div>
+<div id="run-1---generic-weightings---raw-data" class="section level1">
+<h1>Run 1 - “generic weightings” - raw data</h1>
+<p>The generic EcoROMS weightings (-0.1,-0.1,-0.05,-0.9,0.9), and Marxan weightings that produce similar outputs (-0.1,-0.1,-0.05,-0.2,0.1). <br> namesrisk&lt;-c(“Blue shark bycatch”,“Blue sharks”,“Sea lions”,“Leatherbacks”,“Swordfish”)</p>
+<div id="example-alorithm-solutions" class="section level2">
+<h2>Example alorithm solutions</h2>
+<p>From 2005-08-01 <br> <img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_-0.1_-0.1_-0.05_-0.9_0.9_2005-08-01_mean.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.2_0.1_2005-08-01_raw.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.2_0.1_2005-08-01_mosaic.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.2_0.1_2005-08-01_mosaic01.png" width="25%" /></p>
+<p><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/swor/swor_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/casl_noLat/casl_noLat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png" width="20%" /></p>
+</div>
+<div id="box-plots" class="section level2">
+<h2>Box plots</h2>
+<p>Algorithm values at historical records</p>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-4-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-4-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-4-4.png" width="50%" /></p>
+</div>
+<div id="histograms-by-species" class="section level2">
+<h2>Histograms by species</h2>
+<div id="swordfish" class="section level3">
+<h3>Swordfish</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-6-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-6-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-6-4.png" width="50%" /></p>
+</div>
+<div id="leatherbacks" class="section level3">
+<h3>Leatherbacks</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-8-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-8-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-8-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-8-4.png" width="50%" /></p>
+</div>
+</div>
+<div id="maps-by-species" class="section level2">
+<h2>Maps by species</h2>
+<div id="swordfish-1" class="section level3">
+<h3>Swordfish</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-9-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-9-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-9-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-9-4.png" width="50%" /></p>
+</div>
+<div id="leatherbacks-1" class="section level3">
+<h3>Leatherbacks</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-10-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-10-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-10-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-10-4.png" width="50%" /></p>
+</div>
+</div>
+</div>
+<div id="run-2---swor-and-lbst-at-their-most-extremes---raw-data" class="section level1">
+<h1>Run 2 - “SWOR and LBST at their most extremes” - raw data</h1>
+<p>Weightings in this run were select to seperate swordfish and leatherbacks as much as possible, keeping all other species weightings constant with Run 1. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,2 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.6 <br> namesrisk&lt;-c(“Blue shark bycatch”,“Blue sharks”,“Sea lions”,“Leatherbacks”,“Swordfish”)</p>
+<div id="example-alorithm-solutions-1" class="section level2">
+<h2>Example alorithm solutions</h2>
+<p>From 2005-08-01 <br> <img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_-0.1_-0.1_-0.05_-1.5_2_2005-08-01_mean.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.6_2005-08-01_raw.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.6_2005-08-01_mosaic.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.6_2005-08-01_mosaic01.png" width="25%" /></p>
+<p><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/swor/swor_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/casl_noLat/casl_noLat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png" width="20%" /></p>
+</div>
+<div id="box-plots-1" class="section level2">
+<h2>Box plots</h2>
+<p>Algorithm values at historical records</p>
+<p><img src="index_files/figure-html/unnamed-chunk-13-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-13-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-13-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-13-4.png" width="50%" /></p>
+</div>
+<div id="histograms-by-species-1" class="section level2">
+<h2>Histograms by species</h2>
+<div id="swordfish-2" class="section level3">
+<h3>Swordfish</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-15-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-15-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-15-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-15-4.png" width="50%" /></p>
+</div>
+<div id="leatherbacks-2" class="section level3">
+<h3>Leatherbacks</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-17-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-17-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-17-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-17-4.png" width="50%" /></p>
+</div>
+</div>
+<div id="maps-by-species-1" class="section level2">
+<h2>Maps by species</h2>
+<div id="swordfish-3" class="section level3">
+<h3>Swordfish</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-18-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-18-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-18-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-18-4.png" width="50%" /></p>
+</div>
+<div id="leatherbacks-3" class="section level3">
+<h3>Leatherbacks</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-19-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-19-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-19-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-19-4.png" width="50%" /></p>
+</div>
+</div>
+</div>
+<div id="run-3---extreme-lbst-neutral-swor---raw-data" class="section level1">
+<h1>Run 3 - “extreme LBST, neutral SWOR” - raw data</h1>
+<p>Weightings in this run were select to seperate swordfish and leatherbacks as much as possible, keeping all other species weightings constant with Run 1. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,.1 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.1 <br> namesrisk&lt;-c(“Blue shark bycatch”,“Blue sharks”,“Sea lions”,“Leatherbacks”,“Swordfish”)</p>
+<div id="example-alorithm-solutions-2" class="section level2">
+<h2>Example alorithm solutions</h2>
+<p>From 2005-08-01 <br> <img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_-0.1_-0.1_-0.05_-1.5_0.1_2005-08-01_mean.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.1_2005-08-01_raw.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.1_2005-08-01_mosaic.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.1_2005-08-01_mosaic01.png" width="25%" /></p>
+<p><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/swor/swor_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/casl_noLat/casl_noLat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png" width="20%" /></p>
+</div>
+<div id="box-plots-2" class="section level2">
+<h2>Box plots</h2>
+<p>Algorithm values at historical records</p>
+<p><img src="index_files/figure-html/unnamed-chunk-22-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-22-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-22-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-22-4.png" width="50%" /></p>
+</div>
+<div id="histograms-by-species-2" class="section level2">
+<h2>Histograms by species</h2>
+<div id="swordfish-4" class="section level3">
+<h3>Swordfish</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-24-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-24-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-24-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-24-4.png" width="50%" /></p>
+</div>
+<div id="leatherbacks-4" class="section level3">
+<h3>Leatherbacks</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-26-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-26-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-26-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-26-4.png" width="50%" /></p>
+</div>
+</div>
+<div id="maps-by-species-2" class="section level2">
+<h2>Maps by species</h2>
+<div id="swordfish-5" class="section level3">
+<h3>Swordfish</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-27-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-27-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-27-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-27-4.png" width="50%" /></p>
+</div>
+<div id="leatherbacks-5" class="section level3">
+<h3>Leatherbacks</h3>
+<p><img src="index_files/figure-html/unnamed-chunk-28-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-28-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-28-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-28-4.png" width="50%" /></p>
+</div>
+</div>
+</div>
+<div id="run-1---generic-weightings---random-data" class="section level1">
+<h1>Run 1 - “generic weightings” - random data</h1>
+<p>The generic EcoROMS weightings (-0.1,-0.1,-0.05,-0.9,0.9), and Marxan weightings that produce similar outputs (-0.1,-0.1,-0.05,-0.2,0.1). <br> namesrisk&lt;-c(“Blue shark bycatch”,“Blue sharks”,“Sea lions”,“Leatherbacks”,“Swordfish”)</p>
+<div id="example-alorithm-solutions-3" class="section level2">
+<h2>Example alorithm solutions</h2>
+<p>From 2005-08-01 <br> <img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_-0.1_-0.1_-0.05_-0.9_0.9_2005-08-01_mean.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.2_0.1_2005-08-01_raw.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.2_0.1_2005-08-01_mosaic.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.2_0.1_2005-08-01_mosaic01.png" width="25%" /></p>
+<p><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/swor/swor_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/casl_noLat/casl_noLat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png" width="20%" /></p>
+</div>
+<div id="point-clouds" class="section level2">
+<h2>Point clouds</h2>
+<p>Habitat suitability layers vs algorithm solutions</p>
+<p><img src="index_files/figure-html/unnamed-chunk-31-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-31-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-31-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-31-4.png" width="50%" /></p>
+</div>
+</div>
+<div id="run-2---swor-and-lbst-at-their-most-extremes---random-data" class="section level1">
+<h1>Run 2 - “SWOR and LBST at their most extremes” - random data</h1>
+<p>Weightings in this run were select to seperate swordfish and leatherbacks as much as possible, keeping all other species weightings constant with Run 1. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,2 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.6 <br> namesrisk&lt;-c(“Blue shark bycatch”,“Blue sharks”,“Sea lions”,“Leatherbacks”,“Swordfish”)</p>
+<div id="example-alorithm-solutions-4" class="section level2">
+<h2>Example alorithm solutions</h2>
+<p>From 2005-08-01 <br> <img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_-0.1_-0.1_-0.05_-1.5_2_2005-08-01_mean.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.6_2005-08-01_raw.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.6_2005-08-01_mosaic.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.6_2005-08-01_mosaic01.png" width="25%" /></p>
+<p><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/swor/swor_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/casl_noLat/casl_noLat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png" width="20%" /></p>
+</div>
+<div id="point-clouds-1" class="section level2">
+<h2>Point clouds</h2>
+<p>Habitat suitability layers vs algorithm solutions</p>
+<p><img src="index_files/figure-html/unnamed-chunk-34-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-34-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-34-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-34-4.png" width="50%" /></p>
+</div>
+</div>
+<div id="run-3---extreme-lbst-neutral-swor---random-data" class="section level1">
+<h1>Run 3 - “extreme LBST, neutral SWOR” - random data</h1>
+<p>Weightings in this run were select to seperate swordfish and leatherbacks as much as possible, keeping all other species weightings constant with Run 1. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,.1 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.1 <br> namesrisk&lt;-c(“Blue shark bycatch”,“Blue sharks”,“Sea lions”,“Leatherbacks”,“Swordfish”)</p>
+<div id="example-alorithm-solutions-5" class="section level2">
+<h2>Example alorithm solutions</h2>
+<p>From 2005-08-01 <br> <img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_-0.1_-0.1_-0.05_-1.5_0.1_2005-08-01_mean.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.1_2005-08-01_raw.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.1_2005-08-01_mosaic.png" width="25%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.3_0.1_2005-08-01_mosaic01.png" width="25%" /></p>
+<p><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/swor/swor_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/casl_noLat/casl_noLat_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model%20Prediction%20Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png" width="20%" /></p>
+</div>
+<div id="point-clouds-2" class="section level2">
+<h2>Point clouds</h2>
+<p>Habitat suitability layers vs algorithm solutions</p>
+<p><img src="index_files/figure-html/unnamed-chunk-37-1.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-37-2.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-37-3.png" width="50%" /><img src="index_files/figure-html/unnamed-chunk-37-4.png" width="50%" /></p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
