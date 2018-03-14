@@ -1,0 +1,9 @@
+name: "EcoROMS & EcoMarxan hindcast comparison"
+
+output: 
+  html_document:
+    keep_md: true
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: true
