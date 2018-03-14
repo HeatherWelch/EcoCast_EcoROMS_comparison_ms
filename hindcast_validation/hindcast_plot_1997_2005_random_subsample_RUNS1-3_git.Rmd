@@ -30,7 +30,7 @@ library(gridExtra)
 library(maptools)
 library(dplyr)
 library(reshape)
-library(tidyverse)
+library(pracma)
 library(magick)
 library(png)
 library(maps)
@@ -46,7 +46,7 @@ Additionally, a random point hindcast was conducted, consisting of 1400 random p
 
 
 ```{r,echo=FALSE,message=F, warning=F,out.width='50%'}
-master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_1997_2005_run1.csv")%>% group_by(sp_name)%>% dplyr::sample_n(size=280)
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_1997_2005_run1.csv")%>% group_by(sp_name)%>% dplyr::sample_n(size=280) %>% as.data.frame()
 clean=master[complete.cases(master),]
 map.US <- map_data(map="state")
 a=ggplot()+geom_point(data = clean,aes(lon,lat,color=sp_name),size=.7,alpha=.4)+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
@@ -61,6 +61,67 @@ a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)+ggtitle("Random da
 a
 
 ```
+
+**Histograms of predicted habitat suitability at species presences**
+
+```{r, echo=FALSE,message=F, warning=F,out.width='20%',fig.show = 'hold',fig.keep='high',include=F}
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_1997_2005_run1.csv")%>% group_by(sp_name)%>% dplyr::sample_n(size=280) %>% as.data.frame()
+
+algorithm="swor"
+index=NULL
+index=grep(algorithm,names(master))
+swor=hist(master[master$sp_name=="SWOR",index],breaks=c(0,.2,.4,.6,.8,1))
+swor$density=swor$counts/sum(swor$counts)*100
+plot(swor,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="lbst"
+index=NULL
+index=grep(algorithm,names(master))
+lbst=hist(master[master$sp_name=="lbst",index],breaks=c(0,.2,.4,.6,.8,1))
+lbst$density=lbst$counts/sum(lbst$counts)*100
+plot(lbst,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="casl"
+index=NULL
+index=grep(algorithm,names(master))
+casl=hist(master[master$sp_name=="casl",index],breaks=c(0,.2,.4,.6,.8,1))
+casl$density=casl$counts/sum(casl$counts)*100
+plot(casl,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshobs"
+index=NULL
+index=grep(algorithm,names(master))
+blshobs=hist(master[master$sp_name=="BLSH",index],breaks=c(0,.2,.4,.6,.8,1))
+blshobs$density=blshobs$counts/sum(blshobs$counts)*100
+plot(blshobs,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshtrk"
+index=NULL
+index=grep(algorithm,names(master))
+blshtrk=hist(master[master$sp_name=="blshtrk",index],breaks=c(0,.2,.4,.6,.8,1))
+blshtrk$density=blshtrk$counts/sum(blshtrk$counts)*100
+plot(blshtrk,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='30%',fig.show = 'hold',fig.keep='high'}
+algorithm="swor"
+plot(swor,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="lbst"
+plot(lbst,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="casl"
+plot(casl,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshobs"
+plot(blshobs,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshtrk"
+plot(blshtrk,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
 
 **How the Marxan algorithm works**  <br>
 Marxan attempts to solve a min set cover problem, i.e. what is the minimum set of planning units (here 10x10 pixels) needed to meet **targets** for **conservation features** while minimizing **costs**. <br>

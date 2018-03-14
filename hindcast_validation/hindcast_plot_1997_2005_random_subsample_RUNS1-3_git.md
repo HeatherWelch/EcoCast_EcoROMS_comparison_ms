@@ -12,6 +12,13 @@ Additionally, a random point hindcast was conducted, consisting of 1400 random p
 
 <img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-1-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-1-2.png" width="50%" />
 
+**Histograms of predicted habitat suitability at species presences**
+
+
+
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-3-1.png" width="30%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-3-2.png" width="30%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-3-3.png" width="30%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-3-4.png" width="30%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-3-5.png" width="30%" />
+
+
 **How the Marxan algorithm works**  <br>
 Marxan attempts to solve a min set cover problem, i.e. what is the minimum set of planning units (here 10x10 pixels) needed to meet **targets** for **conservation features** while minimizing **costs**. <br>
 -targets: the bycatch species weightings <br>
@@ -42,7 +49,7 @@ From 2005-08-01 <br>
 ## Box plots
 Algorithm values at historical records
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-4-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-4-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-4-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-4-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-4.png" width="50%" />
 
 ## Histograms by species
 
@@ -50,23 +57,23 @@ Algorithm values at historical records
 
 
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-6-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-4.png" width="50%" />
 
 ### Leatherbacks
 
 
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-8-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-4.png" width="50%" />
 
 ## Maps by species
 
 ### Swordfish
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-9-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-9-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-9-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-9-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-11-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-11-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-11-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-11-4.png" width="50%" />
 
 ### Leatherbacks
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-10-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-12-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-12-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-12-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-12-4.png" width="50%" />
 
 
 # Run 2 - "SWOR and LBST at their most extremes" - raw data
@@ -83,7 +90,7 @@ From 2005-08-01 <br>
 ## Box plots
 Algorithm values at historical records
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-13-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-13-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-13-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-13-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-4.png" width="50%" />
 
 ## Histograms by species
 
@@ -91,23 +98,23 @@ Algorithm values at historical records
 
 
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-15-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-4.png" width="50%" />
 
 ### Leatherbacks
 
 
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-17-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-4.png" width="50%" />
 
 ## Maps by species
 
 ### Swordfish
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-18-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-18-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-18-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-18-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-20-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-20-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-20-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-20-4.png" width="50%" />
 
 ### Leatherbacks
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-19-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-21-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-21-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-21-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-21-4.png" width="50%" />
 
 
 # Run 3 - "extreme LBST, neutral SWOR" - raw data
@@ -125,7 +132,7 @@ From 2005-08-01 <br>
 ## Box plots
 Algorithm values at historical records
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-22-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-22-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-22-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-22-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-4.png" width="50%" />
 
 ## Histograms by species
 
@@ -133,23 +140,23 @@ Algorithm values at historical records
 
 
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-24-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-4.png" width="50%" />
 
 ### Leatherbacks
 
 
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-26-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-4.png" width="50%" />
 
 ## Maps by species
 
 ### Swordfish
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-27-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-27-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-27-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-27-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-29-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-29-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-29-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-29-4.png" width="50%" />
 
 ### Leatherbacks
 
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-28-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-30-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-30-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-30-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-30-4.png" width="50%" />
 
 
 
@@ -167,7 +174,7 @@ From 2005-08-01 <br>
 ## Point clouds
 Habitat suitability layers vs algorithm solutions
  
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-31-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-31-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-31-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-31-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-33-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-33-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-33-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-33-4.png" width="50%" />
 
 # Run 2 - "SWOR and LBST at their most extremes" - random data
 Weightings in this run were select to seperate swordfish and leatherbacks as much as possible, keeping all other species weightings constant with Run 1. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,2 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.6 <br>
@@ -183,7 +190,7 @@ From 2005-08-01 <br>
 ## Point clouds
 Habitat suitability layers vs algorithm solutions
  
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-34-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-34-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-34-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-34-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-36-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-36-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-36-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-36-4.png" width="50%" />
 
 
 # Run 3 - "extreme LBST, neutral SWOR" - random data
@@ -200,4 +207,4 @@ From 2005-08-01 <br>
 ## Point clouds
 Habitat suitability layers vs algorithm solutions
  
-<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-37-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-37-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-37-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-37-4.png" width="50%" />
+<img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-39-1.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-39-2.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-39-3.png" width="50%" /><img src="hindcast_plot_1997_2005_random_subsample_RUNS1-3_git_files/figure-html/unnamed-chunk-39-4.png" width="50%" />
