@@ -181,7 +181,119 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
 # cost="swor"
 # dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
 # namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
-# weightings<-c(-0.1,-0.1,-0.05,-0.2,0.1)
+# weightings<-c(-0.05,-0.05,-0.05,-0.2,0.1)
+# outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
+#scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+
+
+
+scp_swor=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
+  
+  ## prepare biodiversity features and costs
+  fullnames=lapply(biofeats,function(x)paste0(dailypreddir,x,"/",x,"_",get_date,"_mean.grd")) %>% stack() ## biodiversity features
+  #names(fullnames)=biofeats
+  fullnames[[5]]=1-fullnames[[5]]
+  
+  ## costs
+  cost=paste0(dailypreddir,cost,"/",cost,"_",get_date,"_mean.grd") %>% raster()  ## costs
+  a=rasterToPolygons(cost)
+  a@data$id=1:nrow(a) 
+  a@data$cost=1
+  a@data$status=0L
+  a@data=a@data[,2:4]
+  
+  ## format targets for conservation features
+  targets=weightings[1:4]
+  targets=unlist(lapply(targets,function(x)x*-1)) %>% lapply(.,function(x)x*100) %>% unlist() %>% lapply(.,function(x)paste0(x,"%")) %>% unlist()
+  
+  targets2=(weightings[5]*100) %>% paste0(.,"%")
+  targets=list(targets,targets2) %>% unlist()
+  
+  if(weightings[5]!=0){
+    spf=4
+    
+    ## run marxan
+    print("running marxan algorithm")
+    results<-marxan(a, fullnames, targets=targets, spf=spf, NUMREPS=1000L, NCORES=2L, BLM=0, lengthFactor=1e-5)
+    
+    b=results@results@selections %>% as.matrix()
+    c=b*1
+    d=as.data.frame(c) %>% colSums()
+    e=as.matrix(d) %>% as.data.frame()
+    colnames(e)[1]="Freq"
+    a$selection_freq=e$Freq
+    aa=rasterize(a,cost,"selection_freq")
+    
+    print("writing out results")
+    ## produce mgmt: rescale between -1 and 1, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 1=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
+    bb=rasterRescale(aa)*-1
+    writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw"),overwrite=T)
+    make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings)
+    
+    ## produce mgmt: remove marxan pixels selected in < 100 solutions,
+    ## rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
+    ## fill in removed areas w swordfish values (scaled between 0,1)
+    cc=aa
+    values(cc)[values(cc)<100]=NA 
+    tt=cc*-1
+    tt=alt_rasterRescale2(tt)
+    
+    xx=mask(cost,tt,inverse=T) %>% inv_alt_rasterRescale()
+    dd=cover(tt,xx)
+    #ee=rasterRescale(dd) ###----------------> THINK ABOUT THIS!!! WHEN DO WE RESCALE?
+    writeRaster(dd,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_mosaic01"),overwrite=T)
+    make_png_marxan(dd,get_date = get_date,outdir=outdir,type="mosaic01",namesrisk = namesrisk,weightings = weightings)
+    
+    ## produce mgmt: remove marxan pixels selected in < 100 solutions,
+    ## rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
+    ## fill in removed areas w swordfish values (unscaled)
+    ## rescale whole thing between -1,1
+    cc=aa
+    values(cc)[values(cc)<100]=NA 
+    tt=cc*-1
+    tt=alt_rasterRescale(tt)
+    
+    xx=mask(cost,tt,inverse=T) 
+    dd=cover(tt,xx)
+    ee=rasterRescale(dd) ###----------------> THINK ABOUT THIS!!! WHEN DO WE RESCALE?
+    writeRaster(ee,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_mosaic"),overwrite=T)
+    make_png_marxan(ee,get_date = get_date,outdir=outdir,type="mosaic",namesrisk = namesrisk,weightings = weightings)
+  }
+  if(weightings[5]==0){
+    a$cost=1
+    
+    ## format targets for cost
+    spf=10
+    
+    ## run marxan
+    print("running marxan algorithm")
+    results<-marxan(a, fullnames, targets=targets, spf=spf, NUMREPS=1000L, NCORES=2L, BLM=0, lengthFactor=1e-5)
+    
+    b=results@results@selections %>% as.matrix()
+    c=b*1
+    d=as.data.frame(c) %>% colSums()
+    e=as.matrix(d) %>% as.data.frame()
+    colnames(e)[1]="Freq"
+    a$selection_freq=e$Freq
+    aa=rasterize(a,cost,"selection_freq")
+    
+    print("writing out results")
+    ## produce mgmt: rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 1=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
+    bb=inv_alt_rasterRescale(aa)*-1
+    writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw"),overwrite=T)
+    make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings)
+    
+  }
+  
+}
+
+##### demo run ####
+# get_date="2011-09-01"
+# biofeats=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat","swor")
+# cost="swor"
+# dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
+# namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+# weightings<-c(-0.05,-0.05,-0.05,-0.4,0.2)
 # outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
 #scp(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 
