@@ -19,4 +19,29 @@ calls plot_EcoROMS_temporary to batch hindcast EcoROMS
 ### 6. hindcast_predict_Marxan.R ###
 calls run_marxan in (3) to batch hindcast Marxan
 
+### 7. extract_function.R ###
+Funtion to extract hindcast values at points from EcoROMS / Marxan rasters
+
+### 8. hindcast_extract_plot.R ###
+depreciated script that takes 2005 output from 1. and runs extract function (7.). Makes plots, boxplots and maps
+
+### 9. hindcast_extract_plot_random.R ###
+script that takes 1000 random data points form 2005 and runs extract function (7.)
+
+### 10. hindcast_extract_plot_1997_random.R ###
+script that takes 1997, and 2005 output from 1. and 1500 random points from the 1997 and 2005 windows, and runs extract function (7.). 
+
+### 11. hindcast_plot_2005-08-11_RUNS1-3.Rmd ###
+Rmarkdown that plots resutls of 8. with box plots, histograms, maps
+
+### 12. hindcast_plot_2005-08-11_random_RUNS1-3.Rmd ###
+Rmarkdown that plots resutls of 9. with point clouds of hab suit vs algorithm result
+
+### 13. hindcast_plot_1997_2005_RUNS1-3.Rmd ###
+Rmarkdown that plots resutls of 10. (raw and random data) with box plots, histograms, maps (raw) and point clouds (random)
+
+
+
+
+
 
