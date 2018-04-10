@@ -9,12 +9,14 @@ predicts for each species at each raw data point, creates Eco products under con
 
 ### 3. marxan_clean_02.21.18.R ###
 the finalized marxan functions: run marxan, make pngs + rasters
+two functions, scp(): swordfish is a cost, scp_swor(): sordfish is inverted and seen as a conservation feature
 
 ### 4. Eco-ROMS-private/Extracto_Scripts/plot_EcoROMS_temporary.R ###
 function run_ecoroms_hindcast is accessed to run the ecoroms portion
 
 ### 5. hindcast_predict_EcoCast.R ###
 calls plot_EcoROMS_temporary to batch hindcast EcoROMS
+runs two functions. Run_ecoroms_hindcast(): standard ecoroms/cast function, Run_ecoroms_hindcast_rations(): calculates a bycatch to targetcatch ratio
 
 ### 6. hindcast_predict_Marxan.R ###
 calls run_marxan in (3) to batch hindcast Marxan
