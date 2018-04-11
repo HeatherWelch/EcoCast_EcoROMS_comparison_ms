@@ -30,7 +30,7 @@ set=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_com
 casl=read.csv("~/Dropbox/Eco-ROMS/Species Data/Observer Data/Catch_Life_1990-2017.csv") %>% filter(SpCd=="UO")%>% mutate(SpCd=as.character(SpCd)) %>% filter(TripNumber_Set!='')%>% mutate(TripNumber_Set=as.character(TripNumber_Set))
 swor=read.csv("~/Dropbox/Eco-ROMS/Species Data/Observer Data/Catch_Spp_1990-2017.csv") %>% filter(ScientificName=="Xiphias gladius") %>% select(TripNumber_Set,SpCd,TotCat) %>% mutate(SpCd=as.character(SpCd))
 blsh=read.csv("~/Dropbox/Eco-ROMS/Species Data/Observer Data/Catch_Spp_1990-2017.csv") %>% filter(ScientificName=="Prionace glauca") %>% select(TripNumber_Set,SpCd,TotCat)%>% mutate(SpCd=as.character(SpCd))
-lbst=read.csv("~/Dropbox/Eco-ROMS/Species Data/Observer Data/Catch_SeaTurtle_1990-2017.csv") %>% filter(SpCd=="DC") %>% mutate(TripNumber_Set=paste0(TripNumber_Set))  %>% select(TripNumber_Set,SpCd) %>% mutate(TotCat=1)%>% mutate(SpCd=as.character(SpCd))
+lbst=read.csv("~/Dropbox/Eco-ROMS/Species Data/Observer Data/Catch_SeaTurtle_1990-2017.csv") %>% filter(SpCd=="DC") %>% mutate(TripNumber_Set=paste0(TripNumber_Set))  %>% dplyr::select(TripNumber_Set,SpCd) %>% mutate(TotCat=1)%>% mutate(SpCd=as.character(SpCd))
 
 ### cleaning up casl
 cas=inner_join(casl,set,by="TripNumber_Set") %>% mutate(dt=as.Date(paste(Year,MM,DD,sep="-")) )%>% mutate(lat=LatD1+LatM1/60)%>% mutate(lon=LongD1+LongM1/60) %>% select(TripNumber_Set,SpCd,TotCat,dt,lat,lon)
@@ -126,3 +126,56 @@ hist(species_1997_10$dt,"day",freq = T)
 
 ### write out final data files for 1997 10-11 extraction
 write.csv(species_1997_10,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms_1997_10_11.csv") ## observer
+
+#### ---------> new code 04-11-18 to select more leatherback data and develop a clean csv
+
+## all leatherback bycatch events
+turts=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt)) %>% dplyr::filter(SpCd=="DC") ## all bycatch events
+
+## 2003 04 for leatherback data
+lbst_trk <- readRDS("~/Dropbox/Eco-ROMS/Species Data/Tracking Data/bstrp_lists_w_data/lbst_bstrp_list.rds") %>% lapply(.,function(DataInput_Fit)DataInput_Fit[complete.cases(DataInput_Fit),]) %>% do.call("rbind",.) %>% .[,1:(ncol(.)-1)] %>% mutate(dt=as.Date(dt))
+hist(lbst_trk$dt,"year",freq=T)
+lb_2003=lbst_trk %>% dplyr::filter(dt>"2003-01-01",dt<"2003-12-31")
+hist(lb_2003$dt,"month",freq=T)
+lbst_2003_month=lb_2003 %>% dplyr::filter(dt>"2003-04-01",dt<"2003-04-30")
+hist(lbst_2003_month$dt,"day",freq=T)
+
+## 1997 10&11 for swordfish
+## 2005-08-11 for all tracking species
+
+## collect all dates
+lbst_bycatch=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt)) %>% dplyr::filter(SpCd=="DC")  %>% dplyr::select(dt) %>% .[,1]
+d1997=seq(as.Date("1997-10-01"),as.Date("1997-11-30"),by=1)
+d2005=seq(as.Date("2005-08-01"),as.Date("2005-11-30"),by=1)
+d2003=seq(as.Date("2003-04-01"),as.Date("2003-04-30"),by=1)
+
+dates=c(lbst_bycatch,d1997,d2005,d2003)
+master=data.frame("dt"=dates)
+
+## read in all raw data (tracking from lines 70-74)
+species=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt))
+species$sp_name=NA
+species[species$SpCd=="UO","sp_name"]="caslobs"
+species[species$SpCd=="DC","sp_name"]="lbstobs"
+species[species$SpCd=="91","sp_name"]="sworobs"
+species[species$SpCd=="167","sp_name"]="blshobs"
+species$sp=NA
+species[species$SpCd=="UO","sp"]="casl"
+species[species$SpCd=="DC","sp"]="lbst"
+species[species$SpCd=="91","sp"]="swor"
+species[species$SpCd=="167","sp"]="blsh"
+
+species=species %>% dplyr::select(dt,lat,lon,sp_name,sp)
+blsh_trk=blsh_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% dplyr::select(-c(X,iter,ptt,flag)) %>% add_column(sp_name="blshtrk")%>% add_column(sp="blsh")%>% dplyr::select(dt,lat,lon,sp_name,sp)
+lbst_trk=lbst_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% dplyr::select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="lbsttrk")%>% add_column(sp="lbst")%>% dplyr::select(dt,lat,lon,sp_name,sp)
+casl_trk=casl_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% dplyr::select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="casltrk")%>% add_column(sp="casl")%>% dplyr::select(dt,lat,lon,sp_name,sp) %>% mutate(dt=as.Date(dt))
+
+obs=left_join(master,species)
+blsh=left_join(master,blsh_trk)
+lbst=left_join(master,lbst_trk)
+casl=left_join(master,casl_trk)
+
+allsp=do.call("rbind",list(obs,blsh,lbst,casl)) %>% .[complete.cases(.),]
+
+### write out final data files for master extraction
+write.csv(allsp,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/allspecies_04_11_2018.csv") ## observer
