@@ -165,10 +165,15 @@ species[species$SpCd=="DC","sp"]="lbst"
 species[species$SpCd=="91","sp"]="swor"
 species[species$SpCd=="167","sp"]="blsh"
 
+## read in RDS files around line
+blsh_trk <- readRDS("~/Dropbox/Eco-ROMS/Species Data/Tracking Data/bstrp_lists_w_data/blsh_bstrp_list.rds") %>% lapply(.,function(DataInput_Fit)DataInput_Fit[complete.cases(DataInput_Fit),]) %>% do.call("rbind",.) %>% .[,1:(ncol(.)-1)] %>% mutate(dt=as.Date(dt))
+lbst_trk <- readRDS("~/Dropbox/Eco-ROMS/Species Data/Tracking Data/bstrp_lists_w_data/lbst_bstrp_list.rds") %>% lapply(.,function(DataInput_Fit)DataInput_Fit[complete.cases(DataInput_Fit),]) %>% do.call("rbind",.) %>% .[,1:(ncol(.)-1)] %>% mutate(dt=as.Date(dt))
+casl_trk <- readRDS(paste0("~/Dropbox/Eco-ROMS/Species Data/Tracking Data/bstrp_lists_w_data/","casl_bstrp_list.rds")) %>% lapply(.,function(DataInput_Fit)DataInput_Fit[complete.cases(DataInput_Fit),]) %>% do.call("rbind",.) %>% .[,1:(ncol(.)-1)]
+
 species=species %>% dplyr::select(dt,lat,lon,sp_name,sp)
-blsh_trk=blsh_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% dplyr::select(-c(X,iter,ptt,flag)) %>% add_column(sp_name="blshtrk")%>% add_column(sp="blsh")%>% dplyr::select(dt,lat,lon,sp_name,sp)
-lbst_trk=lbst_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% dplyr::select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="lbsttrk")%>% add_column(sp="lbst")%>% dplyr::select(dt,lat,lon,sp_name,sp)
-casl_trk=casl_trk %>% filter(as.Date(dt,format="%Y-%m-%d")>as.Date("2005-08-01",format="%Y-%m-%d")& as.Date(dt,format="%Y-%m-%d")<as.Date("2005-11-30",format="%Y-%m-%d")) %>% dplyr::select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="casltrk")%>% add_column(sp="casl")%>% dplyr::select(dt,lat,lon,sp_name,sp) %>% mutate(dt=as.Date(dt))
+blsh_trk=blsh_trk %>% dplyr::select(-c(X,iter,ptt,flag)) %>% add_column(sp_name="blshtrk")%>% add_column(sp="blsh")%>% dplyr::select(dt,lat,lon,sp_name,sp)
+lbst_trk=lbst_trk %>% dplyr::select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="lbsttrk")%>% add_column(sp="lbst")%>% dplyr::select(dt,lat,lon,sp_name,sp)
+casl_trk=casl_trk %>% dplyr::select(-c(id,iteration,flag,RN)) %>% add_column(sp_name="casltrk")%>% add_column(sp="casl")%>% dplyr::select(dt,lat,lon,sp_name,sp) %>% mutate(dt=as.Date(dt))
 
 obs=left_join(master,species)
 blsh=left_join(master,blsh_trk)
