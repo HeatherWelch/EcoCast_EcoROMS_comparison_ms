@@ -42,6 +42,11 @@ Rmarkdown that plots resutls of 9. with point clouds of hab suit vs algorithm re
 ### 13. hindcast_plot_1997_2005_RUNS1-3.Rmd ###
 Rmarkdown that plots resutls of 10. (raw and random data) with box plots, histograms, maps (raw) and point clouds (random)
 
+### 14.hindcast_extract_plot_1997_random_ratio_swor.R ###
+script that takes 1997, and 2005 output from 1. and 1500 random points from the 1997 and 2005 windows, and runs extract function (7.).This script runs over outputs from new ecoroms and marxan functions: ecoroms ratio and marxan w inverted swor as a conservation feature
+
+### 15. hindcast_plot_1997_2005_random_ratio_swor_subample.Rmd ###
+Rmd that takes the resutls of 14 and makes a pdf thing with box plots, histograms, maps
 
 
 
