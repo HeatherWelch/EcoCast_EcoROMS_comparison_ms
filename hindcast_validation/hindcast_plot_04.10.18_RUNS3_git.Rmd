@@ -41,15 +41,15 @@ library(purrr)
 ```
 # Introduction
 This is a hindcast test of the EcoVerse - a suite of algorithms to reduce bycatch while maximizing target catch in near real-time. 
-The hindcast was run between **1997-10-01 and 1997-11-31** (lots of swordfish catches), **2003-04-01 and 2003-04-30** (lots of lbst tracking points), **2005-08-01 and 2005-11-31** (lots of tracking points for all species), and **all dates with leatherback bycatch events**. Records were subampled to have ~400 records per species
+The hindcast was run between **1997-10-01 and 1997-11-31** (lots of swordfish catches), **2003-04-01 and 2003-04-30** (lots of lbst tracking points), **2005-08-01 and 2005-11-31** (lots of tracking points for all species), and **all dates with leatherback bycatch events**. 
 
 Additionally, a random point hindcast was conducted, consisting of 1700 random points between across the same date ranges as the real data. At each random point, all algorithm values were compared to all species habitat suitabilities.
 
 ```{r,echo=FALSE,message=F, warning=F,out.width='50%'}
-master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv")%>% group_by(sp_name)%>% dplyr::sample_n(size=280) %>% as.data.frame()
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv")%>% group_by(sp) %>% as.data.frame() #%>% dplyr::sample_n(size=445) %>% as.data.frame()
 clean=master[complete.cases(master),]
 map.US <-map_data(map="state")
-a=ggplot()+geom_point(data = clean,aes(lon,lat,color=sp_name),size=.7,alpha=.4)+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=ggplot()+geom_point(data = clean,aes(lon,lat,color=sp),size=.7,alpha=.4)+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
 a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)+ggtitle("Raw data")
 a
 
@@ -65,33 +65,33 @@ a
 **Histograms of predicted habitat suitability at species presences**
 
 ```{r, echo=FALSE,message=F, warning=F,out.width='20%',fig.show = 'hold',fig.keep='high',include=F}
-master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv")%>% group_by(sp_name)%>% dplyr::sample_n(size=280) %>% as.data.frame()
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv")%>% group_by(sp)%>% dplyr::sample_n(size=445) %>% as.data.frame()
 
 algorithm="swor"
 index=NULL
 index=grep(algorithm,names(master))
-swor=hist(master[master$sp_name=="SWOR",index],breaks=c(0,.2,.4,.6,.8,1))
+swor=hist(master[master$sp_name=="sworobs",index],breaks=c(0,.2,.4,.6,.8,1))
 swor$density=swor$counts/sum(swor$counts)*100
 plot(swor,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
 
 algorithm="lbst"
 index=NULL
 index=grep(algorithm,names(master))
-lbst=hist(master[master$sp_name=="lbst",index],breaks=c(0,.2,.4,.6,.8,1))
+lbst=hist(master[master$sp_name=="lbsttrk",index],breaks=c(0,.2,.4,.6,.8,1))
 lbst$density=lbst$counts/sum(lbst$counts)*100
 plot(lbst,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
 
 algorithm="casl"
 index=NULL
 index=grep(algorithm,names(master))
-casl=hist(master[master$sp_name=="casl",index],breaks=c(0,.2,.4,.6,.8,1))
+casl=hist(master[master$sp_name=="casltrk",index],breaks=c(0,.2,.4,.6,.8,1))
 casl$density=casl$counts/sum(casl$counts)*100
 plot(casl,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
 
 algorithm="blshobs"
 index=NULL
 index=grep(algorithm,names(master))
-blshobs=hist(master[master$sp_name=="BLSH",index],breaks=c(0,.2,.4,.6,.8,1))
+blshobs=hist(master[master$sp_name=="blshobs",index],breaks=c(0,.2,.4,.6,.8,1))
 blshobs$density=blshobs$counts/sum(blshobs$counts)*100
 plot(blshobs,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
 
@@ -145,17 +145,17 @@ Weightings in this run were select to emphasize avoiding leatherbacks as much as
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 
 ## Example alorithm solutions
-From 2005-08-01 <br>
+From 1995-09-11 <br>
 ```{r, echo=FALSE, out.width='33%'}
 #### also set up generic stuff for run
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 ER_weightings<-c(-0.1,-0.1,-0.05,-1.5,.1)
 M_weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1)
-master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv")%>% group_by(sp_name)%>% dplyr::sample_n(size=280) %>% as.data.frame()
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv") %>% as.data.frame()#%>% group_by(sp_name)%>% dplyr::sample_n(size=280) %>% as.data.frame()
 
-E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_original_",paste0(ER_weightings,collapse="_"),"_2005-08-01_mean.png")
-E_ratio=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_ratio_",paste0(ER_weightings,collapse="_"),"_2005-08-01_mean.png")
-M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_raw.png")
+E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_original_",paste0(ER_weightings,collapse="_"),"_1995-09-11_mean.png")
+E_ratio=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_ratio_",paste0(ER_weightings,collapse="_"),"_1995-09-11_mean.png")
+M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/marxan_",paste0(M_weightings,collapse="_"),"_1995-09-11_raw.png")
 
 image_list=list(E_orig,E_ratio,M_raw) %>% unlist
 knitr::include_graphics(image_list)
@@ -165,11 +165,11 @@ knitr::include_graphics(image_list)
 
 ```{r , echo=FALSE, out.width='20%'}
 ## print raw species files
-swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_2005-08-01_mean.png")
-lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png")
-casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_2005-08-01_mean.png")
-blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png")
-blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png")
+swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_1995-09-11_mean.png")
+lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_1995-09-11_mean.png")
+casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_1995-09-11_mean.png")
+blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_1995-09-11_mean.png")
+blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_1995-09-11_mean.png")
 
 image_list2=list(swor,lbst,casl,blshobs,blshtrk) %>% unlist
 knitr::include_graphics(image_list2)
@@ -186,17 +186,17 @@ algorithm="EcoROMS_original"
 index=NULL
 index=grep(algorithm,names(master))
 subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
-ecoroms=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
-ecoroms=ecoroms+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="Algorithm prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
-ecoroms
+ecoroms_o=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+ecoroms_o=ecoroms_o+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="Algorithm prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+ecoroms_o
 
 algorithm="EcoROMS_ratio"
 index=NULL
 index=grep(algorithm,names(master))
 subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
-ecoroms=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
-ecoroms=ecoroms+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="Althorithm prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
-ecoroms
+ecoroms_r=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+ecoroms_r=ecoroms_r+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="Althorithm prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+ecoroms_r
 
 algorithm="Marxan_raw"
 index=NULL
@@ -210,29 +210,29 @@ marxan_r
 
 ## Histograms by species
 
-### Swordfish
+### Swordfish (observer data)
 
 ```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
 algorithm="EcoROMS_original"
 index=NULL
 index=grep(algorithm,names(master))
-EcoROMS=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
-EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
-plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+EcoROMS_original=hist(master[master$sp_name=="sworobs",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS_original$density=EcoROMS_original$counts/sum(EcoROMS_original$counts)*100
+plot(EcoROMS_original,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of catch events",freq=F,cex.lab=.7,cex.axis=.7)
 
 algorithm="EcoROMS_ratio"
 index=NULL
 index=grep(algorithm,names(master))
-EcoROMS=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
-EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
-plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+EcoROMS_ratio=hist(master[master$sp_name=="sworobs",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS_ratio$density=EcoROMS_ratio$counts/sum(EcoROMS_ratio$counts)*100
+plot(EcoROMS_ratio,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of catch events",freq=F,cex.lab=.7,cex.axis=.7)
 
 algorithm="Marxan_raw"
 index=NULL
 index=grep(algorithm,names(master))
-Marxan_raw=hist(master[master$sp_name=="SWOR",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw=hist(master[master$sp_name=="sworobs",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
 Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
-plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of catch events",freq=F,cex.lab=.7,cex.axis=.7)
 
 ```
 
@@ -242,27 +242,35 @@ plot(EcoROMS_ratio,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Eco
 plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
 ```
 
-### Leatherbacks
+### Leatherbacks (observer and tracking data)
 
 ```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold',include=F}
 algorithm="EcoROMS_original"
 index=NULL
 index=grep(algorithm,names(master))
-EcoROMS=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
-EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
-plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+EcoROMS_original=hist(master[master$sp=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS_original$density=EcoROMS_original$counts/sum(EcoROMS_original$counts)*100
+plot(EcoROMS_original,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch + tracking data",freq=F,cex.lab=.7,cex.axis=.7)
 
 algorithm="EcoROMS_ratio"
 index=NULL
 index=grep(algorithm,names(master))
-EcoROMS=hist(master[master$sp_name=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
-EcoROMS$density=EcoROMS$counts/sum(EcoROMS$counts)*100
-plot(EcoROMS,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+EcoROMS_ratio=hist(master[master$sp=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+EcoROMS_ratio$density=EcoROMS_ratio$counts/sum(EcoROMS_ratio$counts)*100
+plot(EcoROMS_ratio,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch + tracking data",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+Marxan_raw=hist(master[master$sp=="lbst",index],breaks=c(-1,-.75,-.5,-.25,0,.25,.5,.75,1))
+Marxan_raw$density=Marxan_raw$counts/sum(Marxan_raw$counts)*100
+plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0(algorithm,", weightings: ",paste0(M_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch + tracking data",freq=F,cex.lab=.7,cex.axis=.7)
+
 ```
 
 ```{r, echo=FALSE,message=F, warning=F,out.width='50%',fig.show = 'hold'}
 plot(EcoROMS_original,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS orginal, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
-plot(EcoROMS_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS ratio, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
+plot(EcoROMS_ratio,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("EcoROMS ratio, weightings: ",paste0(ER_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
 plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan raw, weightings: ",paste0(M_weightings,collapse = "_")),xlab="Product threshold bins",ylab="Percent of bycatch events",freq=F,cex.lab=.7,cex.axis=.7)
 ```
 
@@ -271,7 +279,7 @@ plot(Marxan_raw,col=rgb(1,0,0,0.3),xlim=c(-1,1),ylim=c(0,50),main=paste0("Marxan
 ### Swordfish
 
 ```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
-clean=master[complete.cases(master),] %>% filter(sp_name=="SWOR")
+clean=master[complete.cases(master),] %>% filter(sp=="swor")
 map.US <- map_data(map="state")
 
 algorithm="EcoROMS_original"
@@ -314,7 +322,7 @@ a
 ### Leatherbacks
 
 ```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
-clean=master[complete.cases(master),] %>% filter(sp_name=="lbst")
+clean=master[complete.cases(master),] %>% filter(sp=="lbst")
 map.US <- map_data(map="state")
 
 algorithm="EcoROMS_original"
@@ -359,7 +367,7 @@ Weightings in this run were selected to minimize leatherbacks bycatch as much as
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 
 ## Example alorithm solutions
-From 2005-08-01 <br>
+From 1995-09-11 <br>
 ```{r, echo=FALSE, out.width='33%'}
 #### also set up generic stuff for run
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
@@ -367,9 +375,9 @@ ER_weightings<-c(-0.1,-0.1,-0.05,-1.5,.1)
 M_weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1)
 master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_random_run3.csv")%>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,EcoROMS_ratio,Marxan_raw))
 
-E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_original_",paste0(ER_weightings,collapse="_"),"_2005-08-01_mean.png")
-E_ratio=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_ratio_",paste0(ER_weightings,collapse="_"),"_2005-08-01_mean.png")
-M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/marxan_",paste0(M_weightings,collapse="_"),"_2005-08-01_raw.png")
+E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_original_",paste0(ER_weightings,collapse="_"),"_1995-09-11_mean.png")
+E_ratio=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_ratio_",paste0(ER_weightings,collapse="_"),"_1995-09-11_mean.png")
+M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/marxan_",paste0(M_weightings,collapse="_"),"_1995-09-11_raw.png")
 
 image_list=list(E_orig,E_ratio,M_raw) %>% unlist
 knitr::include_graphics(image_list)
@@ -379,11 +387,11 @@ knitr::include_graphics(image_list)
 
 ```{r , echo=FALSE, out.width='20%'}
 ## print raw species files
-swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_2005-08-01_mean.png")
-lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_2005-08-01_mean.png")
-casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_2005-08-01_mean.png")
-blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_2005-08-01_mean.png")
-blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_2005-08-01_mean.png")
+swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_1995-09-11_mean.png")
+lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_1995-09-11_mean.png")
+casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_1995-09-11_mean.png")
+blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_1995-09-11_mean.png")
+blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_1995-09-11_mean.png")
 
 image_list2=list(swor,lbst,casl,blshobs,blshtrk) %>% unlist
 knitr::include_graphics(image_list2)

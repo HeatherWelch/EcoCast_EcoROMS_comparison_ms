@@ -104,7 +104,14 @@ cost="swor"
 dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/"
-dates=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/allspecies_04_11_2018.csv") %>% dplyr::select(dt)%>% .[,1] %>% as.character() %>% unique()
+
+#dates=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/allspecies_04_11_2018.csv") %>% dplyr::select(dt)%>% .[,1] %>% as.character() %>% unique()
+lbst_bycatch=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt)) %>% dplyr::filter(SpCd=="DC")  %>% dplyr::select(dt) %>% .[,1]
+d1997=seq(as.Date("1997-10-01"),as.Date("1997-11-30"),by=1)
+d2005=seq(as.Date("2005-08-01"),as.Date("2005-11-30"),by=1)
+d2003=seq(as.Date("2003-04-01"),as.Date("2003-04-30"),by=1)
+
+dates=c(lbst_bycatch,d1997,d2005,d2003) %>% unique() %>% as.character()
 
 # weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 3) -----> run
 # for(d in dates){
@@ -122,13 +129,25 @@ dates=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_c
 #   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 # }
 
-weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2) # testing leatherback at it's most extreme, swor upweighted ## (run 4) -----> running
+# weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2) # testing leatherback at it's most extreme, swor upweighted ## (run 5) -----> run
+# for(d in dates){
+#   print(d)
+#   get_date=d
+#   print(get_date)
+#   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# }
+
+weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4) # testing leatherback at it's most extreme, swor also extreme ## (run 6) -----> running
 for(d in dates){
   print(d)
   get_date=d
   print(get_date)
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
+
+
+
+
 
 ### really old junk ####
 

@@ -1,0 +1,328 @@
+---
+title: "EcoROMS original, EcoROMS ratio & EcoMarxan hindcast comparison"
+author: "Heather Welch"
+date:  "`r format(Sys.Date())`"
+output: 
+  html_document:
+    keep_md: true
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: true
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(raster)
+library(sp)
+library(tidyverse)
+library(rworldmap)
+library(rgdal)
+library(rasterVis)
+library(RColorBrewer)
+library(ggmap)
+library(grid)
+library(lattice)
+library(gridExtra)
+library(maptools)
+library(dplyr)
+library(reshape)
+library(pracma)
+library(magick)
+library(png)
+library(maps)
+library(purrr)
+
+## follows hindcast_extract_plot_random.R
+
+```
+# Introduction
+This is a hindcast test of the EcoVerse - a suite of algorithms to reduce bycatch while maximizing target catch in near real-time. 
+The hindcast was run between **1997-10-01 and 1997-11-31** (lots of swordfish catches), **2003-04-01 and 2003-04-30** (lots of lbst tracking points), **2005-08-01 and 2005-11-31** (lots of tracking points for all species), and **all dates with leatherback bycatch events**. 
+
+Additionally, a random point hindcast was conducted, consisting of 1700 random points between across the same date ranges as the real data. At each random point, all algorithm values were compared to all species habitat suitabilities.
+
+```{r,echo=FALSE,message=F, warning=F,out.width='50%'}
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv")%>% group_by(sp) %>% as.data.frame() #%>% dplyr::sample_n(size=445) %>% as.data.frame()
+clean=master[complete.cases(master),]
+map.US <-map_data(map="state")
+a=ggplot()+geom_point(data = clean,aes(lon,lat,color=sp),size=.7,alpha=.4)+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)+ggtitle("Raw data")
+a
+
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_random_run3.csv")
+clean=master[complete.cases(master),]
+map.US <- map_data(map="state")
+a=ggplot()+geom_point(data = clean,aes(lon,lat),color="blue",size=.7,alpha=.4)+geom_map(data=map.US,map=map.US,aes(map_id=region,x=long,y=lat),fill="grey")+coord_cartesian()
+a=a+coord_cartesian(xlim=c(-133,-115),ylim=c(29,49),expand=F)+ggtitle("Random data")
+a
+
+```
+
+**Histograms of predicted habitat suitability at species presences**
+
+```{r, echo=FALSE,message=F, warning=F,out.width='20%',fig.show = 'hold',fig.keep='high',include=F}
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv")%>% group_by(sp)%>% dplyr::sample_n(size=445) %>% as.data.frame()
+
+algorithm="swor"
+index=NULL
+index=grep(algorithm,names(master))
+swor=hist(master[master$sp_name=="sworobs",index],breaks=c(0,.2,.4,.6,.8,1))
+swor$density=swor$counts/sum(swor$counts)*100
+plot(swor,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="lbst"
+index=NULL
+index=grep(algorithm,names(master))
+lbst=hist(master[master$sp_name=="lbsttrk",index],breaks=c(0,.2,.4,.6,.8,1))
+lbst$density=lbst$counts/sum(lbst$counts)*100
+plot(lbst,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="casl"
+index=NULL
+index=grep(algorithm,names(master))
+casl=hist(master[master$sp_name=="casltrk",index],breaks=c(0,.2,.4,.6,.8,1))
+casl$density=casl$counts/sum(casl$counts)*100
+plot(casl,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshobs"
+index=NULL
+index=grep(algorithm,names(master))
+blshobs=hist(master[master$sp_name=="blshobs",index],breaks=c(0,.2,.4,.6,.8,1))
+blshobs$density=blshobs$counts/sum(blshobs$counts)*100
+plot(blshobs,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshtrk"
+index=NULL
+index=grep(algorithm,names(master))
+blshtrk=hist(master[master$sp_name=="blshtrk",index],breaks=c(0,.2,.4,.6,.8,1))
+blshtrk$density=blshtrk$counts/sum(blshtrk$counts)*100
+plot(blshtrk,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+
+```
+
+```{r, echo=FALSE,message=F, warning=F,out.width='30%',fig.show = 'hold',fig.keep='high'}
+algorithm="swor"
+plot(swor,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="lbst"
+plot(lbst,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="casl"
+plot(casl,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshobs"
+plot(blshobs,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+
+algorithm="blshtrk"
+plot(blshtrk,col=rgb(1,0,0,0.3),xlim=c(0,1),ylim=c(0,100),main=paste0(algorithm," predicted suitability at presences"),xlab="Product threshold bins",ylab="Percent of presences",freq=F,cex.lab=.7,cex.axis=.7)
+```
+
+
+**How the Marxan algorithm works**  <br>
+Marxan attempts to solve a min set cover problem, i.e. what is the minimum set of planning units (here 10x10 pixels) needed to meet **targets** for **conservation features** while minimizing **costs**. <br>
+-targets: the species weightings <br>
+-conservation features: the bycatch species and the inverse of swordfish  <br>
+-costs: total area (the impact of cost here is minimized as far as possible: we're not trying to design compact protected areas)  <br>
+
+How Marxan is run in EcoMarxan <br>
+Species habitat suitability layers (HSL) are input into Marxan with the three bycatch species and inverted swordfish as conservation features. The species weightings used to set targets for the conservation features (e.g. blsh = .4 ---> protect 40% of blsh habitat). Because we are trying to avoid swordfish habitat, swordfish is inverted (subtracted from 1), such that where swor equaled .1, it now equales .9. Marxan will try to maximize protected "highly suitable" swordfish habitat, which is in actually areas that are most unsuitable pre inversion.
+
+For a given day, Marxan is run 1000 times to create an output of selection frequency, i.e. the number of times / 1000 each pixel was selected for a solution.
+
+Three algorithms were tested:  <br>
+**1. EcoROMS original** - species habitat suitability layers (HSL) are weighted, summed, and then normalized between -1 and 1  <br>
+**2. EcoROMS ratio** - bycatch species habitat suitability layers (HSL) are weighted, summed, and then normalized between -1 to -0.001 and then multiplied by -1. Swor HSL are weighted and then normalized between 0.001 to 1. The swordfish surface is then divided by the bycatch surface, capped at 2.5 (there can be an extreme range of values with high swor and low bycatch) and the product is rescaled between -1 and 1 <br>
+**3. Marxan raw** - the raw selection frequency output (0-1000) rescaled to (-1,1)  <br>
+
+
+# Run 3 - "extreme LBST, neutral SWOR" - raw data
+Weightings in this run were select to emphasize avoiding leatherbacks as much as possible, keeping all other species weightings neutral. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,.1 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.1 <br>
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+
+## Example alorithm solutions
+From 1995-09-11 <br>
+```{r, echo=FALSE, out.width='33%'}
+#### also set up generic stuff for run
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+ER_weightings<-c(-0.1,-0.1,-0.05,-1.5,.1)
+M_weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1)
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_run3.csv") %>% as.data.frame()#%>% group_by(sp_name)%>% dplyr::sample_n(size=280) %>% as.data.frame()
+
+E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_original_",paste0(ER_weightings,collapse="_"),"_1995-09-11_mean.png")
+E_ratio=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_ratio_",paste0(ER_weightings,collapse="_"),"_1995-09-11_mean.png")
+M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/marxan_",paste0(M_weightings,collapse="_"),"_1995-09-11_raw.png")
+
+image_list=list(E_orig,E_ratio,M_raw) %>% unlist
+knitr::include_graphics(image_list)
+
+```
+
+
+```{r , echo=FALSE, out.width='20%'}
+## print raw species files
+swor=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_1995-09-11_mean.png")
+lbst=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_1995-09-11_mean.png")
+casl=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_1995-09-11_mean.png")
+blshobs=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_1995-09-11_mean.png")
+blshtrk=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_1995-09-11_mean.png")
+
+image_list2=list(swor,lbst,casl,blshobs,blshtrk) %>% unlist
+knitr::include_graphics(image_list2)
+
+
+```
+
+
+## Box plots
+Algorithm values at historical records
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+algorithm="EcoROMS_original"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+ecoroms_o=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+ecoroms_o=ecoroms_o+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="Algorithm prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+ecoroms_o
+
+algorithm="EcoROMS_ratio"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+ecoroms_r=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+ecoroms_r=ecoroms_r+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="Althorithm prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+ecoroms_r
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+marxan_r=ggplot(data=master,aes(x=sp_name,y=master[,index]))+geom_boxplot()
+marxan_r=marxan_r+ggtitle(label = paste0("Weighted ", algorithm," predictions at obs & trk data"),subtitle = subtitle)+labs(x="Species catch events")+labs(y="Algorithm prediction")+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+marxan_r
+
+```
+
+
+## Point clouds
+Habitat suitability layers vs algorithm solutions
+
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+sworDat=master[master$sp_name=="sworobs",]
+caslDat=master[master$sp_name=="casltrk",]
+lbstDat=master[master$sp=="lbst",]
+blshobsDat=master[master$sp_name=="blshobs",]
+blshtrkDat=master[master$sp_name=="blshtrk",]
+
+algorithm="EcoROMS_original"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_point(data=sworDat,aes(x=swor,y=sworDat[,index],color="SWOR"),size=.5,shape=1)
+a=a+geom_point(data=blshobsDat,aes(x=blshobs,y=blshobsDat[,index],color="BLSH obs"),size=.5,shape=1)
+a=a+geom_point(data=blshtrkDat,aes(x=blshtrk,y=blshtrkDat[,index],color="BLSH trk"),size=.5,shape=1)
+a=a+geom_point(data=lbstDat,aes(x=lbst,y=lbstDat[,index],color="LBST"),size=.5,shape=1)
+a=a+geom_point(data=caslDat,aes(x=casl,y=caslDat[,index],color="CASL"),size=.5,shape=1)
+a=a+ggtitle(label = paste0("Relationship between species probability of presence and ",algorithm," predictions"),subtitle = subtitle)+labs(x="Probability of presence")+labs(y=paste0(algorithm," prediction"))+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+scale_color_manual("",values=c("SWOR"="goldenrod","BLSH obs"="gray","BLSH trk"="gray47","LBST"="chartreuse4","CASL"="coral3"))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank()) +guides(color=guide_legend(override.aes = list(shape=c(1,1,1,1,1))))
+a
+
+algorithm="EcoROMS_ratio"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_point(data=sworDat,aes(x=swor,y=sworDat[,index],color="SWOR"),size=.5,shape=1)
+a=a+geom_point(data=blshobsDat,aes(x=blshobs,y=blshobsDat[,index],color="BLSH obs"),size=.5,shape=1)
+a=a+geom_point(data=blshtrkDat,aes(x=blshtrk,y=blshtrkDat[,index],color="BLSH trk"),size=.5,shape=1)
+a=a+geom_point(data=lbstDat,aes(x=lbst,y=lbstDat[,index],color="LBST"),size=.5,shape=1)
+a=a+geom_point(data=caslDat,aes(x=casl,y=caslDat[,index],color="CASL"),size=.5,shape=1)
+a=a+ggtitle(label = paste0("Relationship between species probability of presence and ",algorithm," predictions"),subtitle = subtitle)+labs(x="Probability of presence")+labs(y=paste0(algorithm," prediction"))+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+scale_color_manual("",values=c("SWOR"="goldenrod","BLSH obs"="gray","BLSH trk"="gray47","LBST"="chartreuse4","CASL"="coral3"))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank()) +guides(color=guide_legend(override.aes = list(shape=c(1,1,1,1,1))))
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_point(data=sworDat,aes(x=swor,y=sworDat[,index],color="SWOR"),size=.5,shape=1)
+a=a+geom_point(data=blshobsDat,aes(x=blshobs,y=blshobsDat[,index],color="BLSH obs"),size=.5,shape=1)
+a=a+geom_point(data=blshtrkDat,aes(x=blshtrk,y=blshtrkDat[,index],color="BLSH trk"),size=.5,shape=1)
+a=a+geom_point(data=lbstDat,aes(x=lbst,y=lbstDat[,index],color="LBST"),size=.5,shape=1)
+a=a+geom_point(data=caslDat,aes(x=casl,y=caslDat[,index],color="CASL"),size=.5,shape=1)
+a=a+ggtitle(label = paste0("Relationship between species probability of presence and ",algorithm," predictions"),subtitle = subtitle)+labs(x="Probability of presence")+labs(y=paste0(algorithm," prediction"))+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+scale_color_manual("",values=c("SWOR"="goldenrod","BLSH obs"="gray","BLSH trk"="gray47","LBST"="chartreuse4","CASL"="coral3"))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank()) +guides(color=guide_legend(override.aes = list(shape=c(1,1,1,1,1))))
+a
+
+```
+
+# Run 3 - "extreme LBST, neutral SWOR" - random data
+Weightings in this run were selected to minimize leatherbacks bycatch as much as possible, keeping all other species weightings neutral. EcoROMS weightings: -0.1,-0.1,-0.05,-1.5,.1 ; and Marxan weightings: -0.1,-0.1,-0.05,-0.3,0.1 <br>
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+
+## Point clouds
+Habitat suitability layers vs algorithm solutions
+ 
+```{r, echo=FALSE,message=F, warning=F,out.width='50%'}
+#### also set up generic stuff for run
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+ER_weightings<-c(-0.1,-0.1,-0.05,-1.5,.1)
+M_weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1)
+master=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/species_predict_04.10.18_random_run3.csv")%>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,EcoROMS_ratio,Marxan_raw))
+
+sworDat=master[master$sp_name=="swor",]
+caslDat=master[master$sp_name=="casl",]
+lbstDat=master[master$sp_name=="lbst",]
+blshobsDat=master[master$sp_name=="blshobs",]
+blshtrkDat=master[master$sp_name=="blshtrk",]
+
+algorithm="EcoROMS_original"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_point(data=sworDat,aes(x=value,y=sworDat[,index],color="SWOR"),size=.5,shape=1)
+a=a+geom_point(data=blshobsDat,aes(x=value,y=blshobsDat[,index],color="BLSH obs"),size=.5,shape=1)
+a=a+geom_point(data=blshtrkDat,aes(x=value,y=blshtrkDat[,index],color="BLSH trk"),size=.5,shape=1)
+a=a+geom_point(data=lbstDat,aes(x=value,y=lbstDat[,index],color="LBST"),size=.5,shape=1)
+a=a+geom_point(data=caslDat,aes(x=value,y=caslDat[,index],color="CASL"),size=.5,shape=1)
+a=a+ggtitle(label = paste0("Relationship between species probability of presence and ",algorithm," predictions"),subtitle = subtitle)+labs(x="Probability of presence")+labs(y=paste0(algorithm," prediction"))+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+scale_color_manual("",values=c("SWOR"="goldenrod","BLSH obs"="gray","BLSH trk"="gray47","LBST"="chartreuse4","CASL"="coral3"))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank()) +guides(color=guide_legend(override.aes = list(shape=c(1,1,1,1,1))))
+a
+
+algorithm="EcoROMS_ratio"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
+a=ggplot()+geom_point(data=sworDat,aes(x=value,y=sworDat[,index],color="SWOR"),size=.5,shape=1)
+a=a+geom_point(data=blshobsDat,aes(x=value,y=blshobsDat[,index],color="BLSH obs"),size=.5,shape=1)
+a=a+geom_point(data=blshtrkDat,aes(x=value,y=blshtrkDat[,index],color="BLSH trk"),size=.5,shape=1)
+a=a+geom_point(data=lbstDat,aes(x=value,y=lbstDat[,index],color="LBST"),size=.5,shape=1)
+a=a+geom_point(data=caslDat,aes(x=value,y=caslDat[,index],color="CASL"),size=.5,shape=1)
+a=a+ggtitle(label = paste0("Relationship between species probability of presence and ",algorithm," predictions"),subtitle = subtitle)+labs(x="Probability of presence")+labs(y=paste0(algorithm," prediction"))+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+scale_color_manual("",values=c("SWOR"="goldenrod","BLSH obs"="gray","BLSH trk"="gray47","LBST"="chartreuse4","CASL"="coral3"))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank()) +guides(color=guide_legend(override.aes = list(shape=c(1,1,1,1,1))))
+a
+
+algorithm="Marxan_raw"
+index=NULL
+index=grep(algorithm,names(master))
+subtitle=paste0(namesrisk[1],": ",M_weightings[1],", ",namesrisk[2],": ",M_weightings[2],", ",namesrisk[3],": ",M_weightings[3],", ",namesrisk[4],": ",M_weightings[4],", ",namesrisk[5],": ",M_weightings[5])
+a=ggplot()+geom_point(data=sworDat,aes(x=value,y=sworDat[,index],color="SWOR"),size=.5,shape=1)
+a=a+geom_point(data=blshobsDat,aes(x=value,y=blshobsDat[,index],color="BLSH obs"),size=.5,shape=1)
+a=a+geom_point(data=blshtrkDat,aes(x=value,y=blshtrkDat[,index],color="BLSH trk"),size=.5,shape=1)
+a=a+geom_point(data=lbstDat,aes(x=value,y=lbstDat[,index],color="LBST"),size=.5,shape=1)
+a=a+geom_point(data=caslDat,aes(x=value,y=caslDat[,index],color="CASL"),size=.5,shape=1)
+a=a+ggtitle(label = paste0("Relationship between species probability of presence and ",algorithm," predictions"),subtitle = subtitle)+labs(x="Probability of presence")+labs(y=paste0(algorithm," prediction"))+theme(panel.background = element_blank())+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8))
+a=a+scale_color_manual("",values=c("SWOR"="goldenrod","BLSH obs"="gray","BLSH trk"="gray47","LBST"="chartreuse4","CASL"="coral3"))
+a=a+guides(fill=guide_legend(title="Species"))+theme(legend.title = element_text(size=6),legend.position=c(.99,.45),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=6),legend.box.background = element_rect(colour = "black"))+ theme(legend.key=element_blank()) +guides(color=guide_legend(override.aes = list(shape=c(1,1,1,1,1))))
+a
+
+```

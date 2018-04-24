@@ -124,13 +124,23 @@ dates=c(lbst_bycatch,d1997,d2005,d2003) %>% unique() %>% as.character()
 # }
 
 
-weightings<-c(-0.1,-0.1,-0.05,-2.5,1.5)  # testing leatherback even more extreme, swor neutral ## (run 4) ------> running
+# weightings<-c(-0.1,-0.1,-0.05,-2.5,1.5)  # testing leatherback even more extreme, swor neutral ## (run 5) ------> run
+# for(d in dates){
+#   get_date=d
+#   print(get_date)
+#   #Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+#   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+# }
+
+weightings<-c(-0.1,-0.1,-0.05,-2.5,2.5)  # testing leatherback even more extreme, swor equally extreme ## (run 6) ------> running
 for(d in dates){
   get_date=d
   print(get_date)
   #Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
 }
+
+
 
 
 
