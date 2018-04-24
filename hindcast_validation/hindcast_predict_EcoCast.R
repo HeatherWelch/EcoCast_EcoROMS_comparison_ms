@@ -82,7 +82,7 @@ namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swor
 #   Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
 # }
 
-###### -------> new run 04.10.18, rerunning with new data and cleaning everything up #####  -----> running
+###### -------> new run 04.10.18, rerunning with new data and cleaning everything up #####  -----> running ####
 
 moddir="~/Dropbox/Eco-ROMS/Model Outputs/Final EcoROMS models"
 outdir="~/Dropbox/Eco-ROMS/EcoROMSruns"
@@ -92,19 +92,45 @@ dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
 staticdir="~/Dropbox/Eco-ROMS/ROMS & Bathym Data/Bathymetry ETOPO1/"
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 
-dates=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/allspecies_04_11_2018.csv") %>% dplyr::select(dt) %>% .[,1] %>% as.character() %>% unique()
+lbst_bycatch=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt)) %>% dplyr::filter(SpCd=="DC")  %>% dplyr::select(dt) %>% .[,1]
+d1997=seq(as.Date("1997-10-01"),as.Date("1997-11-30"),by=1)
+d2005=seq(as.Date("2005-08-01"),as.Date("2005-11-30"),by=1)
+d2003=seq(as.Date("2003-04-01"),as.Date("2003-04-30"),by=1)
 
-weightings<-c(-0.1,-0.1,-0.05,-1.5,.1)  # testing leatherback at it's most extreme, swor neutral ## (run 3)
+dates=c(lbst_bycatch,d1997,d2005,d2003) %>% unique() %>% as.character()
+
+# weightings<-c(-0.1,-0.1,-0.05,-1.5,.1)  # testing leatherback at it's most extreme, swor neutral ## (run 3) ----> run
+# for(d in dates){
+#   get_date=d
+#   print(get_date)
+#   Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+#   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+# }
+
+# weightings<-c(-0.1,-0.1,-0.05,-2,.1)  # testing leatherback even more extreme, swor neutral ## (run 4) ------> run
+# for(d in dates){
+#   get_date=d
+#   print(get_date)
+#   #Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+#   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+# }
+# 
+# weightings<-c(-0.1,-0.1,-0.05,-2.5,.1)  # testing leatherback even more extreme, swor neutral ## (run 4) ------> run
+# for(d in dates){
+#   get_date=d
+#   print(get_date)
+#   #Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+#   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+# }
+
+
+weightings<-c(-0.1,-0.1,-0.05,-2.5,1.5)  # testing leatherback even more extreme, swor neutral ## (run 4) ------> running
 for(d in dates){
   get_date=d
   print(get_date)
-  Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+  #Run_ecoroms_hindcast_ratios(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
 }
-
-
-
-
 
 
 

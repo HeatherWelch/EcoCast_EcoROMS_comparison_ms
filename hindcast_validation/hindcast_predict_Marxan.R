@@ -106,13 +106,29 @@ namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swor
 outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/"
 dates=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/allspecies_04_11_2018.csv") %>% dplyr::select(dt)%>% .[,1] %>% as.character() %>% unique()
 
-weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 3)
+# weightings<-c(-0.1,-0.1,-0.05,-0.3,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 3) -----> run
+# for(d in dates){
+#   print(d)
+#   get_date=d
+#   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# }
+
+
+# weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+# for(d in dates){
+#   print(d)
+#   get_date=d
+#   print(get_date)
+#   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+# }
+
+weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2) # testing leatherback at it's most extreme, swor upweighted ## (run 4) -----> running
 for(d in dates){
   print(d)
   get_date=d
+  print(get_date)
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
-
 
 ### really old junk ####
 
