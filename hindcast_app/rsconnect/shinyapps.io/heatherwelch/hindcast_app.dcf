@@ -1,0 +1,10 @@
+name: hindcast_app
+title:
+username:
+account: heatherwelch
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 330336
+bundleId: 1339554
+url: https://heatherwelch.shinyapps.io/hindcast_app/
+when: 1524692081.9455

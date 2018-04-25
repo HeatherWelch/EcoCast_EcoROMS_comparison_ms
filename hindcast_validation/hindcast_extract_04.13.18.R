@@ -17,7 +17,7 @@ source("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_compariso
 
 #### -------------------------------------------------- > ## (run 4) ####
 ##### c. run extracto (ecoroms) ####
-ER_weightings<-c(-0.1,-0.1,-0.05,-2,.1)
+ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,.1)
 M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
 ecoroms_original=list.files("~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean",pattern=".grd",full.names = T) %>% grep(paste0(ER_weightings,collapse="_"),.,value=T) %>% grep("original",.,value=T)
 
@@ -52,7 +52,7 @@ datess=sample(seq(as.Date('2005/08/01'), as.Date('2005/11/30'), by="day"), 1000,
 datess2=sample(seq(as.Date('1997/10/01'), as.Date('1997/11/30'), by="day"), 500,replace = T)
 datess3=sample(seq(as.Date('2003/04/01'), as.Date('2003/04/30'), by="day"), 200,replace = T)
 datess=c(datess,datess2,datess3)
-species=regular@coords %>% as.tibble() %>% dplyr::select(lon=x1,lat=x2) %>% add_column(dt=datess[1:1696])
+species=regular@coords %>% as.tibble() %>% dplyr::select(lon=x1,lat=x2) %>% add_column(dt=datess[1:1686])
 
 ### write new extraction function ####
 source("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_validation/extract_function.R")
@@ -61,11 +61,11 @@ source("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_compariso
 
 #### -------------------------------------------------- > ## (run 4) ####
 ##### c. run extracto (ecoroms) ####
-ER_weightings<-c(-0.1,-0.1,-0.05,-2,.1)
+ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,.1)
 M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
 ecoroms_original=list.files("~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean",pattern=".grd",full.names = T) %>% grep(paste0(ER_weightings,collapse="_"),.,value=T)%>% grep("original",.,value=T)
 
-a=extracto_raster(pts=a,algorithm="EcoROMS_original",solution_list = ecoroms_original,weightings = ER_weightings)
+a=extracto_raster(pts=species,algorithm="EcoROMS_original",solution_list = ecoroms_original,weightings = ER_weightings)
 
 ##### c. run extracto (marxan) ####
 marxan_raw=list.files("~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan",pattern=".grd",full.names = T) %>% grep(paste0(M_weightings,collapse="_"),.,value=T) %>% grep("_raw",.,value=T)
