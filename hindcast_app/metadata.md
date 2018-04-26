@@ -72,3 +72,60 @@ From 1995-09-11** <br>
 
 <img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_1995-09-11_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_1995-09-11_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/casl_nolat_1995-09-11_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_1995-09-11_mean.png" width="20%" /><img src="/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_1995-09-11_mean.png" width="20%" />
 
+# Stuff that didn't work
+For reference, here are some algorithms I tried that didn't work
+
+## EcoROMS species weightings >=3
+These outputs can contain occasional extremely high values which washes out the variability on the low end of the values range
+
+<img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/mean/EcoROMS_-0.1_-0.1_-0.05_-0.9_3_2005-08-07_mean.png" width="960" />
+
+## EcoROMS ratio
+These outputs can contain occasional extremely high values (large swordfish value divided by small bycatch value) which washes out the variability on the low end of the values range (I even tried capping ratio values at 2.5 before the rescale) <br>
+
+
+
+```r
+#Here's the ratio code: <br>
+EcoCalc<-function(a,b,c,d,e,risk=weightings,clipTarget=TRUE){
+    ecorisk_bycatch<-(a*risk[1]+b*risk[2]+c*risk[3]+d*risk[4])%>% alt_rasterRescale2(.)
+    ecorisk_bycatch=ecorisk_bycatch*-1
+    ecorisk_target<-(e*risk[5]) %>% inv_alt_rasterRescale()
+    
+    ecorisk=overlay(ecorisk_target,ecorisk_bycatch,fun=function(x,y)x/y) #%>% rasterRescale()  ### option to make ratio work, but ends up capping data (range of values can get so extreme)<br>
+    ecorisk[ecorisk>2.5]<-2.5
+    ecorisk=rasterRescale(ecorisk)
+    if (clipTarget) {
+      (ecorisk[(e<0.25)&(ecorisk>0.5)]=100)
+    }
+    return(ecorisk)
+}
+
+E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_ratio_-0.1_-0.1_-0.05_-1.5_0.1_1997-11-20_mean.png")
+knitr::include_graphics(E_orig)
+```
+
+<img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_ratio_-0.1_-0.1_-0.05_-1.5_0.1_1997-11-20_mean.png" width="960" />
+
+## Marxan with swordfish as a cost
+This did work, but the products were not very responsive to changes in swordfish weightings (the way I set this up was not really how marxan is supposed to be run)<br>
+
+**How the Marxan algorithm works with swordfish as a cost**  <br>
+Marxan attempts to solve a min set cover problem, i.e. what is the minimum set of planning units (here 10x10 pixels) needed to meet **targets** for **conservation features** while minimizing **costs**. <br>
+-targets: the bycatch species weightings <br>
+-conservation features: the bycatch species  <br>
+-costs: avoided swordfish  <br>
+
+How Marxan is run in EcoMarxan <br>
+Species habitat suitability layers HSL are input into Marxan with the three bycatch species as conservation features and swordfish as a cost. The bycatch species weightings used to set targets for the conservation features (e.g. blsh = .4 ---> protect 40% of blsh habitat). The swordfish weighting is used to set a penalty for failing to meet targets for the conservation features, e.g. when swor is high, the penalty is low, therefor we get a less conservative (in terms of avoiding bycatch) solution. For a given day, Marxan is run 1000 times to create an output of selection frequency, i.e. the number of times / 1000 each pixel was selected for a solution.
+
+
+## Mosaiced Marxan
+This produced unwanted artifacts in the solutions, i.e. certain ranges of values were excluded<br>
+Here's how the mosaic algorithm worked <br>
+**4. Marxan mosaic 01** - remove marxan pixels selected in < 100 solutions, rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch), fill in removed areas w swordfish values (unscaled), rescale whole thing between -1,1  <br>
+
+<img src="/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/marxan_-0.1_-0.1_-0.05_-0.2_0.1_2005-11-12_mosaic01.png" width="960" />
+
+![](metadata_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+
