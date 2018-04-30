@@ -5,6 +5,6 @@ account: heatherwelch
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 330336
-bundleId: 1339554
+bundleId: 1344198
 url: https://heatherwelch.shinyapps.io/hindcast_app/
-when: 1524692081.9455
+when: 1524871093.11271
