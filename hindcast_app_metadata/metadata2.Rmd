@@ -88,8 +88,8 @@ namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swor
 ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
 M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
 
-E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_original_",paste0(ER_weightings,collapse="_"),"_1995-09-11_mean.png")
-M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/marxan_",paste0(M_weightings,collapse="_"),"_1995-09-11_raw.png")
+E_orig=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/mean/EcoROMS_original_",paste0(ER_weightings,collapse="_"),"_1995-09-23_mean.png")
+M_raw=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/marxan_",paste0(M_weightings,collapse="_"),"_1995-09-23_raw.png")
 
 image_list=list(E_orig,M_raw) %>% unlist
 knitr::include_graphics(image_list)
