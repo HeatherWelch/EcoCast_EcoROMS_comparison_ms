@@ -71,6 +71,7 @@ library(miniUI)
 library(shinyjs)
 library(DT)
 library(htmlwidgets)
+library(DescTools)
 
 
 # pkgTest("miniUI")

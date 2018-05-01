@@ -27,12 +27,14 @@ ui <- dashboardPage(skin="yellow",
                                   conditionalPanel("input.sidebarmenu==='random'",
                                         div(style="background-color:black;",
                                         sliderInput("presence", "Presence threshold", 0,1,.5,step=.1),                          
-                                        sliderInput("algorithm", "Algorithm threshold", -1,1,0,step=.1))),
+                                        sliderInput("algorithmE", "EcoCast algorithm threshold", -1,1,0,step=.1),
+                                        sliderInput("algorithmM", "Marxan algorithm threshold", -1,1,0,step=.1))),
                                          
                                   menuItem("Raw data", tabName='raw',icon=icon("ship",lib='font-awesome')),
                                   conditionalPanel("input.sidebarmenu==='raw'",
                                       div(style="background-color:black;",
-                                      sliderInput("algorithmraw", "Algorithm threshold", -1,1,0,step=.1))),
+                                      sliderInput("algorithmrawE", "Ecocast algorithm threshold", -1,1,0,step=.1),
+                                      sliderInput("algorithmrawM", "Marxan algorithm threshold", -1,1,0,step=.1))),
                                   
                                   menuItem("Random data: swor vs lbst", tabName='random_ratio',icon=icon("random",lib='font-awesome')),
                                   conditionalPanel("input.sidebarmenu==='raw'"),
@@ -129,7 +131,7 @@ server <- shinyServer(function(input, output) {
         
        master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
        master$presenceVal=input$presence
-       master$algorithmVal=input$algorithm
+       master$algorithmVal=input$algorithmE
 
         sworDat=master[master$sp_name=="swor",]
         caslDat=master[master$sp_name=="casl",]
@@ -160,7 +162,7 @@ server <- shinyServer(function(input, output) {
    
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithm
+    master$algorithmVal=input$algorithmM
     
     sworDat=master[master$sp_name=="swor",]
     caslDat=master[master$sp_name=="casl",]
@@ -189,24 +191,33 @@ server <- shinyServer(function(input, output) {
       ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,.1)
       M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     # set up to plot
-    data$presenceVal=input$presence
-    data$algorithmVal=input$algorithm
     
-    # data$presenceVal=presence
-    # data$algorithmVal=algorithm
-    # tablecaught=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=presence) %>% filter(product_value>=algorithm) %>%
-    #   group_by(species,product) %>% summarise(num_presences_caught=n()) #%>% mutate(Percent_caught=Percent_caught/1649*100) %>% spread(product,Percent_caught)
+    # tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=presence) %>% filter(product_value>=algorithmE) %>% 
+    #   filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
     # 
-    # tabletotal=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=presence) %>%
-    #   group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
+    # tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=presence) %>% filter(product_value>=algorithmM) %>%
+    #   filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     # 
+    # tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=presence) %>%
+    #   group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
 
+
+    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmE) %>% 
+      filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
     
-    tablecaught=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithm) %>% 
-      group_by(species,product) %>% summarise(num_presences_caught=n())
+    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmM) %>%
+      filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     
-    tabletotal=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% 
-      group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
+    tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>%
+      group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3)) %>% 
+      mutate(E2Mratio=EcoROMS_original/Marxan_raw) %>% mutate(E2Mratio=round(E2Mratio,3))
+    
+    # 
+    # tablecaught=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithm) %>% 
+    #   group_by(species,product) %>% summarise(num_presences_caught=n())
+    # 
+    # tabletotal=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% 
+    #   group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
     
     datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
                                                                                                                                                                                                                       
@@ -220,7 +231,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithm
+    master$algorithmVal=input$algorithmE
     
     sworDat=master[master$sp_name=="swor",]
     caslDat=master[master$sp_name=="casl",]
@@ -251,7 +262,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithm
+    master$algorithmVal=input$algorithmM
     
     sworDat=master[master$sp_name=="swor",]
     caslDat=master[master$sp_name=="casl",]
@@ -280,19 +291,17 @@ server <- shinyServer(function(input, output) {
       ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,1.5)
       M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     # set up to plot
-    data$presenceVal=input$presence
-    data$algorithmVal=input$algorithm
-    # set up for table
-    # tabledata=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=presence)%>% filter(product_value>=algorithm) %>% 
-    #    group_by(species,product) %>% summarise(Percent_caught=n()) #%>% mutate(Percent_caught=Percent_caught/1649*100) %>% spread(product,Percent_caught)
+      tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmE) %>% 
+        filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
+      
+      tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmM) %>%
+        filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
+      
+      tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>%
+        group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3)) %>% 
+        mutate(E2Mratio=EcoROMS_original/Marxan_raw) %>% mutate(E2Mratio=round(E2Mratio,3))
     
-    tablecaught=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence)%>% filter(product_value>=input$algorithm) %>% 
-      group_by(species,product) %>% summarise(num_presences_caught=n()) #%>% mutate(Percent_caught=Percent_caught/1649*100) %>% spread(product,Percent_caught)
-    
-    tabletotal=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% 
-      group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
-    
-    datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
+      datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
     
   })
   
@@ -304,7 +313,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithm
+    master$algorithmVal=input$algorithmE
     
     sworDat=master[master$sp_name=="swor",]
     caslDat=master[master$sp_name=="casl",]
@@ -335,7 +344,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithm
+    master$algorithmVal=input$algorithmM
     
     sworDat=master[master$sp_name=="swor",]
     caslDat=master[master$sp_name=="casl",]
@@ -364,19 +373,17 @@ server <- shinyServer(function(input, output) {
       ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,2.5)
       M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     # set up to plot
-    data$presenceVal=input$presence
-    data$algorithmVal=input$algorithm
-    # set up for table
-    # tabledata=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=presence)%>% filter(product_value>=algorithm) %>% 
-    #    group_by(species,product) %>% summarise(Percent_caught=n()) #%>% mutate(Percent_caught=Percent_caught/1649*100) %>% spread(product,Percent_caught)
-    
-    tablecaught=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence)%>% filter(product_value>=input$algorithm) %>% 
-      group_by(species,product) %>% summarise(num_presences_caught=n()) #%>% mutate(Percent_caught=Percent_caught/1649*100) %>% spread(product,Percent_caught)
-    
-    tabletotal=data %>% select(-c(X,lon,lat,dt,presenceVal,algorithmVal))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% 
-      group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
-    
-    datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
+      tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmE) %>% 
+        filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
+      
+      tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmM) %>%
+        filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
+      
+      tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>%
+        group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3)) %>% 
+        mutate(E2Mratio=EcoROMS_original/Marxan_raw) %>% mutate(E2Mratio=round(E2Mratio,3))
+   
+       datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
     
   })
   
@@ -389,7 +396,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% as.data.frame()
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithmraw
+    master$algorithmVal=input$algorithmrawE
     
     sworDat=master[master$sp_name=="sworobs",]
     caslDat=master[master$sp_name=="casltrk",]
@@ -421,7 +428,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% as.data.frame()
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithmraw
+    master$algorithmVal=input$algorithmrawM
     
     sworDat=master[master$sp_name=="sworobs",]
     caslDat=master[master$sp_name=="casltrk",]
@@ -450,20 +457,28 @@ server <- shinyServer(function(input, output) {
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     # set up to plot
 
-    data$algorithmVal=input$algorithmraw
+
     
-    # data$algorithmVal=algorithm
-    # tablecaught=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=algorithm) %>%
-    #   group_by(sp_name,product) %>% summarise(num_presences_caught=n()) 
+    # tablecaughtE=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=algorithmE) %>%
+    #  filter(product=="EcoROMS_original") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n())
+    # 
+    # tablecaughtM=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=algorithmM) %>%
+    #   filter(product=="Marxan_raw") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     # 
     # tabletotal=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>%
-    #   group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
+    #   group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
 
-    tablecaught=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmraw) %>%
-      group_by(sp_name,product) %>% summarise(num_presences_caught=n()) 
+    tablecaughtE=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmrawE) %>%
+      filter(product=="EcoROMS_original") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n())
+    
+    tablecaughtM=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmrawM) %>%
+      filter(product=="Marxan_raw") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     
     tabletotal=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>%
-      group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
+      group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3)) %>% 
+      mutate(E2Mratio=EcoROMS_original/Marxan_raw) %>% mutate(E2Mratio=round(E2Mratio,3))
+    
+    
     datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
     
   })
@@ -476,7 +491,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% as.data.frame()
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithmraw
+    master$algorithmVal=input$algorithmrawE
     
     sworDat=master[master$sp_name=="sworobs",]
     caslDat=master[master$sp_name=="casltrk",]
@@ -506,7 +521,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% as.data.frame()
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithmraw
+    master$algorithmVal=input$algorithmrawM
     
     sworDat=master[master$sp_name=="sworobs",]
     caslDat=master[master$sp_name=="casltrk",]
@@ -535,13 +550,15 @@ server <- shinyServer(function(input, output) {
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     # set up to plot
 
-    data$algorithmVal=input$algorithmraw
-    # set up for table
-    tablecaught=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmraw) %>%
-      group_by(sp_name,product) %>% summarise(num_presences_caught=n()) 
+    tablecaughtE=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmrawE) %>%
+      filter(product=="EcoROMS_original") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n())
+    
+    tablecaughtM=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmrawM) %>%
+      filter(product=="Marxan_raw") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     
     tabletotal=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>%
-      group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
+      group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3)) %>% 
+      mutate(E2Mratio=EcoROMS_original/Marxan_raw) %>% mutate(E2Mratio=round(E2Mratio,3))
     
     datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
     
@@ -555,7 +572,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% as.data.frame()
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithmraw
+    master$algorithmVal=input$algorithmrawE
     
     sworDat=master[master$sp_name=="sworobs",]
     caslDat=master[master$sp_name=="casltrk",]
@@ -585,7 +602,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% as.data.frame()
     master$presenceVal=input$presence
-    master$algorithmVal=input$algorithmraw
+    master$algorithmVal=input$algorithmrawM
     
     sworDat=master[master$sp_name=="sworobs",]
     caslDat=master[master$sp_name=="casltrk",]
@@ -615,13 +632,15 @@ server <- shinyServer(function(input, output) {
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     # set up to plot
     
-    data$algorithmVal=input$algorithmraw
-    # set up for table
-    tablecaught=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmraw) %>%
-      group_by(sp_name,product) %>% summarise(num_presences_caught=n()) 
+    tablecaughtE=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmrawE) %>%
+      filter(product=="EcoROMS_original") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n())
+    
+    tablecaughtM=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>% filter(product_value>=input$algorithmrawM) %>%
+      filter(product=="Marxan_raw") %>% group_by(sp_name,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     
     tabletotal=data %>% select(c(sp_name, EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-sp_name) %>%
-      group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaught,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3))
+      group_by(sp_name,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(Marxan_raw=round(Marxan_raw,3)) %>% 
+      mutate(E2Mratio=EcoROMS_original/Marxan_raw) %>% mutate(E2Mratio=round(E2Mratio,3))
     
     datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                  
     
