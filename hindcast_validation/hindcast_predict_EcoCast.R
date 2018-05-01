@@ -145,6 +145,12 @@ for(d in dates){
 
 
 
+###### --------> new run 04.30.18, rerunning with comparable weightings to marxan #####
+
+
+
+
+
 ### really old junk ####
 
 # weightings<-c(-0.1,-0.1,-0.05,-0.9,4)  # testing the effect of swor weighting
