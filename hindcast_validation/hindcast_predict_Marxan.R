@@ -95,7 +95,7 @@ outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/marxan/"
 # }
 # 
 
-###### -------> new run 04.10.18, rerunning with new data and cleaning everything up ------> running now ##### 
+###### -------> new run 04.10.18, rerunning with new data and cleaning everything up ------> run now ##### 
 source("marxan/marxan_clean_04.10.18.R")
 
 #get_date="2011-09-01"
@@ -146,6 +146,36 @@ for(d in dates){
 }
 
 
+
+
+
+###### -------> new run 05.01.18, extreme marxan ------> running now ##### 
+
+source("marxan/marxan_clean_04.10.18.R")
+
+#get_date="2011-09-01"
+biofeats=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat","swor")
+cost="swor"
+dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/"
+
+#dates=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/allspecies_04_11_2018.csv") %>% dplyr::select(dt)%>% .[,1] %>% as.character() %>% unique()
+lbst_bycatch=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt)) %>% dplyr::filter(SpCd=="DC")  %>% dplyr::select(dt) %>% .[,1]
+d1997=seq(as.Date("1997-10-01"),as.Date("1997-11-30"),by=1)
+d2005=seq(as.Date("2005-08-01"),as.Date("2005-11-30"),by=1)
+d2003=seq(as.Date("2003-04-01"),as.Date("2003-04-30"),by=1)
+
+dates=c(lbst_bycatch,d1997,d2005,d2003) %>% unique() %>% as.character()
+
+
+weightings<-c(-0.1,-0.1,-0.05,-1,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+for(d in dates){
+  print(d)
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
 
 
 
