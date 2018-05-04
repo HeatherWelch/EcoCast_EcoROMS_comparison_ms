@@ -24,6 +24,7 @@ ui <- dashboardPage(skin="yellow",
                     dashboardSidebar(
                       sidebarMenu(id = 'sidebarmenu',
                                   
+                                  ######
                                   menuItem("Set weightings by catch limits", tabName='limits',icon=icon("random",lib='font-awesome')),
                                   conditionalPanel("input.sidebarmenu==='limits'",
                                                    div(style="background-color:black;",
@@ -52,7 +53,13 @@ ui <- dashboardPage(skin="yellow",
                                   menuItem("Random data: swor vs lbst", tabName='random_ratio',icon=icon("random",lib='font-awesome')),
                                   conditionalPanel("input.sidebarmenu==='raw'"),
                                   
+
                                   menuItem("EcoROMS scaled and unscaled comparison", tabName='scaling',icon=icon("random",lib='font-awesome')),
+
+                                  #####
+                                  
+                                  menuItem("EcoROMS scaled and unscaled", tabName='scaling',icon=icon("random",lib='font-awesome')),
+                                  menuItem("EcoROMS scaled and unscaled", tabName='scaling',icon=icon("random",lib='font-awesome')),
                                   conditionalPanel("input.sidebarmenu==='scaling'",
                                                    div(style="background-color:black;",
                                                        sliderInput("presenceScaling", "Presence threshold", 0,1,.5,step=.1),
@@ -62,12 +69,12 @@ ui <- dashboardPage(skin="yellow",
                                                          choices = c("Avoided leatherback bycatch","Available swordfish catch"),
                                                          selected="Avoided leatherback bycatch"
                                                        )),
-                                                   conditionalPanel("input.select=='Avoided leatherback bycatch'",
-                                                        div(style="background-color:black;",
-                                                        numericInput("avoidedScaling","% avoided",value = 50,min=0,max=100,step=10))),
-                                                   conditionalPanel("input.select=='Available swordfish catch'",
-                                                        div(style="background-color:black;",
-                                                        numericInput("caughtScaling","% available to catch",value = 50,min=0,max=100,step=10)))
+                                                   conditionalPanel("input.selectScaling=='Avoided leatherback bycatch'",
+                                                                    div(style="background-color:black;",
+                                                                        numericInput("avoidedScaling","% avoided",value = 50,min=0,max=100,step=10))),
+                                                   conditionalPanel("input.selectScaling=='Available swordfish catch'",
+                                                                    div(style="background-color:black;",
+                                                                        numericInput("caughtScaling","% available to catch",value = 50,min=0,max=100,step=10)))
                                   )
                                   
                       )),
@@ -75,6 +82,8 @@ ui <- dashboardPage(skin="yellow",
      dashboardBody(
        tabItems(
        
+         #####
+         
        tabItem(tabName = "limits",h2("Weightings set by catch limits"),
                fluidRow(h3("Extreme LBST, neutral SWOR"),
                         column(h4("EcoROMS"),width=4,plotOutput("EcoRoms_1a")),
@@ -123,21 +132,23 @@ ui <- dashboardPage(skin="yellow",
            column(h4("Marxan"),width=4,plotOutput("Marxan_3b")))
        ),
        
-       tabItem(tabName = "random",h2("Weightings set manually"),
-       fluidRow(h3("Extreme LBST, neutral SWOR"),
-           column(h4("EcoROMS scaled"),width=4,plotOutput("EcoRoms_1b")),
-           column(h4("EcoROMS unscaled"),width=4,plotOutput("Marxan_1b")),
-           column(h4("Quantitative comparison"),width=4,DTOutput("table_1b"))),
+       #####
+       
+       tabItem(tabName = "scaling",h2("EcoROMS scaled (original) and unscaled comparison"),
+               fluidRow(h3("Extreme LBST, neutral SWOR"),
+                        column(h4("EcoROMS scaled"),width=4,plotOutput("EcoRoms_1c")),
+                        column(h4("EcoROMS unscaled"),width=4,plotOutput("Marxan_1c")),
+                        column(h4("Quantitative comparison"),width=4,DTOutput("table_1c"))),
                
-       fluidRow(h3("Extreme LBST, moderate SWOR"),
-           column(h4("EcoROMS scaled"),width=4,plotOutput("EcoRoms_2b")),
-           column(h4("EcoROMS unscaled"),width=4,plotOutput("Marxan_2b")),
-           column(h4("Quantitative comparison"),width=4,DTOutput("table_2b"))),
+               fluidRow(h3("Extreme LBST, moderate SWOR"),
+                        column(h4("EcoROMS scaled"),width=4,plotOutput("EcoRoms_2c")),
+                        column(h4("EcoROMS unscaled"),width=4,plotOutput("Marxan_2c")),
+                        column(h4("Quantitative comparison"),width=4,DTOutput("table_2c"))),
                
-       fluidRow(h3("Extreme LBST, extreme SWOR"),
-           column(h4("EcoROMS scaled"),width=4,plotOutput("EcoRoms_3b")),
-           column(h4("EcoROMS unscaled"),width=4,plotOutput("Marxan_3b")),
-           column(h4("Quantitative comparison"),width=4,DTOutput("table_3b")))
+               fluidRow(h3("Extreme LBST, extreme SWOR"),
+                        column(h4("EcoROMS scaled"),width=4,plotOutput("EcoRoms_3c")),
+                        column(h4("EcoROMS unscaled"),width=4,plotOutput("Marxan_3c")),
+                        column(h4("Quantitative comparison"),width=4,DTOutput("table_3c")))
        )
             
        ))
@@ -148,7 +159,7 @@ ui <- dashboardPage(skin="yellow",
 
 
 server <- shinyServer(function(input, output) {
-
+  
   ## weightings set via limits ####  
   thresholdTurt=reactive(input$avoided/100)
   thresholdSwor=reactive(1-(input$caught/100))
@@ -268,8 +279,8 @@ server <- shinyServer(function(input, output) {
   })
   output$Marxan_1a <-renderPlot({
     data=run4_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
-    M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
+    M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
     master$presenceVal=input$presenceLimits
@@ -490,7 +501,7 @@ server <- shinyServer(function(input, output) {
   output$EcoRoms_1 <- renderPlot({
     # get raw data organized
     data=run4_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,.1)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
@@ -521,7 +532,7 @@ server <- shinyServer(function(input, output) {
   })
   output$Marxan_1 <-renderPlot({
     data=run4_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,.1)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
@@ -552,7 +563,7 @@ server <- shinyServer(function(input, output) {
   })
   output$table_1 <-renderDT({
     data=run4_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,.1)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     # set up to plot
     
@@ -590,7 +601,7 @@ server <- shinyServer(function(input, output) {
   output$EcoRoms_2 <- renderPlot({
     # get raw data organized
     data=run5_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,1.5)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
@@ -621,7 +632,7 @@ server <- shinyServer(function(input, output) {
   })
   output$Marxan_2 <-renderPlot({
     data=run5_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,1.5)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
@@ -652,7 +663,7 @@ server <- shinyServer(function(input, output) {
   })
   output$table_2 <-renderDT({
     data=run5_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,1.5)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     # set up to plot
     tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmE) %>% 
@@ -672,7 +683,7 @@ server <- shinyServer(function(input, output) {
   output$EcoRoms_3 <- renderPlot({
     # get raw data organized
     data=run6_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,2.5)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
@@ -703,7 +714,7 @@ server <- shinyServer(function(input, output) {
   })
   output$Marxan_3 <-renderPlot({
     data=run6_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,2.5)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,Marxan_raw))
@@ -734,7 +745,7 @@ server <- shinyServer(function(input, output) {
   })
   output$table_3 <-renderDT({
     data=run6_random
-    ER_weightings<-c(-0.1,-0.1,-0.05,-2.5,2.5)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     # set up to plot
     tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presence) %>% filter(product_value>=input$algorithmE) %>% 
@@ -842,89 +853,89 @@ server <- shinyServer(function(input, output) {
 
   
   ## EcoROMS scaled and unscaled comparison ####  
-  thresholdTurt=reactive(input$avoidedScaling/100)
-  thresholdSwor=reactive(1-(input$caughtScaling/100))
+  thresholdTurtS=reactive(input$avoidedScaling/100)
+  thresholdSworS=reactive(1-(input$caughtScaling/100))
   
-  algorithm=reactive({
-    if(input$selectScaling=="Avoided leatherback bycatch"){algorithm=thresholdTurt()}
-    if(input$selectScaling=="Available swordfish catch"){algorithm=thresholdSwor()}
-    return(algorithm)
+  algorithmS=reactive({
+    if(input$selectScaling=="Avoided leatherback bycatch"){algorithmS=thresholdTurtS()}
+    if(input$selectScaling=="Available swordfish catch"){algorithmS=thresholdSworS()}
+    return(algorithmS)
   })
   
   bin_run4_EcoROMSscaling=reactive({
     data=run4_random_scaling
-    if(input$select=="Avoided leatherback bycatch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,Marxan_raw,lbst) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Avoided leatherback bycatch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
-    if(input$select=="Available swordfish catch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,Marxan_raw,swor) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Available swordfish catch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
     return(bin)
   })
   bin_run4_EcoROMSunscaling=reactive({
     data=run4_random_scaling
-    if(input$select=="Avoided leatherback bycatch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,Marxan_raw,lbst) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original_unscaled,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Avoided leatherback bycatch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original_unscaled,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
-    if(input$select=="Available swordfish catch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,Marxan_raw,swor) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original_unscaled,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Available swordfish catch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original_unscaled,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
     return(bin)
   })
   bin_run5_EcoROMSscaling=reactive({
     data=run5_random_scaling
-    if(input$select=="Avoided leatherback bycatch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Avoided leatherback bycatch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
-    if(input$select=="Available swordfish catch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Available swordfish catch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
     return(bin)
   })
   bin_run5_EcoROMSunscaling=reactive({
     data=run5_random_scaling
-    if(input$select=="Avoided leatherback bycatch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original_unscaled,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Avoided leatherback bycatch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original_unscaled,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
-    if(input$select=="Available swordfish catch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original_unscaled,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Available swordfish catch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original_unscaled,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
     return(bin)
   })
   bin_run6_EcoROMSscaling=reactive({
     data=run6_random_scaling
-    if(input$select=="Avoided leatherback bycatch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Avoided leatherback bycatch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
-    if(input$select=="Available swordfish catch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Available swordfish catch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
     return(bin)
   })
   bin_run6_EcoROMSunscaling=reactive({
     data=run6_random_scaling
-    if(input$select=="Avoided leatherback bycatch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original_unscaled,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Avoided leatherback bycatch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,lbst) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original_unscaled,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
-    if(input$select=="Available swordfish catch"){
-      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceLimits) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
-      bin=quantile(binA$EcoROMS_original_unscaled,algorithm(),na.rm = T) %>% as.data.frame() %>% .[,1]
+    if(input$selectScaling=="Available swordfish catch"){
+      binA=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% filter(suitability>=input$presenceScaling) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,swor) %>% .[complete.cases(.),]
+      bin=quantile(binA$EcoROMS_original_unscaled,algorithmS(),na.rm = T) %>% as.data.frame() %>% .[,1]
     }
     return(bin)
   })
   
-  output$EcoRoms_1b <- renderPlot({
+  output$EcoRoms_1c <- renderPlot({
     # get raw data organized
     data=run4_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
@@ -940,7 +951,7 @@ server <- shinyServer(function(input, output) {
     blshobsDat=master[master$sp_name=="blshobs",]
     blshtrkDat=master[master$sp_name=="blshtrk",]
     
-    algorithm="EcoROMS_original"
+    algorithm="^EcoROMS_original$"
     index=NULL
     index=grep(algorithm,names(master))
     subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
@@ -958,10 +969,10 @@ server <- shinyServer(function(input, output) {
     
     
   })
-  output$Marxan_1b <-renderPlot({
+  output$Marxan_1c <-renderPlot({
     data=run4_random_scaling
-    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
-    M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
+    ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
+    M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,EcoROMS_original_unscaled))
     master$presenceVal=input$presenceScaling
@@ -990,27 +1001,27 @@ server <- shinyServer(function(input, output) {
     a
     
   })
-  output$table_1b <-renderDT({
+  output$table_1c <-renderDT({
     data=run4_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.1)
     # set up to plot
     
-    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run4_EcoROMS()) %>% 
+    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run4_EcoROMSscaling()) %>% 
       filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
     
-    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run4_Marxan()) %>%
+    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run4_EcoROMSunscaling()) %>%
       filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     
     tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>%
       group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(EcoROMS_original_unscaled=round(EcoROMS_original_unscaled,3)) %>% 
-      mutate(E2Mratio=EcoROMS_original/EcoROMS_original_unscaled) %>% mutate(E2Mratio=round(E2Mratio,3)) %>% as.data.frame %>% add_row(species="Algorithm threshold",EcoROMS_original=round(bin_run4_EcoROMS(),3),EcoROMS_original_unscaled=round(bin_run4_Marxan(),3))
+      mutate(E2Mratio=EcoROMS_original/EcoROMS_original_unscaled) %>% mutate(E2Mratio=round(E2Mratio,3)) %>% as.data.frame %>% add_row(species="Algorithm threshold",EcoROMS_original=round(bin_run4_EcoROMSscaling(),3),EcoROMS_original_unscaled=round(bin_run4_EcoROMSunscaling(),3))
     
     datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                        
     
   })
   
-  output$EcoRoms_2b <- renderPlot({
+  output$EcoRoms_2c <- renderPlot({
     # get raw data organized
     data=run5_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
@@ -1018,7 +1029,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,EcoROMS_original_unscaled))
     master$presenceVal=input$presenceScaling
-    master$algorithmVal=bin_run5_EcoROMSSscaling()
+    master$algorithmVal=bin_run5_EcoROMSscaling()
     
     sworDat=master[master$sp_name=="swor",]
     caslDat=master[master$sp_name=="casl",]
@@ -1026,7 +1037,7 @@ server <- shinyServer(function(input, output) {
     blshobsDat=master[master$sp_name=="blshobs",]
     blshtrkDat=master[master$sp_name=="blshtrk",]
     
-    algorithm="EcoROMS_original"
+    algorithm="^EcoROMS_original$"
     index=NULL
     index=grep(algorithm,names(master))
     subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
@@ -1043,7 +1054,7 @@ server <- shinyServer(function(input, output) {
     a
     
   })
-  output$Marxan_2b <-renderPlot({
+  output$Marxan_2c <-renderPlot({
     data=run5_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
@@ -1075,25 +1086,25 @@ server <- shinyServer(function(input, output) {
     a
     
   })
-  output$table_2b <-renderDT({
+  output$table_2c <-renderDT({
     data=run5_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
     # set up to plot
-    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run5_EcoROMS()) %>% 
+    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run5_EcoROMSscaling()) %>% 
       filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
     
-    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run5_Marxan()) %>%
+    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run5_EcoROMSunscaling()) %>%
       filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     
     tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>%
       group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(EcoROMS_original_unscaled=round(EcoROMS_original_unscaled,3)) %>% 
-      mutate(E2Mratio=EcoROMS_original/EcoROMS_original_unscaled) %>% mutate(E2Mratio=round(E2Mratio,3)) %>% as.data.frame %>% add_row(species="Algorithm threshold",EcoROMS_original=round(bin_run5_EcoROMS(),3),EcoROMS_original_unscaled=round(bin_run5_Marxan(),3))
+      mutate(E2Mratio=EcoROMS_original/EcoROMS_original_unscaled) %>% mutate(E2Mratio=round(E2Mratio,3)) %>% as.data.frame %>% add_row(species="Algorithm threshold",EcoROMS_original=round(bin_run5_EcoROMSscaling(),3),EcoROMS_original_unscaled=round(bin_run5_EcoROMSunscaling(),3))
     
     datatable(tabletotal,caption = "% of presences caught")    
   })
   
-  output$EcoRoms_3b <- renderPlot({
+  output$EcoRoms_3c <- renderPlot({
     # get raw data organized
     data=run6_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
@@ -1101,7 +1112,7 @@ server <- shinyServer(function(input, output) {
     
     master=data %>% gather(sp_name,value,-c(X,lon,lat,dt,EcoROMS_original,EcoROMS_original_unscaled))
     master$presenceVal=input$presenceScaling
-    master$algorithmVal=bin_run6_EcoROMSSscaling()
+    master$algorithmVal=bin_run6_EcoROMSscaling()
     
     sworDat=master[master$sp_name=="swor",]
     caslDat=master[master$sp_name=="casl",]
@@ -1109,7 +1120,7 @@ server <- shinyServer(function(input, output) {
     blshobsDat=master[master$sp_name=="blshobs",]
     blshtrkDat=master[master$sp_name=="blshtrk",]
     
-    algorithm="EcoROMS_original"
+    algorithm="^EcoROMS_original$"
     index=NULL
     index=grep(algorithm,names(master))
     subtitle=paste0(namesrisk[1],": ",ER_weightings[1],", ",namesrisk[2],": ",ER_weightings[2],", ",namesrisk[3],": ",ER_weightings[3],", ",namesrisk[4],": ",ER_weightings[4],", ",namesrisk[5],": ",ER_weightings[5])
@@ -1126,7 +1137,7 @@ server <- shinyServer(function(input, output) {
     a
     
   })
-  output$Marxan_3b <-renderPlot({
+  output$Marxan_3c <-renderPlot({
     data=run6_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
@@ -1158,21 +1169,21 @@ server <- shinyServer(function(input, output) {
     a
     
   })
-  output$table_3b <-renderDT({
+  output$table_3c <-renderDT({
     data=run6_random_scaling
     ER_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     M_weightings<-c(-0.1,-0.1,-0.05,-0.4,0.4)
     # set up to plot
     
-    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run6_EcoROMS()) %>% 
+    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run6_EcoROMSscaling()) %>% 
       filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
     
-    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run6_Marxan()) %>%
+    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>% filter(product_value>=bin_run6_EcoROMSunscaling()) %>%
       filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% rbind(.,tablecaughtE)
     
     tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% filter(suitability>=input$presenceScaling) %>%
       group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtM,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(product,Percent_caught) %>% mutate(EcoROMS_original=round(EcoROMS_original,3))%>% mutate(EcoROMS_original_unscaled=round(EcoROMS_original_unscaled,3)) %>% 
-      mutate(E2Mratio=EcoROMS_original/EcoROMS_original_unscaled) %>% mutate(E2Mratio=round(E2Mratio,3)) %>% as.data.frame %>% add_row(species="Algorithm threshold",EcoROMS_original=round(bin_run6_EcoROMS(),3),EcoROMS_original_unscaled=round(bin_run6_Marxan(),3))
+      mutate(E2Mratio=EcoROMS_original/EcoROMS_original_unscaled) %>% mutate(E2Mratio=round(E2Mratio,3)) %>% as.data.frame %>% add_row(species="Algorithm threshold",EcoROMS_original=round(bin_run6_EcoROMSscaling(),3),EcoROMS_original_unscaled=round(bin_run6_EcoROMSunscaling(),3))
     
     datatable(tabletotal,caption = "% of presences caught")                                                                                                                                                                                                                     
     
