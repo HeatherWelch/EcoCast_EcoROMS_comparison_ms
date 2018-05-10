@@ -52,13 +52,8 @@ ui <- dashboardPage(skin="yellow",
                                   
                                   menuItem("Random data: swor vs lbst", tabName='random_ratio',icon=icon("random",lib='font-awesome')),
                                   conditionalPanel("input.sidebarmenu==='raw'"),
-                                  
-
-                                  menuItem("EcoROMS scaled and unscaled comparison", tabName='scaling',icon=icon("random",lib='font-awesome')),
 
                                   #####
-                                  
-                                  menuItem("EcoROMS scaled and unscaled", tabName='scaling',icon=icon("random",lib='font-awesome')),
                                   menuItem("EcoROMS scaled and unscaled", tabName='scaling',icon=icon("random",lib='font-awesome')),
                                   conditionalPanel("input.sidebarmenu==='scaling'",
                                                    div(style="background-color:black;",

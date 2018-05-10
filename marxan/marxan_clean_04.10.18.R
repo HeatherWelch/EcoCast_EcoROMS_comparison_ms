@@ -46,18 +46,22 @@ inv_alt_rasterRescale=function(r){ ## 0,1
   return(r.scale)
 }
 
-make_png_marxan=function(r,get_date,outdir,type,weightings,namesrisk){ ### does what it says
+make_png_marxan=function(r,get_date,outdir,type,weightings,namesrisk,scaling){ ### does what it says
   
   EcoCols<-colorRampPalette(c("red","orange","white","cyan","blue"))
   ByCols<-colorRampPalette(c("red","orange","white"))
   
-  if(weightings[5]!=0){
+  if(weightings[5]!=0 && scaling=="scaled"){
     zlimits=c(-1,1)
     col=EcoCols(255)}
   
-  if(weightings[5]==0){
+  if(weightings[5]==0 && scaling=="scaled"){
     zlimits=c(-1,0)
     col=ByCols(255)}
+  
+  if(scaling=="unscaled"){
+    zlimits=c(r@data@min,r@data@max)
+    col=EcoCols(255)}
   
   png(paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_",type,".png"),width=960,height=1100,units='px',pointsize=20)
   par(mar=c(3,3,.5,.5),las=1,font=2)
@@ -116,10 +120,10 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
   ## produce mgmt: rescale between -1 and 1, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 1=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
   bb=rasterRescale(aa)*-1
   writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw"),overwrite=T)
-  make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings)
+  make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings,scaling="scaled")
   
-  writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw_unscaled"),overwrite=T)
-  make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw_unscaled",namesrisk = namesrisk,weightings = weightings)
+  writeRaster(aa,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw_unscaled"),overwrite=T)
+  make_png_marxan(aa,get_date = get_date,outdir=outdir,type="raw_unscaled",namesrisk = namesrisk,weightings = weightings,scaling = "unscaled")
   
   ## produce mgmt: remove marxan pixels selected in < 100 solutions,
   ## rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
@@ -231,10 +235,11 @@ scp_swor=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
     ## produce mgmt: rescale between -1 and 1, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 1=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
     bb=rasterRescale(aa)*-1
     writeRaster(bb,paste0(outdir,"marxan_nocost_",paste0(weightings,collapse = "_"),"_",get_date,"_raw"),overwrite=T)
-    make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings)
+    make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings,scaling = "scaled")
     
-    writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw_unscaled"),overwrite=T)
-    make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw_unscaled",namesrisk = namesrisk,weightings = weightings)
+    cc=aa*-1
+    writeRaster(cc,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw_unscaled"),overwrite=T)
+    make_png_marxan(cc,get_date = get_date,outdir=outdir,type="raw_unscaled",namesrisk = namesrisk,weightings = weightings,scaling="unscaled")
 
   }
   if(weightings[5]==0){
