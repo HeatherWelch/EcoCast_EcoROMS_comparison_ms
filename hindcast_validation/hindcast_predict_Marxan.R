@@ -161,21 +161,41 @@ namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swor
 outdir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan/"
 
 #dates=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/allspecies_04_11_2018.csv") %>% dplyr::select(dt)%>% .[,1] %>% as.character() %>% unique()
-lbst_bycatch=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt)) %>% dplyr::filter(SpCd=="DC")  %>% dplyr::select(dt) %>% .[,1]
-d1997=seq(as.Date("1997-10-01"),as.Date("1997-11-30"),by=1)
-d2005=seq(as.Date("2005-08-01"),as.Date("2005-11-30"),by=1)
-d2003=seq(as.Date("2003-04-01"),as.Date("2003-04-30"),by=1)
+# lbst_bycatch=read.csv("/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/raw_data/observer_casl_swor_blsh_lbst_roms.csv")%>% mutate(dt=as.Date(dt)) %>% dplyr::filter(SpCd=="DC")  %>% dplyr::select(dt) %>% .[,1]
+# d1997=seq(as.Date("1997-10-01"),as.Date("1997-11-30"),by=1)
+# d2005=seq(as.Date("2005-08-01"),as.Date("2005-11-30"),by=1)
+# d2003=seq(as.Date("2003-04-01"),as.Date("2003-04-30"),by=1)
+# 
+# dates=c(lbst_bycatch,d1997,d2005,d2003) %>% unique() %>% as.character()
+weightings<-c(-0.1,-0.1,-0.05,-0.4,0.2)
+dates=list.files("~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan",pattern=".grd") %>% grep("_raw",.,value=T) %>% grep(paste0(weightings,collapse="_"),.,value=T) %>% 
+  gsub(paste0("marxan_nocost_",paste0(weightings,collapse="_"),"_"),"",.) %>% gsub("_raw.grd","",.)
 
-dates=c(lbst_bycatch,d1997,d2005,d2003) %>% unique() %>% as.character()
 
-
-weightings<-c(-0.1,-0.1,-0.05,-1,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+weightings<-c(-0.1,-0.1,-0.05,-.5,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
 for(d in dates){
   print(d)
   get_date=d
   print(get_date)
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
+
+weightings<-c(-0.1,-0.1,-0.05,-.7,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+for(d in dates){
+  print(d)
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings<-c(-0.1,-0.1,-0.05,-.9,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+for(d in dates){
+  print(d)
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
 
 
 

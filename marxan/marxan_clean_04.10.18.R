@@ -118,6 +118,9 @@ scp=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
   writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw"),overwrite=T)
   make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings)
   
+  writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw_unscaled"),overwrite=T)
+  make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw_unscaled",namesrisk = namesrisk,weightings = weightings)
+  
   ## produce mgmt: remove marxan pixels selected in < 100 solutions,
   ## rescale between -1 and 0, where -1= highly selected marxan pixels (e.g. most important for avoiding bycatch); 0=infrequently selected marxan pixels (e.g. least important for avoiding bycatch)
   ## fill in removed areas w swordfish values (scaled between 0,1)
@@ -229,6 +232,9 @@ scp_swor=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
     bb=rasterRescale(aa)*-1
     writeRaster(bb,paste0(outdir,"marxan_nocost_",paste0(weightings,collapse = "_"),"_",get_date,"_raw"),overwrite=T)
     make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw",namesrisk = namesrisk,weightings = weightings)
+    
+    writeRaster(bb,paste0(outdir,"marxan_",paste0(weightings,collapse = "_"),"_",get_date,"_raw_unscaled"),overwrite=T)
+    make_png_marxan(bb,get_date = get_date,outdir=outdir,type="raw_unscaled",namesrisk = namesrisk,weightings = weightings)
 
   }
   if(weightings[5]==0){
