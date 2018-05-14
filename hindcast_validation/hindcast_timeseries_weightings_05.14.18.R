@@ -2,6 +2,7 @@
 ## testing the ratio of lbst:swor at different weightings and different catch limits and different algorithms
 ## weightings: run 4, run 5, run
 ## catch limits: lbst @ 10,30,50
+### test
 
 run4_random=read.csv("raw_data/species_predict_05.04.18_random_scaled_unscaled_marxan_run4.csv") %>% mutate(sworweighting=.1)
 run5_random=read.csv("raw_data/species_predict_05.04.18_random_scaled_unscaled_marxan_run5.csv") %>% mutate(sworweighting=.2)
