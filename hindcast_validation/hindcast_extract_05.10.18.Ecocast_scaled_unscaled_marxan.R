@@ -15,7 +15,7 @@ datess=sample(seq(as.Date('2005/08/01'), as.Date('2005/11/30'), by="day"), 1000,
 datess2=sample(seq(as.Date('1997/10/01'), as.Date('1997/11/30'), by="day"), 500,replace = T)
 datess3=sample(seq(as.Date('2003/04/01'), as.Date('2003/04/30'), by="day"), 200,replace = T)
 datess=c(datess,datess2,datess3)
-species=regular@coords %>% as.tibble() %>% dplyr::select(lon=x1,lat=x2) %>% add_column(dt=datess[1:1697])
+species=regular@coords %>% as.tibble() %>% dplyr::select(lon=x1,lat=x2) %>% add_column(dt=datess[1:1685])
 
 ################## -------------------- run 7
 #### run extractions and save
