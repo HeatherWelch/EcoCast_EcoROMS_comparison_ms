@@ -172,7 +172,7 @@ dates=list.files("~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast/marxan",pattern
   gsub(paste0("marxan_nocost_",paste0(weightings,collapse="_"),"_"),"",.) %>% gsub("_raw.grd","",.)
 
 
-weightings<-c(-0.1,-0.1,-0.05,-.5,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+weightings<-c(-0.1,-0.1,-0.05,-.5,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 7) -----> run
 for(d in dates){
   print(d)
   get_date=d
@@ -180,7 +180,7 @@ for(d in dates){
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
 
-weightings<-c(-0.1,-0.1,-0.05,-.7,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+weightings<-c(-0.1,-0.1,-0.05,-.7,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 8) -----> run
 for(d in dates){
   print(d)
   get_date=d
@@ -188,7 +188,7 @@ for(d in dates){
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
 
-weightings<-c(-0.1,-0.1,-0.05,-.9,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 4) -----> run
+weightings<-c(-0.1,-0.1,-0.05,-.9,0.1) # testing leatherback at it's most extreme, swor neutral ## (run 9) -----> run
 for(d in dates){
   print(d)
   get_date=d
