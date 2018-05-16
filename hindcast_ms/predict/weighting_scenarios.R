@@ -25,7 +25,7 @@ weightings <-c(0,0,0,-0.5,0.5)
 weightings <-c(0,0,0,-0.7,0.7)
 weightings <-c(0,0,0,-0.9,0.9)
 
-## scenario 4--> testing the ability to manage swordfish and bluesharks
+## scenario 4--> testing the ability to manage swordfish and bluesharks (lbst weighting to be determined in scenarios 1-3)
 M_weightings <-c(-0.1,-0.1,0,"lbst",0)
 M_weightings <-c(-0.5,-0.5,0,"lbst",0)
 M_weightings <-c(-0.9,-0.9,0,"lbst",0)
