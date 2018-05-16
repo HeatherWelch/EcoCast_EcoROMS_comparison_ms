@@ -4,31 +4,31 @@
 
 namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
 
-## scenario 1--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms)
-weightings <-c(0,0,0,0,0.1)
-weightings <-c(0,0,0,0,0.3)
-weightings <-c(0,0,0,0,0.5)
-weightings <-c(0,0,0,0,0.7)
-weightings <-c(0,0,0,0,0.9)
+## scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms)
+weightings <-c(0,0,0,0,0.1) #run A.1
+weightings <-c(0,0,0,0,0.3) #run A.2
+weightings <-c(0,0,0,0,0.5) #run A.3
+weightings <-c(0,0,0,0,0.7) #run A.4
+weightings <-c(0,0,0,0,0.9) #run A.5
 
-## scenario 2--> isolating the effect of leatherback weightings (5 runs, weightings are the same for both algorithms)
-weightings <-c(0,0,0,-0.1,0)
-weightings <-c(0,0,0,-0.3,0)
-weightings <-c(0,0,0,-0.5,0)
-weightings <-c(0,0,0,-0.7,0)
-weightings <-c(0,0,0,-0.9,0)
+## scenario B--> isolating the effect of leatherback weightings (5 runs, weightings are the same for both algorithms)
+weightings <-c(0,0,0,-0.1,0) #run B.1
+weightings <-c(0,0,0,-0.3,0) #run B.2
+weightings <-c(0,0,0,-0.5,0) #run B.3
+weightings <-c(0,0,0,-0.7,0) #run B.4
+weightings <-c(0,0,0,-0.9,0) #run B.5
 
-## scenario 3--> testing the ability to manage swordfish and leatherback equally (5 runs, weightings are the same for both algorithms)
-weightings <-c(0,0,0,-0.1,0.1)
-weightings <-c(0,0,0,-0.3,0.3)
-weightings <-c(0,0,0,-0.5,0.5)
-weightings <-c(0,0,0,-0.7,0.7)
-weightings <-c(0,0,0,-0.9,0.9)
+## scenario C--> testing the ability to manage swordfish and leatherback equally (5 runs, weightings are the same for both algorithms)
+weightings <-c(0,0,0,-0.1,0.1) #run C.1
+weightings <-c(0,0,0,-0.3,0.3) #run C.2
+weightings <-c(0,0,0,-0.5,0.5) #run C.3
+weightings <-c(0,0,0,-0.7,0.7) #run C.4
+weightings <-c(0,0,0,-0.9,0.9) #run C.5
 
-## scenario 4--> testing the ability to manage swordfish and bluesharks (lbst weighting to be determined in scenarios 1-3)
-M_weightings <-c(-0.1,-0.1,0,"lbst",0)
-M_weightings <-c(-0.5,-0.5,0,"lbst",0)
-M_weightings <-c(-0.9,-0.9,0,"lbst",0)
-E_weightings <-c(-0.3,-0.3,0,"lbst",0)
-E_weightings <-c(-1.5,-1.5,0,"lbst",0)
-E_weightings <-c(-2.7,-2.7,0,"lbst",0)
+## scenario D--> testing the ability to manage swordfish and bluesharks (lbst weighting to be determined in scenarios 1-3)
+M_weightings <-c(-0.1,-0.1,0,"lbst",0) #run D.1
+M_weightings <-c(-0.5,-0.5,0,"lbst",0) #run D.2
+M_weightings <-c(-0.9,-0.9,0,"lbst",0) #run D.3
+E_weightings <-c(-0.3,-0.3,0,"lbst",0) #run D.1
+E_weightings <-c(-1.5,-1.5,0,"lbst",0) #run D.2
+E_weightings <-c(-2.7,-2.7,0,"lbst",0) #run D.3
