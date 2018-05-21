@@ -44,5 +44,6 @@ pkgTest("magrittr")
 pkgTest("dismo")
 pkgTest("caret")
 pkgTest("mlbench")
+pkgTest("cowplot")
 
 
