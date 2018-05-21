@@ -1,6 +1,6 @@
 ## function to batch extract from hindcast runs
 source("load_functions.R")
-source("hindcast_validation/extract_function.R")
+source("hindcast_ms/extract/extract_function.R")
 
 hindcast_extracto=function(points,outdir,ER_weightings,M_weightings,preddir,run){
   ##### c. run extracto (ecoroms scaled) ####
