@@ -1,20 +1,4 @@
 ## function to compare effect of species weightings
-library(gdata)
-
-one=read.csv("hindcast_ms/extract/extractions/run_A.1.csv") %>% mutate(weighting=.1)
-two=read.csv("hindcast_ms/extract/extractions/run_A.2.csv") %>% mutate(weighting=.3)
-three=read.csv("hindcast_ms/extract/extractions/run_A.3.csv") %>% mutate(weighting=.5)
-four=read.csv("hindcast_ms/extract/extractions/run_A.4.csv") %>% mutate(weighting=.7)
-five=read.csv("hindcast_ms/extract/extractions/run_A.5.csv") %>% mutate(weighting=.9)
-
-species_delta="swordfish"
-weighting_delta=c(.1,.3,.5,.7,.9)
-run="A"
-
-plotdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/plots/"
-csvdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs/"
-
-weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
 
 weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run){
   dataframelist=list(one,two,three,four,five)
@@ -93,3 +77,19 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
   write.csv(plotting,paste0(csvdir,run,"_availcatch_weighting_comparison.csv"),row.names = F)
   write.csv(empty,paste0(csvdir,run,"_thresholds_weighting_comparison.csv"),row.names = F)
 }
+
+# #demo
+# one=read.csv("hindcast_ms/extract/extractions/run_A.1.csv") %>% mutate(weighting=.1)
+# two=read.csv("hindcast_ms/extract/extractions/run_A.2.csv") %>% mutate(weighting=.3)
+# three=read.csv("hindcast_ms/extract/extractions/run_A.3.csv") %>% mutate(weighting=.5)
+# four=read.csv("hindcast_ms/extract/extractions/run_A.4.csv") %>% mutate(weighting=.7)
+# five=read.csv("hindcast_ms/extract/extractions/run_A.5.csv") %>% mutate(weighting=.9)
+# 
+# species_delta="swordfish"
+# weighting_delta=c(.1,.3,.5,.7,.9)
+# run="A"
+# 
+# plotdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/plots/"
+# csvdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs/"
+# 
+# weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)

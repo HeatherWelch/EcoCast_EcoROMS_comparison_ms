@@ -7,7 +7,7 @@ csvdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hi
 datadir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/extract/extractions/"
 
 
-## scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms) (running) #### 
+## scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms) (run) #### 
 weightings <-c(0,0,0,0,0.1) #run A.1
 run="A.1"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
