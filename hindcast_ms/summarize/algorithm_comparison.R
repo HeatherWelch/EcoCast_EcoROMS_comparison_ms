@@ -8,11 +8,11 @@ agorithm_comparison=function(data,weightings,outdir,run){
   empty=data.frame(matrix(NA,nrow=11,ncol = 5))
   colnames(empty)=c("availcatch","Marxan_raw","EcoROMS_original","Marxan_raw_unscaled","EcoROMS_original_unscaled")
   for(i in 1:length(catch)){ 
-    binA=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% filter(suitability>=.5) %>% spread(species,suitability) %>% dplyr::select(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,swor) %>% .[complete.cases(.),]
-    binM=quantile(binA$Marxan_raw,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
-    binE=quantile(binA$EcoROMS_original,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
-    binMnS=quantile(binA$Marxan_raw_unscaled,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
-    binEnS=quantile(binA$EcoROMS_original_unscaled,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+    binA=data %>% dplyr::select(-c(X,lon,lat,dt,lbst,casl,blshobs,blshtrk))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% filter(suitability>=.5) %>% spread(species,suitability) %>% dplyr::select(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,swor) %>% .[complete.cases(.),]
+    binM=quantile(binA$Marxan_raw,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+    binE=quantile(binA$EcoROMS_original,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+    binMnS=quantile(binA$Marxan_raw_unscaled,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+    binEnS=quantile(binA$EcoROMS_original_unscaled,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
     print(binM)
     print(binE)
     print(binMnS)
@@ -72,7 +72,7 @@ agorithm_comparison=function(data,weightings,outdir,run){
   empty=data.frame(matrix(NA,nrow=11,ncol = 5))
   colnames(empty)=c("availcatch","Marxan_raw","EcoROMS_original","Marxan_raw_unscaled","EcoROMS_original_unscaled")
   for(i in 1:length(catch)){ 
-    binA=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% filter(suitability>=.5) %>% spread(species,suitability) %>% dplyr::select(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,lbst) %>% .[complete.cases(.),]
+    binA=data %>% dplyr::select(-c(X,lon,lat,dt,swor,casl,blshobs,blshtrk))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% filter(suitability>=.5) %>% spread(species,suitability) %>% dplyr::select(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,lbst) %>% .[complete.cases(.),]
     binM=quantile(binA$Marxan_raw,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
     binE=quantile(binA$EcoROMS_original,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
     binMnS=quantile(binA$Marxan_raw_unscaled,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]

@@ -1,0 +1,97 @@
+---
+title: "Run A"
+author: "Heather Welch"
+date: "5/22/2018"
+output: 
+  html_document:
+    code_folding: hide
+    #toc: true
+    #toc_depth: 3
+    #toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+##
+library(tidyverse)
+library(raster)
+library(sp)
+library(tidyverse)
+library(rworldmap)
+library(rgdal)
+library(rasterVis)
+library(RColorBrewer)
+library(ggmap)
+library(grid)
+library(lattice)
+library(gridExtra)
+library(maptools)
+library(dplyr)
+library(reshape)
+library(pracma)
+library(magick)
+library(png)
+library(maps)
+library(purrr)
+```
+## scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms)  
+weightings <-c(0,0,0,0,0.1) #run A.1  
+weightings <-c(0,0,0,0,0.3) #run A.2  
+weightings <-c(0,0,0,0,0.5) #run A.3  
+weightings <-c(0,0,0,0,0.7) #run A.4  
+weightings <-c(0,0,0,0,0.9) #run A.5  
+
+
+```{r , echo=FALSE, out.width='25%'}
+weightings <-c(0,0,0,0,0.1) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw.png")
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.png")
+image_list=list(a,b,c,d) %>% unlist
+knitr::include_graphics(image_list)
+weightings <-c(0,0,0,0,0.3) #run A.2
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw.png")
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.png")
+image_list=list(a,b,c,d) %>% unlist
+knitr::include_graphics(image_list)
+weightings <-c(0,0,0,0,0.5) #run A.3  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw.png")
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.png")
+image_list=list(a,b,c,d) %>% unlist
+knitr::include_graphics(image_list)
+weightings <-c(0,0,0,0,0.7) #run A.4 
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw.png")
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.png")
+image_list=list(a,b,c,d) %>% unlist
+knitr::include_graphics(image_list)
+weightings <-c(0,0,0,0,0.9) #run A.5  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.png")
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw.png")
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.png")
+image_list=list(a,b,c,d) %>% unlist
+knitr::include_graphics(image_list)
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/swor_1995-09-11_mean.png")
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/lbst_nolat_1995-09-11_mean.png")
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/blshobs_1995-09-11_mean.png")
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_1995-09-11_mean.png")
+image_list=list(a,b,c,d) %>% unlist
+knitr::include_graphics(image_list)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

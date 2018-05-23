@@ -213,14 +213,15 @@ scp_swor=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
   a@data$status=0L
   a@data=a@data[,2:4]
   
-  ## format targets for conservation features
-  targets=weightings[1:4]
-  targets=unlist(lapply(targets,function(x)x*-1)) %>% lapply(.,function(x)x*100) %>% unlist() %>% lapply(.,function(x)paste0(x,"%")) %>% unlist()
-  
-  targets2=(weightings[5]*100) %>% paste0(.,"%")
-  targets=list(targets,targets2) %>% unlist()
   
   if(weightings[5]!=0){
+    
+    targets=weightings[1:4]
+    targets=unlist(lapply(targets,function(x)x*-1)) %>% lapply(.,function(x)x*100) %>% unlist() %>% lapply(.,function(x)paste0(x,"%")) %>% unlist()
+    
+    targets2=((1-weightings[5])*100) %>% paste0(.,"%")
+    targets=list(targets,targets2) %>% unlist()
+    
     spf=4
     
     ## run marxan
@@ -247,6 +248,12 @@ scp_swor=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
 
   }
   if(weightings[5]==0){
+    
+    targets=weightings[1:4]
+    targets=unlist(lapply(targets,function(x)x*-1)) %>% lapply(.,function(x)x*100) %>% unlist() %>% lapply(.,function(x)paste0(x,"%")) %>% unlist()
+    
+    targets2=(weightings[5]*100) %>% paste0(.,"%")
+    targets=list(targets,targets2) %>% unlist()
     
     ## format targets for cost
     spf=4

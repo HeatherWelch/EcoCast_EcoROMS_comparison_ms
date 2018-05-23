@@ -32,3 +32,29 @@ weightings <-c(0,0,0,0,0.9) #run A.5
 run="A.5"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
+
+## scenario B --> isolating the effect of leatherback weightings (5 runs, weightings are the same for both algorithms) (run) #### 
+weightings <-c(0,0,0,-0.1,0) #run B.1
+run="B.1"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.3,0) #run B.2
+run="B.2"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.5,0) #run B.3
+run="B.3"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.7,0) #run B.4
+run="B.4"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.9,0) #run B.5
+run="B.5"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
