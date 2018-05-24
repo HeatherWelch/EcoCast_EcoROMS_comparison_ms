@@ -87,3 +87,40 @@ for(d in dates){
 
 
 
+
+## scenario C--> testing the ability to manage swordfish and leatherback equally (5 runs, weightings are the same for both algorithms) (running) ####
+weightings <-c(0,0,0,-0.1,0.1) #run C.1
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(0,0,0,-0.3,0.3) #run C.2
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(0,0,0,-0.5,0.5) #run C.3
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.7,0.7) #run C.4
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(0,0,0,-0.9,0.9) #run C.5
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+

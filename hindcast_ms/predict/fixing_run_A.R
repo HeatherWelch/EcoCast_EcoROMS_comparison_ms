@@ -60,3 +60,6 @@ file.copy(a,b)
 # M_weightings <-c(0,0,0,0,0.9)
 # fromD=list.files(todir,full.names = T) %>% grep(paste0(M_weightings,collapse="_"),.,value=T)
 # toD=fromA %>% gsub("_0_0_0_0_0.9_","_0_0_0_0_0.1_",.)
+
+## repredicting raster for Run_A.Rmd
+

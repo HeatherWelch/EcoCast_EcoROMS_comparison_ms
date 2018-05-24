@@ -85,13 +85,3 @@ d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_pred
 image_list=list(a,b,c,d) %>% unlist
 knitr::include_graphics(image_list)
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
