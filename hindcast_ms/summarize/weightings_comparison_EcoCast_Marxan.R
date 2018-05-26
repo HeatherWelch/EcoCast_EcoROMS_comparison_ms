@@ -2,8 +2,8 @@
 source("load_functions.R")
 source("hindcast_ms/summarize/weightings_comparison.R")
 
-plotdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/plots/"
-csvdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs/"
+plotdir="hindcast_ms/summarize/plots/"
+csvdir="hindcast_ms/summarize/csvs/"
 
 ## scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms) (run) #### 
 one=read.csv("hindcast_ms/extract/extractions/run_A.1.csv") %>% mutate(weighting=.1)

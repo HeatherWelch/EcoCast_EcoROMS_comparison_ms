@@ -4,20 +4,22 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
   dataframelist=list(one,two,three,four,five)
   
   empty=data.frame(matrix(NA,nrow=30,ncol = 6))
-  colnames(empty)=c("avoided","Marxan_raw","Marxan_raw_unscaled","EcoROMS_original","EcoROMS_original_unscaled","weighting")
+  colnames(empty)=c("catch","Marxan_raw","Marxan_raw_unscaled","EcoROMS_original","EcoROMS_original_unscaled","weighting")
   catch=c(.9,.7,.5,.3,.1,0)
   count=1
     
   for(i in 1:length(catch)){
+    print("new catch limit")
     for(ii in 1:length(dataframelist)){
-      binA=dataframelist[[ii]] %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% dplyr::filter(suitability>=.5) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,Marxan_raw,Marxan_raw_unscaled,lbst) %>% .[complete.cases(.),]
-      binM=quantile(binA$Marxan_raw,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
-      binE=quantile(binA$EcoROMS_original,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
-      binEnS=quantile(binA$EcoROMS_original_unscaled,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
-      binMnS=quantile(binA$Marxan_raw_unscaled,(catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
-      print(binM)
-      print(binE)
-      empty$avoided[count]=catch[i]
+      print("new dataframe")
+      binA=dataframelist[[ii]] %>% select(-c(X,lon,lat,dt,swor,casl,blshobs,blshtrk))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% dplyr::filter(suitability>=.5) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,Marxan_raw,Marxan_raw_unscaled,lbst) %>% .[complete.cases(.),]
+      binM=quantile(binA$Marxan_raw,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+      binE=quantile(binA$EcoROMS_original,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+      binEnS=quantile(binA$EcoROMS_original_unscaled,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+      binMnS=quantile(binA$Marxan_raw_unscaled,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
+      #print(binM)
+      #print(binE)
+      empty$catch[count]=catch[i]
       empty$Marxan_raw[count]=binM
       empty$EcoROMS_original[count]=binE
       empty$EcoROMS_original_unscaled[count]=binEnS
@@ -29,19 +31,19 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
   }
   
   dataframelist=do.call("rbind",dataframelist)
-  master=data.frame(product=NA,swor=NA,lbst=NA,weighting=NA)
+  master=data.frame(product=NA,swor=NA,lbst=NA,weighting=NA,lbstA=NA)
   for(i in 1:nrow(empty)){
     data=dataframelist %>% dplyr::filter(weighting==empty$weighting[i])
-    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value<=empty$EcoROMS_original[i]) %>% 
+    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original[i]) %>% 
       dplyr::filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i])
     
-    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value<=empty$Marxan_raw[i]) %>%
+    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw[i]) %>%
       dplyr::filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i]) %>% rbind(.,tablecaughtE)
     
-    tablecaughtEuS=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value<=empty$EcoROMS_original_unscaled[i]) %>%
+    tablecaughtEuS=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original_unscaled[i]) %>%
       dplyr::filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i]) %>% rbind(.,tablecaughtM)
     
-    tablecaughtMuS=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value<=empty$Marxan_raw_unscaled[i]) %>%
+    tablecaughtMuS=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw_unscaled[i]) %>%
       dplyr::filter(product=="Marxan_raw_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i]) %>% rbind(.,tablecaughtEuS)
     
     tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>%
@@ -52,7 +54,7 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
     
     tabletotal=tabletotal %>% select(product,swor,lbst,weighting)
     tabletotal[is.na(tabletotal)]<-0
-    tabletotal$lbst=empty[i,1]*100
+    tabletotal$lbstA=empty[i,1]*100
     
     master=rbind(master,tabletotal) %>% .[complete.cases(.),]
   }

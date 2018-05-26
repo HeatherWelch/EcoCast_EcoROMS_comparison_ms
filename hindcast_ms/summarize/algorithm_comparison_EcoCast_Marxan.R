@@ -2,9 +2,9 @@
 source("load_functions.R")
 source("hindcast_ms/summarize/algorithm_comparison.R")
 
-plotdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/plots/"
-csvdir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs/"
-datadir="~/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/extract/extractions/"
+plotdir="hindcast_ms/summarize/plots/"
+csvdir="hindcast_ms/summarize/csvs/"
+datadir="hindcast_ms/extract/extractions/"
 
 
 ## scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms) (run) #### 
