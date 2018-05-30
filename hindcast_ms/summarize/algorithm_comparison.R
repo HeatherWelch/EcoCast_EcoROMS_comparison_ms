@@ -28,17 +28,24 @@ agorithm_comparison=function(data,weightings,outdir,run){
   
   master=data.frame(product=NA,swor=NA,lbst=NA)
   for(i in 1:nrow(empty)){
-    tablecaughtE=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original[i]) %>% 
+    tablecaughtE=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$EcoROMS_original[i]) %>% 
       dplyr::filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
+    if(nrow(tablecaughtE)==0){tablecaughtE=tablecaughtE %>% ungroup() %>% add_row(species=c("lbst","swor"),product="EcorROMS_original",num_presences_caught=0) %>% group_by(species,product)}
     
-    tablecaughtM=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw[i]) %>%
-      dplyr::filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% rbind(.,tablecaughtE)
+    tablecaughtM=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$Marxan_raw[i]) %>%
+      dplyr::filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
+    if(nrow(tablecaughtM)==0){tablecaughtM=tablecaughtM %>% ungroup() %>% add_row(species=c("lbst","swor"),product="Marxan_raw",num_presences_caught=0) %>% group_by(species,product)}
+    tablecaughtM=tablecaughtM %>% rbind(.,tablecaughtE)
     
-    tablecaughtEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original_unscaled[i]) %>%
-      dplyr::filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% rbind(.,tablecaughtM)
+    tablecaughtEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$EcoROMS_original_unscaled[i]) %>%
+      dplyr::filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  
+    if(nrow(tablecaughtEuS)==0){tablecaughtEuS=tablecaughtEuS %>% ungroup() %>% add_row(species=c("lbst","swor"),product="EcoROMS_original_unscaled",num_presences_caught=0) %>% group_by(species,product)}
+    tablecaughtEuS=tablecaughtEuS %>% rbind(.,tablecaughtM)
     
-    tablecaughtMEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw_unscaled[i]) %>%
-      dplyr::filter(product=="Marxan_raw_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% rbind(.,tablecaughtEuS)
+    tablecaughtMEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$Marxan_raw_unscaled[i]) %>%
+      dplyr::filter(product=="Marxan_raw_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  
+    if(nrow(tablecaughtMEuS)==0){tablecaughtMEuS=tablecaughtMEuS %>% ungroup() %>% add_row(species=c("lbst","swor"),product="Marxan_raw_unscaled",num_presences_caught=0) %>% group_by(species,product)}
+    tablecaughtMEuS=tablecaughtMEuS %>% rbind(.,tablecaughtEuS)
     
     tabletotal=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>%
       group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtMEuS,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% dplyr::select(-c(num_presences,num_presences_caught)) %>% spread(species,Percent_caught) 
@@ -46,7 +53,7 @@ agorithm_comparison=function(data,weightings,outdir,run){
     if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
     if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
     
-    tabletotal=tabletotal %>% dplyr::select(product,swor,lbst)
+    tabletotal=tabletotal %>% dplyr::select(product,swor,lbst) %>% as.data.frame()
     tabletotal[is.na(tabletotal)]<-0
     
     master=rbind(master,tabletotal)
@@ -92,25 +99,32 @@ agorithm_comparison=function(data,weightings,outdir,run){
   
   master=data.frame(product=NA,swor=NA,lbst=NA)
   for(i in 1:nrow(empty)){
-    tablecaughtE=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original[i]) %>% 
+    tablecaughtE=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$EcoROMS_original[i]) %>% 
       dplyr::filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
+    if(nrow(tablecaughtE)==0){tablecaughtE=tablecaughtE %>% ungroup() %>% add_row(species=c("lbst","swor"),product="EcorROMS_original",num_presences_caught=0) %>% group_by(species,product)}
     
-    tablecaughtM=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw[i]) %>%
-      dplyr::filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% rbind(.,tablecaughtE)
+    tablecaughtM=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$Marxan_raw[i]) %>%
+      dplyr::filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) 
+    if(nrow(tablecaughtM)==0){tablecaughtM=tablecaughtM %>% ungroup() %>% add_row(species=c("lbst","swor"),product="Marxan_raw",num_presences_caught=0) %>% group_by(species,product)}
+    tablecaughtM=tablecaughtM %>% rbind(.,tablecaughtE)
     
-    tablecaughtEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original_unscaled[i]) %>%
-      dplyr::filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% rbind(.,tablecaughtM)
+    tablecaughtEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$EcoROMS_original_unscaled[i]) %>%
+      dplyr::filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  
+    if(nrow(tablecaughtEuS)==0){tablecaughtEuS=tablecaughtEuS %>% ungroup() %>% add_row(species=c("lbst","swor"),product="EcoROMS_original_unscaled",num_presences_caught=0) %>% group_by(species,product)}
+    tablecaughtEuS=tablecaughtEuS %>% rbind(.,tablecaughtM)
     
-    tablecaughtMEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw_unscaled[i]) %>%
-      dplyr::filter(product=="Marxan_raw_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% rbind(.,tablecaughtEuS)
+    tablecaughtMEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$Marxan_raw_unscaled[i]) %>%
+      dplyr::filter(product=="Marxan_raw_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  
+    if(nrow(tablecaughtMEuS)==0){tablecaughtMEuS=tablecaughtMEuS %>% ungroup() %>% add_row(species=c("lbst","swor"),product="Marxan_raw_unscaled",num_presences_caught=0) %>% group_by(species,product)}
+    tablecaughtMEuS=tablecaughtMEuS %>% rbind(.,tablecaughtEuS)
     
     tabletotal=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled)) %>% gather(product,product_value,-c(species,suitability)) %>% dplyr::filter(suitability>=.5) %>%
       group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtMEuS,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% dplyr::select(-c(num_presences,num_presences_caught)) %>% spread(species,Percent_caught) 
     
     if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
-    if(("swor"%in%colnames(tabletotal))==F){tabletotal$swor=0}
+    if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
     
-    tabletotal=tabletotal %>% dplyr::select(product,swor,lbst)
+    tabletotal=tabletotal %>% dplyr::select(product,swor,lbst) %>% as.data.frame()
     tabletotal[is.na(tabletotal)]<-0
     
     master=rbind(master,tabletotal)

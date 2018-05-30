@@ -34,34 +34,42 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
   master=data.frame(product=NA,swor=NA,lbst=NA,weighting=NA,lbstA=NA)
   for(i in 1:nrow(empty)){
     data=dataframelist %>% dplyr::filter(weighting==empty$weighting[i])
-    tablecaughtE=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original[i]) %>% 
+    data=dataframelist %>% dplyr::filter(weighting==empty$weighting[i])
+    tablecaughtE=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$EcoROMS_original[i]) %>% 
       dplyr::filter(product=="EcoROMS_original")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i])
+    if(nrow(tablecaughtE)==0){tablecaughtE=tablecaughtE %>% ungroup() %>% add_row(species=c("lbst","swor"),product="EcorROMS_original",num_presences_caught=0,weighting=empty$weighting[i]) %>% group_by(species,product)}
     
-    tablecaughtM=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw[i]) %>%
-      dplyr::filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i]) %>% rbind(.,tablecaughtE)
+    tablecaughtM=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$Marxan_raw[i]) %>%
+      dplyr::filter(product=="Marxan_raw")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i])
+    if(nrow(tablecaughtM)==0){tablecaughtM=tablecaughtM %>% ungroup() %>% add_row(species=c("lbst","swor"),product="Marxan_raw",num_presences_caught=0,weighting=empty$weighting[i]) %>% group_by(species,product)}
+    tablecaughtM=tablecaughtM %>% rbind(.,tablecaughtE)
     
-    tablecaughtEuS=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$EcoROMS_original_unscaled[i]) %>%
-      dplyr::filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i]) %>% rbind(.,tablecaughtM)
+    tablecaughtEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$EcoROMS_original_unscaled[i]) %>%
+      dplyr::filter(product=="EcoROMS_original_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% mutate(weighting=empty$weighting[i])
+    if(nrow(tablecaughtEuS)==0){tablecaughtEuS=tablecaughtEuS %>% ungroup() %>% add_row(species=c("lbst","swor"),product="EcoROMS_original_unscaled",num_presences_caught=0,weighting=empty$weighting[i]) %>% group_by(species,product)}
+    tablecaughtEuS=tablecaughtEuS %>% rbind(.,tablecaughtM)
     
-    tablecaughtMuS=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>=empty$Marxan_raw_unscaled[i]) %>%
-      dplyr::filter(product=="Marxan_raw_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n()) %>% mutate(weighting=empty$weighting[i]) %>% rbind(.,tablecaughtEuS)
+    tablecaughtMEuS=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>% dplyr::filter(product_value>empty$Marxan_raw_unscaled[i]) %>%
+      dplyr::filter(product=="Marxan_raw_unscaled")%>% group_by(species,product) %>% summarise(num_presences_caught=n())  %>% mutate(weighting=empty$weighting[i])
+    if(nrow(tablecaughtMEuS)==0){tablecaughtMEuS=tablecaughtMEuS %>% ungroup() %>% add_row(species=c("lbst","swor"),product="Marxan_raw_unscaled",num_presences_caught=0,weighting=empty$weighting[i]) %>% group_by(species,product)}
+    tablecaughtMEuS=tablecaughtMEuS %>% rbind(.,tablecaughtEuS)
     
-    tabletotal=data %>% select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>%
-      group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtMuS,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% select(-c(num_presences,num_presences_caught)) %>% spread(species,Percent_caught) 
+    tabletotal=data %>% dplyr::select(-c(X,lon,lat,dt))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,Marxan_raw_unscaled,EcoROMS_original_unscaled,weighting)) %>% gather(product,product_value,-c(species,suitability,weighting)) %>% dplyr::filter(suitability>=.5) %>%
+      group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtMEuS,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% dplyr::select(-c(num_presences,num_presences_caught)) %>% spread(species,Percent_caught) 
     
     if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
-    if(("swor"%in%colnames(tabletotal))==F){tabletotal$swor=0}
+    if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
     
-    tabletotal=tabletotal %>% select(product,swor,lbst,weighting)
+    tabletotal=tabletotal %>% select(product,swor,lbst,weighting)%>% as.data.frame()
     tabletotal[is.na(tabletotal)]<-0
     tabletotal$lbstA=empty[i,1]*100
     
     master=rbind(master,tabletotal) %>% .[complete.cases(.),]
   }
   
-  plotting=master %>% mutate(lbst=paste0(lbst,"% leatherback risk")) %>% mutate(lbst=as.factor(lbst)) #%>% mutate(lbst=reorder.factor(lbst,levels=c("10% LBST risk","30% LBST risk","50% LBST risk","70% LBST risk","90% LBST risk","100% LBST risk")))
+  plotting=master %>% mutate(lbstA=paste0(lbstA,"% leatherback risk")) %>% mutate(lbstA=as.factor(lbstA)) #%>% mutate(lbst=reorder.factor(lbst,levels=c("10% LBST risk","30% LBST risk","50% LBST risk","70% LBST risk","90% LBST risk","100% LBST risk")))
   
-  a=ggplot(plotting,aes(x=weighting,y=swor,group=product,color=product))+geom_line(aes(linetype=product))+geom_point(size=.5) +facet_wrap(~lbst,nrow=1)
+  a=ggplot(plotting,aes(x=weighting,y=swor,group=product,color=product))+geom_line(aes(linetype=product))+geom_point(size=.5) +facet_wrap(~lbstA,nrow=1)
   a=a+ggtitle(label = paste0("Effect of increasing ",species_delta," weighting on swordfish availability under scenarios of allowable leatherback bycatch risk"),subtitle = "Algorithm thresholds are set by defining % of allowable leatherback bycatch risk (iterated at 0,10,30,50,70,90%)")+labs(x=paste0(species_delta," weighting"))+labs(y="% of swordfish available to catch")
   a=a+scale_x_continuous(breaks=weighting_delta)
   a=a+theme(panel.background = element_rect(fill=NA,color="black"),strip.background =element_rect(fill=NA))+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8),axis.text = element_text(size=8),plot.title = element_text(hjust = 0,size = 9))

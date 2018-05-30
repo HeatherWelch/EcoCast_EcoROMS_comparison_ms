@@ -58,3 +58,30 @@ ER_weightings <-c(0,0,0,-0.9,0) #run B.5
 M_weightings <-c(0,0,0,-0.9,0)
 run="B.5"
 hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+## scenario C--> testing the ability to manage swordfish and leatherback equally (5 runs, weightings are the same for both algorithms) (run) ####
+marxandir="marxan" 
+ER_weightings <-c(0,0,0,-0.1,0.1) #run C.1
+M_weightings <-c(0,0,0,-0.1,0.1)
+run="C.1"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.3,0.3) #run C.2
+M_weightings <-c(0,0,0,-0.3,0.3)
+run="C.2"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.5,0.5) #run C.3
+M_weightings <-c(0,0,0,-0.5,0.5)
+run="C.3"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.7,0.7) #run C.4
+M_weightings <-c(0,0,0,-0.7,0.7)
+run="C.4"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.9,0.9) #run C.5
+M_weightings <-c(0,0,0,-0.9,0.9)
+run="C.5"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)

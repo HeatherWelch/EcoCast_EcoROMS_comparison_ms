@@ -4,19 +4,19 @@ source("hindcast_ms/extract/extract_function.R")
 
 hindcast_extracto=function(points,outdir,ER_weightings,M_weightings,preddir,run,marxandir){
   ##### c. run extracto (ecoroms scaled) ####
-  ecoroms_original=list.files(paste0(preddir,"mean"),pattern=".grd",full.names = T) %>% grep(paste0(ER_weightings,collapse="_"),.,value=T)%>% grep("original",.,value=T) %>% grep("_unscaled_",.,value=T,invert=T)
+  ecoroms_original=list.files(paste0(preddir,"mean"),pattern=".grd",full.names = T) %>% grep(paste0(paste0(ER_weightings,collapse="_"),"_"),.,value=T)%>% grep("original",.,value=T) %>% grep("_unscaled_",.,value=T,invert=T)
   a=extracto_raster(pts=points,algorithm="EcoROMS_original",solution_list = ecoroms_original,weightings = ER_weightings)
   
   ##### c. run extracto (ecoroms unscaled) ####
-  ecoroms_original=list.files(paste0(preddir,"mean"),pattern=".grd",full.names = T) %>% grep(paste0(ER_weightings,collapse="_"),.,value=T)%>% grep("original",.,value=T) %>% grep("_unscaled_",.,value=T)
+  ecoroms_original=list.files(paste0(preddir,"mean"),pattern=".grd",full.names = T) %>% grep(paste0(paste0(ER_weightings,collapse="_"),"_"),.,value=T)%>% grep("original",.,value=T) %>% grep("_unscaled_",.,value=T)
   a=extracto_raster(pts=a,algorithm="EcoROMS_original_unscaled",solution_list = ecoroms_original,weightings = ER_weightings)
   
   ##### c. run extracto (marxan scaled) ####
-  marxan_raw=list.files(paste0(preddir,marxandir),pattern=".grd",full.names = T) %>% grep(paste0(M_weightings,collapse="_"),.,value=T) %>% grep("_unscaled",.,value=T,invert=T)
+  marxan_raw=list.files(paste0(preddir,marxandir),pattern=".grd",full.names = T) %>% grep(paste0(paste0(M_weightings,collapse="_"),"_"),.,value=T) %>% grep("_unscaled",.,value=T,invert=T)
   a=extracto_raster(pts=a,algorithm="Marxan_raw",solution_list = marxan_raw,weightings = M_weightings)
   
   ##### c. run extracto (marxan unscaled) ####
-  marxan_raw=list.files(paste0(preddir,marxandir),pattern=".grd",full.names = T) %>% grep(paste0(M_weightings,collapse="_"),.,value=T) %>% grep("_unscaled",.,value=T)
+  marxan_raw=list.files(paste0(preddir,marxandir),pattern=".grd",full.names = T) %>% grep(paste0(paste0(M_weightings,collapse="_"),"_"),.,value=T) %>% grep("_unscaled",.,value=T)
   a=extracto_raster(pts=a,algorithm="Marxan_raw_unscaled",solution_list = marxan_raw,weightings = M_weightings)
   
   ##### c. run extracto (species habitat suitability layers) ####

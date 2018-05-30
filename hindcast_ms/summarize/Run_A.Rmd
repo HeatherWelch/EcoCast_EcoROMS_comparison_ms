@@ -33,6 +33,11 @@ library(magick)
 library(png)
 library(maps)
 library(purrr)
+
+thresholds=read.csv("/Users/heatherwelch/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs/A_thresholds_weighting_comparison.csv")
+path = "/Volumes/EcoCast_SeaGate/ERD_DOM/EcoCast_CodeArchive"
+staticdir=paste0(path,"/static_variables/")
+studyarea=readOGR(dsn=staticdir,layer="sa_square_coast3")
 ```
 ## scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms)  
 weightings <-c(0,0,0,0,0.1) #run A.1  
@@ -84,5 +89,253 @@ c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_pred
 d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/blshtrk_nolat_1995-09-11_mean.png")
 image_list=list(a,b,c,d) %>% unlist
 knitr::include_graphics(image_list)
+```
+
+### visualization of threshold effect at 10% allowable leatherback bycatch risk. Red = waters below threshold (do not fish), blue = waters above threshold (fist), white = waters at threshold (NA, values not considered fishable or unfishable)
+
+```{r , echo=FALSE, out.width='25%'}
+cuts=c(-1,0,1)
+pal=colorRampPalette(c("red","blue"))
+thresh10=thresholds %>% filter(catch==0.1)
+
+i=1
+weightings <-c(0,0,0,0,0.1) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=2
+weightings <-c(0,0,0,0,0.3) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=3
+weightings <-c(0,0,0,0,0.5) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=4
+weightings <-c(0,0,0,0,0.7) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=5
+weightings <-c(0,0,0,0,0.9) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+```
+
+### visualization of threshold effect at 50% allowable leatherback bycatch risk. Red = waters below threshold (do not fish), blue = waters above threshold (fist), white = waters at threshold (NA, values not considered fishable or unfishable)
+
+```{r , echo=FALSE, out.width='25%'}
+cuts=c(-1,0,1)
+pal=colorRampPalette(c("red","blue"))
+thresh10=thresholds %>% filter(catch==0.5)
+
+i=1
+weightings <-c(0,0,0,0,0.1) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=2
+weightings <-c(0,0,0,0,0.3) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=3
+weightings <-c(0,0,0,0,0.5) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=4
+weightings <-c(0,0,0,0,0.7) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
+i=5
+weightings <-c(0,0,0,0,0.9) #run A.1  
+a=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() %>% crop(.,extent(studyarea))
+a[a>thresh10$EcoROMS_original[i]]<-1
+a[a<thresh10$EcoROMS_original[i]]<--1
+a[a==thresh10$EcoROMS_original[i]]<-NA
+plot(a,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original[i],3)))
+b=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/mean/EcoROMS_original_unscaled_",paste0(weightings,collapse="_"),"_1995-09-11_mean.grd") %>% raster() 
+b[b>thresh10$EcoROMS_original_unscaled[i]]<-1
+b[b<thresh10$EcoROMS_original_unscaled[i]]<--1
+b[b==thresh10$EcoROMS_original_unscaled[i]]<-NA
+plot(b,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$EcoROMS_original_unscaled[i],3)))
+c=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_nocost_",paste0(weightings,collapse="_"),"_1995-09-11_raw.grd") %>% raster() 
+c[c>thresh10$Marxan_raw[i]]<-1
+c[c<thresh10$Marxan_raw[i]]<--1
+c[c==thresh10$Marxan_raw[i]]<-NA
+plot(c,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw[i],3)))
+d=paste0("/Users/heatherwelch/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_run_A/marxan_",paste0(weightings,collapse="_"),"_1995-09-11_raw_unscaled.grd") %>% raster() 
+d[d>thresh10$Marxan_raw_unscaled[i]]<-1
+d[d<thresh10$Marxan_raw_unscaled[i]]<--1
+d[d==thresh10$Marxan_raw_unscaled[i]]<-NA
+plot(d,breaks=cuts,col=pal(2),legend=F,axes=F,box=F,main=paste0("weighting= ",thresh10$weighting[i],", threshold= ",round(thresh10$Marxan_raw_unscaled[i],3)))
+
 ```
 
