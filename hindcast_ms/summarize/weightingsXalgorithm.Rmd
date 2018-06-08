@@ -1,0 +1,83 @@
+---
+title: "WeightingsXAlgorithm Poltly"
+author: "Heather Welch"
+date: "6/8/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(plotly)
+library(RColorBrewer)
+```
+
+## Weightings scenarios
+
+namesrisk<-c("Blue shark bycatch","Blue sharks","Sea lions","Leatherbacks","Swordfish")
+
+**scenario A--> isolating the effect of swordfish weightings (5 runs, weightings are the same for both algorithms)**  
+weightings <-c(0,0,0,0,0.1) #run A.1  
+weightings <-c(0,0,0,0,0.3) #run A.2  
+weightings <-c(0,0,0,0,0.5) #run A.3  
+weightings <-c(0,0,0,0,0.7) #run A.4  
+weightings <-c(0,0,0,0,0.9) #run A.5  
+
+**scenario B--> isolating the effect of leatherback weightings (5 runs, weightings are the same for both algorithms)**  
+weightings <-c(0,0,0,-0.1,0) #run B.1  
+weightings <-c(0,0,0,-0.3,0) #run B.2  
+weightings <-c(0,0,0,-0.5,0) #run B.3  
+weightings <-c(0,0,0,-0.7,0) #run B.4  
+weightings <-c(0,0,0,-0.9,0) #run B.5  
+
+**scenario C--> testing the ability to manage swordfish and leatherback equally (5 runs, weightings are the same for both algorithms)**  
+weightings <-c(0,0,0,-0.1,0.1) #run C.1  
+weightings <-c(0,0,0,-0.3,0.3) #run C.2  
+weightings <-c(0,0,0,-0.5,0.5) #run C.3  
+weightings <-c(0,0,0,-0.7,0.7) #run C.4  
+weightings <-c(0,0,0,-0.9,0.9) #run C.5  
+
+```{r,echo=FALSE}
+csvdir="hindcast_ms/summarize/csvs/"
+plotdir="hindcast_ms/summarize/plots/"
+run="A-C"
+
+file_list=list.files("/Users/heatherwelch/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs") %>% grep("availcatch_algorithm",.,value=T)
+master=list()
+for (file in file_list){
+  a=read.csv(paste0("/Users/heatherwelch/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs/",file))
+  name=gsub("_availcatch_algorithm_comparison.csv","",file)
+  a$run=name
+  assign(name,a)
+  master[[name]]<-a
+}
+
+fullon=do.call("rbind",master)
+df=fullon %>% dplyr::filter(limit_target=="swordfish")
+df$product=gsub("EcorROMS","EcoROMS",df$product)
+
+colorCount=length(unique(df$run))
+getPalette = colorRampPalette(brewer.pal(11, "Spectral"))
+mycolors=c(brewer.pal("Greens",n=5),brewer.pal("Blues",n=5),brewer.pal("Reds",n=5))
+
+a=ggplot(df,aes(x=swor,y=lbst,group=run,color=run))+geom_line()+geom_point(size=.5) +facet_wrap(~product,nrow=1)
+a=a+ggtitle(label = "Trade-offs between swordfish availability and leatherback bycatch for each algorithm and run")+labs(x=paste0("% of swordfish available to catch"))+labs(y="% of leathbacks bycaught")
+a=a+theme(panel.background = element_rect(fill=NA,color="black"),strip.background =element_rect(fill=NA))+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8),axis.text = element_text(size=8),plot.title = element_text(hjust = 0,size = 9))
+a=a+scale_color_manual(values=mycolors)
+a=a+theme(legend.title = element_text(size=5),legend.position=c(.13,.9),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=8),legend.box.background = element_rect(colour = "black"))+theme(legend.key=element_blank())+theme(legend.key.size = unit(.9,'lines'))
+b=a
+#a=ggplotly(a)
+
+df2=fullon %>% filter(limit_target=="leatherback")
+df2$product=gsub("EcorROMS","EcoROMS",df$product)
+
+a=ggplot(df2,aes(x=lbst,y=swor,group=run,color=run))+geom_line()+geom_point(size=.5) +facet_wrap(~product,nrow=1)
+a=a+ggtitle(label = "Trade-offs between leatherback bycatch and swordfish availability for each algorithm and run")+labs(x=paste0("% of leathbacks bycaught"))+labs(y="% of swordfish available to catch")
+a=a+theme(panel.background = element_rect(fill=NA,color="black"),strip.background =element_rect(fill=NA))+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8),axis.text = element_text(size=8),plot.title = element_text(hjust = 0,size = 9))
+a=a+scale_color_manual(values=mycolors)
+a=a+theme(legend.title = element_text(size=5),legend.position=c(.9,.4),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=8),legend.box.background = element_rect(colour = "black"))+theme(legend.key=element_blank())+theme(legend.key.size = unit(.9,'lines'))
+
+ggplotly(b,session="knitr")
+ggplotly(a,session="knitr")
+
+```
