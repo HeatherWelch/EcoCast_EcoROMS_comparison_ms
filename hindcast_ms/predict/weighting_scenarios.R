@@ -25,6 +25,15 @@ weightings <-c(0,0,0,-0.5,0.5) #run C.3
 weightings <-c(0,0,0,-0.7,0.7) #run C.4
 weightings <-c(0,0,0,-0.9,0.9) #run C.5
 
+## scenario D--> testing the ability to manage swordfish and leatherback, tailored based on above results (5 runs, weightings are the same for both algorithms)
+# C.3 was the best for Marxan, the Bs were the best for EcoROMS. Seems like its best when lbst is greater than swor
+weightings <-c(0,0,0,-0.5,0.1) #run D.1
+weightings <-c(0,0,0,-0.5,0.3) #run D.2
+weightings <-c(0,0,0,-0.7,0.1) #run D.3
+weightings <-c(0,0,0,-0.7,0.3) #run D.4
+weightings <-c(0,0,0,-0.7,0.5) #run D.5
+
+
 ## scenario D--> testing the ability to manage swordfish and bluesharks (lbst weighting to be determined in scenarios 1-3)
 M_weightings <-c(-0.1,-0.1,0,"lbst",0) #run D.1
 M_weightings <-c(-0.5,-0.5,0,"lbst",0) #run D.2
