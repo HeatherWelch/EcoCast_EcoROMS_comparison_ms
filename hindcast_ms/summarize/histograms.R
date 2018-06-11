@@ -108,7 +108,7 @@ histograms=function(plotdir,run,weighting_delta,species_delta,species_delta_shor
   
   ##--------> ECDF ####
   index=grep(species_delta_short,colnames(dataframelist))
-  test=dataframelist %>% dplyr::filter(.[,index]>.5) %>% select(-c(X,lon,lat,dt,swor,lbst,casl,blshobs,blshtrk)) %>% gather(product,value,-weighting) %>% mutate(weighting=as.factor(weighting))
+  test=dataframelist %>% dplyr::filter(.[,index]>.5) %>% dplyr::select(-c(X,lon,lat,dt,swor,lbst,casl,blshobs,blshtrk)) %>% gather(product,value,-weighting) %>% mutate(weighting=as.factor(weighting))
   
   a=ggplot(test,aes(x=value,color=weighting))+stat_ecdf(pad = FALSE)+facet_wrap(~product,nrow=1,scales = "free")
   a=a+ggtitle(label = paste0("Effect of increasing ",species_delta," weighting on algorithm values at ",species_delta," presences"),subtitle = "Presences are habitat suitabilities >.5")+labs(x="Algorithm value")+labs(y="Cumulative Distribution Function")

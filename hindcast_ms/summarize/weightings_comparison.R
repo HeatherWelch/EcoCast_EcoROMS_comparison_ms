@@ -12,7 +12,7 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
     print("new catch limit")
     for(ii in 1:length(dataframelist)){
       print("new dataframe")
-      binA=dataframelist[[ii]] %>% select(-c(X,lon,lat,dt,swor,casl,blshobs,blshtrk))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% dplyr::filter(suitability>=.5) %>% spread(species,suitability) %>% select(EcoROMS_original,EcoROMS_original_unscaled,Marxan_raw,Marxan_raw_unscaled,lbst) %>% .[complete.cases(.),]
+      binA=dataframelist[[ii]] %>% dplyr::select(-c(X,lon,lat,dt,swor,casl,blshobs,blshtrk))%>% gather(species,suitability,-c(EcoROMS_original,Marxan_raw,EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% dplyr::filter(suitability>=.5) %>% spread(species,suitability) %>% dplyr::select(EcoROMS_original,EcoROMS_original_unscaled,Marxan_raw,Marxan_raw_unscaled,lbst) %>% .[complete.cases(.),]
       binM=quantile(binA$Marxan_raw,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
       binE=quantile(binA$EcoROMS_original,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
       binEnS=quantile(binA$EcoROMS_original_unscaled,(1-catch[i]),na.rm = T) %>% as.data.frame() %>% .[,1]
@@ -60,7 +60,7 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
     if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
     if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
     
-    tabletotal=tabletotal %>% select(product,swor,lbst,weighting)%>% as.data.frame()
+    tabletotal=tabletotal %>% dplyr::select(product,swor,lbst,weighting)%>% as.data.frame()
     tabletotal[is.na(tabletotal)]<-0
     tabletotal$lbstA=empty[i,1]*100
     
@@ -71,7 +71,7 @@ weightings_comparison=function(species_delta,weighting_delta,plotdir,csvdir,run)
   
   a=ggplot(plotting,aes(x=weighting,y=swor,group=product,color=product))+geom_line(aes(linetype=product))+geom_point(size=.5) +facet_wrap(~lbstA,nrow=1)
   a=a+ggtitle(label = paste0("Effect of increasing ",species_delta," weighting on swordfish availability under scenarios of allowable leatherback bycatch risk"),subtitle = "Algorithm thresholds are set by defining % of allowable leatherback bycatch risk (iterated at 0,10,30,50,70,90%)")+labs(x=paste0(species_delta," weighting"))+labs(y="% of swordfish available to catch")
-  a=a+scale_x_continuous(breaks=weighting_delta)
+  #a=a+scale_x_continuous(breaks=weighting_delta)
   a=a+theme(panel.background = element_rect(fill=NA,color="black"),strip.background =element_rect(fill=NA))+ theme(axis.line = element_line(colour = "black"))+ theme(text = element_text(size=8),axis.text = element_text(size=8),plot.title = element_text(hjust = 0,size = 9))
   a=a+scale_color_manual("Algorithm",values=c("EcoROMS_original"="#034f84","Marxan_raw"="#f7786b","EcoROMS_original_unscaled"="#92a8d1","Marxan_raw_unscaled"="#f7cac9"))+guides(color = guide_legend(override.aes = list(linetype = c("solid", "solid","dashed", "dashed"))))+scale_linetype_manual("Algorithm",values = c("solid", "solid","dashed", "dashed"))
   a=a+theme(legend.title = element_text(size=5),legend.position=c(.13,.9),legend.justification = c(.9,.9))+theme(legend.background = element_blank())+theme(legend.text=element_text(size=5),legend.box.background = element_rect(colour = "black"))+theme(legend.key=element_blank())+theme(legend.key.size = unit(.5,'lines'))

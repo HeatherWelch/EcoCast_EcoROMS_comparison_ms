@@ -47,3 +47,18 @@ species_delta="swordfish/leatherback"
 species_delta_short="swor"
 
 histograms(plotdir = plotdir,weighting_delta = weighting_delta,species_delta = species_delta,run=run,species_delta_short)
+
+
+# scenario D--> testing the ability to manage swordfish and leatherback, tailored based on above results (5 runs, weightings are the same for both algorithms) (run) ####
+one=read.csv("hindcast_ms/extract/extractions/run_D.1.csv") %>% mutate(weighting="-0.5_0.1")
+two=read.csv("hindcast_ms/extract/extractions/run_D.2.csv") %>% mutate(weighting="-0.5_0.3")
+three=read.csv("hindcast_ms/extract/extractions/run_D.3.csv") %>% mutate(weighting="-0.7_0.1")
+four=read.csv("hindcast_ms/extract/extractions/run_D.4.csv") %>% mutate(weighting="-0.7_0.3")
+five=read.csv("hindcast_ms/extract/extractions/run_D.5.csv") %>% mutate(weighting="-0.7_0.5")
+
+run="D"
+weighting_delta=c("-0.5_0.1","-0.5_0.3","-0.7_0.1","-0.7_0.3","-0.7_0.5")
+species_delta="leatherback/swor"
+species_delta_short="lbst"
+
+histograms(plotdir = plotdir,weighting_delta = weighting_delta,species_delta = species_delta,run=run,species_delta_short)

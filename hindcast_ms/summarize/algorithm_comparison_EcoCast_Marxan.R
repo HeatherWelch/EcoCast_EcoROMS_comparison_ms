@@ -84,3 +84,29 @@ weightings <-c(0,0,0,-0.9,0.9) #run C.5
 run="C.5"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
+## scenario D--> testing the ability to manage swordfish and leatherback, tailored based on above results (5 runs, weightings are the same for both algorithms) (run) ####
+weightings <-c(0,0,0,-0.5,0.1) #run D.1
+run="D.1"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.5,0.3) #run D.2
+run="D.2"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.7,0.1) #run D.3
+run="D.3"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.7,0.3) #run D.4
+run="D.4"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.7,0.5) #run D.5
+run="D.5"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+

@@ -44,3 +44,16 @@ weighting_delta=c(-0.1,-0.3,-0.5,-0.7,-0.9)
 run="C"
 
 weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
+
+## scenario D--> testing the ability to manage swordfish and leatherback, tailored based on above results (5 runs, weightings are the same for both algorithms) (run) ####
+one=read.csv("hindcast_ms/extract/extractions/run_D.1.csv") %>% mutate(weighting="-0.5_0.1")
+two=read.csv("hindcast_ms/extract/extractions/run_D.2.csv") %>% mutate(weighting="-0.5_0.3")
+three=read.csv("hindcast_ms/extract/extractions/run_D.3.csv") %>% mutate(weighting="-0.7_0.1")
+four=read.csv("hindcast_ms/extract/extractions/run_D.4.csv") %>% mutate(weighting="-0.7_0.3")
+five=read.csv("hindcast_ms/extract/extractions/run_D.5.csv") %>% mutate(weighting="-0.7_0.5")
+
+species_delta="swordfish/leatherback"
+weighting_delta=c("-0.5_0.1","-0.5_0.3","-0.7_0.1","-0.7_0.3","-0.7_0.5")
+run="D"
+
+weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
