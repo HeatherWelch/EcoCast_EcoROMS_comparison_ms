@@ -164,3 +164,42 @@ for(d in dates){
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
 
+
+## scenario E--> testing the ability to manage swordfish and leatherback, tailored based on above results, swor > lbst (5 runs, weightings are the same for both algorithms) ####
+# in the orginial analysis, this config should make marxan work better
+outdir="~/Desktop/marxan/"
+weightings <-c(0,0,0,-0.3,0.7) #run E.1
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(0,0,0,-0.3,0.9) #run E.2
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(0,0,0,-0.5,0.7) #run E.3
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(0,0,0,-0.5,0.9) #run E.4
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(0,0,0,-0.7,0.9) #run E.5
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
