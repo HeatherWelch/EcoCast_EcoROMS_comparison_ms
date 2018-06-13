@@ -123,3 +123,76 @@ for(d in dates){
   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
 }
 
+
+## scenario D--> testing the ability to manage swordfish and leatherback, tailored based on above results (5 runs, weightings are the same for both algorithms) ####
+# C.3 was the best for Marxan, the Bs were the best for EcoROMS. Seems like its best when lbst is greater than swor
+weightings <-c(0,0,0,-0.5,0.1) #run D.1
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.5,0.3) #run D.2
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.7,0.1) #run D.3
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.7,0.3) #run D.4
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.7,0.5) #run D.5
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+## scenario E--> testing the ability to manage swordfish and leatherback, tailored based on above results, swor > lbst (5 runs, weightings are the same for both algorithms) ####
+# in the orginial analysis, this config should make marxan work better
+weightings <-c(0,0,0,-0.3,0.7) #run E.1
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.3,0.9) #run E.2
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.5,0.7) #run E.3
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.5,0.9) #run E.4
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(0,0,0,-0.7,0.9) #run E.5
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}

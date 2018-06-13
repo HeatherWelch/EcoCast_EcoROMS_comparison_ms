@@ -110,3 +110,30 @@ run="D.5"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
+## scenario E--> testing the ability to manage swordfish and leatherback, tailored based on above results, swor > lbst (5 runs, weightings are the same for both algorithms) (run) ####
+weightings <-c(0,0,0,-0.3,0.7) #run E.1
+run="E.1"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.3,0.9) #run E.2
+run="E.2"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.5,0.7) #run E.3
+run="E.3"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.5,0.9) #run E.4
+run="E.4"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-0.7,0.9) #run E.5
+run="E.5"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+

@@ -114,3 +114,33 @@ M_weightings <-c(0,0,0,-0.7,0.5)
 run="D.5"
 hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
 
+
+## scenario E--> testing the ability to manage swordfish and leatherback, tailored based on above results, swor > lbst (5 runs, weightings are the same for both algorithms) (run) ####
+# in the orginial analysis, this config should make marxan work better 
+marxandir="marxan" 
+
+ER_weightings <-c(0,0,0,-0.3,0.7) #run E.1
+M_weightings <-c(0,0,0,-0.3,0.7)
+run="E.1"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.3,0.9) #run E.2
+M_weightings <-c(0,0,0,-0.3,0.9)
+run="E.2"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.5,0.7) #run E.3
+M_weightings <-c(0,0,0,-0.5,0.7) 
+run="E.3"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.5,0.9) #run E.4
+M_weightings <-c(0,0,0,-0.5,0.9) 
+run="E.4"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(0,0,0,-0.7,0.9) #run E.5
+M_weightings <-c(0,0,0,-0.7,0.9) 
+run="E.5"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+

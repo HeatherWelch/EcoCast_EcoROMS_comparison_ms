@@ -33,6 +33,14 @@ weightings <-c(0,0,0,-0.7,0.1) #run D.3
 weightings <-c(0,0,0,-0.7,0.3) #run D.4
 weightings <-c(0,0,0,-0.7,0.5) #run D.5
 
+## scenario E--> testing the ability to manage swordfish and leatherback, tailored based on above results, swor > lbst (5 runs, weightings are the same for both algorithms)
+# in the orginial analysis, this config should make marxan work better
+weightings <-c(0,0,0,-0.3,0.7) #run E.1
+weightings <-c(0,0,0,-0.3,0.9) #run E.2
+weightings <-c(0,0,0,-0.5,0.7) #run E.3
+weightings <-c(0,0,0,-0.5,0.9) #run E.4
+weightings <-c(0,0,0,-0.7,0.9) #run E.5
+
 
 ## scenario D--> testing the ability to manage swordfish and bluesharks (lbst weighting to be determined in scenarios 1-3)
 M_weightings <-c(-0.1,-0.1,0,"lbst",0) #run D.1

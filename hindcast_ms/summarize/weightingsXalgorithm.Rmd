@@ -45,10 +45,18 @@ weightings <-c(0,0,0,-0.7,0.1) #run D.3
 weightings <-c(0,0,0,-0.7,0.3) #run D.4  
 weightings <-c(0,0,0,-0.7,0.5) #run D.5  
 
+**scenario E--> testing the ability to manage swordfish and leatherback, tailored based on above results, swor > lbst (5 runs, weightings are the same for both algorithms)**  
+in the orginial analysis, this config should make marxan work better  
+weightings <-c(0,0,0,-0.3,0.7) #run E.1  
+weightings <-c(0,0,0,-0.3,0.9) #run E.2  
+weightings <-c(0,0,0,-0.5,0.7) #run E.3  
+weightings <-c(0,0,0,-0.5,0.9) #run E.4  
+weightings <-c(0,0,0,-0.7,0.9) #run E.5  
+
 ```{r,echo=FALSE}
 csvdir="hindcast_ms/summarize/csvs/"
 plotdir="hindcast_ms/summarize/plots/"
-run="A-D"
+run="A-E"
 
 file_list=list.files("/Users/heatherwelch/Dropbox/EcoEast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize/csvs") %>% grep("availcatch_algorithm",.,value=T)
 master=list()
@@ -66,7 +74,7 @@ df$product=gsub("EcorROMS","EcoROMS",df$product)
 
 colorCount=length(unique(df$run))
 getPalette = colorRampPalette(brewer.pal(11, "Spectral"))
-mycolors=c(brewer.pal("Greens",n=5),brewer.pal("Blues",n=5),brewer.pal("Reds",n=5),brewer.pal("Purples",n=5))
+mycolors=c(brewer.pal("Greens",n=5),brewer.pal("Blues",n=5),brewer.pal("Reds",n=5),brewer.pal("Purples",n=5),brewer.pal("Greys",n=5))
 
 a=ggplot(df,aes(x=swor,y=lbst,group=run,color=run))+geom_line()+geom_point(size=.5) +facet_wrap(~product,nrow=1)
 a=a+ggtitle(label = "Trade-offs between swordfish availability and leatherback bycatch for each algorithm and run")+labs(x=paste0("% of swordfish available to catch"))+labs(y="% of leathbacks bycaught")
