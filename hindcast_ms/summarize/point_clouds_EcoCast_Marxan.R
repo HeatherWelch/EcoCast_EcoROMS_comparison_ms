@@ -41,10 +41,21 @@ data_cloud(data=data,data_thresh = data_thresh,data5 = data5,data5_thresh = data
 ## scenario D --> testing the ability to manage swordfish and leatherback, tailored based on above results (5 runs, weightings are the same for both algorithms) (run) #### 
 data=read.csv("hindcast_ms/extract/extractions/run_D.1.csv") 
 data_thresh=read.csv("hindcast_ms/summarize/csvs/D.1_thresholds_algorithm_comparison.csv") %>% filter(limit_target=="leatherback")
-data5=read.csv("hindcast_ms/extract/extractions/run_D.5.csv") 
-data5_thresh=read.csv("hindcast_ms/summarize/csvs/D.5_thresholds_algorithm_comparison.csv") %>% filter(limit_target=="leatherback")
+data5=read.csv("hindcast_ms/extract/extractions/run_D.3.csv") 
+data5_thresh=read.csv("hindcast_ms/summarize/csvs/D.3_thresholds_algorithm_comparison.csv") %>% filter(limit_target=="leatherback")
 weightings <-c(0,0,0,-0.5,0.1) #run D.1
 weightings5 <-c(0,0,0,-0.7,0.5) #run D.5
 run="D"
+
+data_cloud(data=data,data_thresh = data_thresh,data5 = data5,data5_thresh = data5_thresh,run = run)
+
+## scenario E --> testing the ability to manage swordfish and leatherback, tailored based on above results, swor > lbst (5 runs, weightings are the same for both algorithms) (run) #### 
+data=read.csv("hindcast_ms/extract/extractions/run_E.1.csv") 
+data_thresh=read.csv("hindcast_ms/summarize/csvs/E.1_thresholds_algorithm_comparison.csv") %>% filter(limit_target=="leatherback")
+data5=read.csv("hindcast_ms/extract/extractions/run_E.5.csv") 
+data5_thresh=read.csv("hindcast_ms/summarize/csvs/E.5_thresholds_algorithm_comparison.csv") %>% filter(limit_target=="leatherback")
+weightings <-c(0,0,0,-0.3,0.7) #run E.1
+weightings5 <-c(0,0,0,-0.7,0.9) #run E.5
+run="E"
 
 data_cloud(data=data,data_thresh = data_thresh,data5 = data5,data5_thresh = data5_thresh,run = run)
