@@ -203,7 +203,7 @@ df$diff=df$swor-df$lbst
 dfsub=df %>% filter(product_run=="EcoROMS_original_unscaled_D.3"|product_run=="EcoROMS_original_unscaled_D.1"|product_run=="EcoROMS_original_unscaled_B.5"|product_run=="EcoROMS_original_unscaled_D.4"|product_run=="Marxan_raw_unscaled_C.3"|product_run=="Marxan_raw_unscaled_E.1"|product_run=="Marxan_raw_unscaled_D.4"|product_run=="Marxan_raw_unscaled_B.2")
 dfsub=dfsub %>% mutate(product=gsub("Marxan_raw_unscaled","Marxan",product)) %>% mutate(product=gsub("EcoROMS_original_unscaled","EcoCast",product))
 
-a=ggplot(dfsub,aes(x=lbst,y=swor))+geom_point(aes(color=product))
+a=ggplot(dfsub,aes(x=lbst,y=swor))+geom_point(aes(color=product))+geom_line(aes(group=product_run,color=product),alpha=.4)
 a=a+scale_color_manual("Algorithm",values=c("EcoCast"="#92a8d1","Marxan"="#f7cac9"))
 a=a+geom_line(data=filter(df,product_run=="EcoROMS_original_unscaled_D.3"),aes(x=lbst,y=swor))+geom_point(data=filter(df,product_run=="EcoROMS_original_unscaled_D.3"),aes(x=lbst,y=swor),size=2,fill="#92a8d1",pch=21,color="black")
 a=a+scale_x_continuous(breaks=seq(0,100,by=10))
