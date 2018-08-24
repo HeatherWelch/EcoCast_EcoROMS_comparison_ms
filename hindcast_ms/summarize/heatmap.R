@@ -46,7 +46,19 @@ df$lbst=as.factor(df$lbst)
 
 test=ggplot(df,mapping = aes(x=as.factor(lbst),y=run,fill=swor))+geom_tile()+facet_grid(~product)+scale_fill_gradient2(name="% of swordfish available to catch",low=muted("red"),mid="yellow", high=muted("darkgreen"), guide="colorbar",midpoint = 50)
 test=test+xlab("% of allowable leatherback bycatch")+ylab("Species weightings run")
-test=test+theme(strip.background = element_rect(colour="black", fill=NA),axis.text=element_text(size=10),text=element_text(size=10))
+test=test+theme(strip.background = element_rect(colour="black", fill=NA),axis.text=element_text(size=10),text=element_text(size=10))+coord_polar()
+test
+
+df=df %>% filter(product=="EcoROMS_original")
+test=ggplot(df,mapping = aes(x=run,y=as.factor(lbst),fill=swor))+geom_tile()+facet_grid(~product)+scale_fill_gradient2(name="% of swordfish available to catch",low=muted("red"),mid="yellow", high=muted("darkgreen"), guide="colorbar",midpoint = 50)
+test=test+ylab("% of allowable leatherback bycatch")
+test=test+theme(strip.background = element_rect(colour="black", fill=NA),axis.text=element_text(size=10),text=element_text(size=10))+coord_polar()
+test
+
+df=df %>% filter(product=="EcoROMS_original")
+test=ggplot(df,mapping = aes(x=run,y=as.factor(lbst),fill=casl))+geom_tile()+facet_grid(~product)+scale_fill_gradient2(name="% of sea lion available to bycatch",low=muted("red"),mid="yellow", high=muted("darkgreen"), guide="colorbar",midpoint = 50)
+test=test+ylab("% of allowable leatherback bycatch")
+test=test+theme(strip.background = element_rect(colour="black", fill=NA),axis.text=element_text(size=10),text=element_text(size=10))+coord_polar()
 test
 
 ## blsh
