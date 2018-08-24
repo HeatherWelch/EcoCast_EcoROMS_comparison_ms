@@ -46,5 +46,6 @@ pkgTest("caret")
 pkgTest("mlbench")
 pkgTest("cowplot")
 pkgTest("gdata")
+pkgTest("plotly")
 
 
