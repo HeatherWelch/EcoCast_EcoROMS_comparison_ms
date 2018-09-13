@@ -28,7 +28,7 @@ df$lbst=round(df$lbst, digits = -1)
 
 
 
-df=df %>% mutate(blueshark=(blshobs+blshtrk)/2) %>% select(product,lbst,swor,blueshark,casl,run) %>% filter(lbst==10)
+df=df %>% mutate(blueshark=(blshobs+blshtrk)/2) %>% select(product,lbst,swor,blueshark,casl,run) %>% filter(lbst==0)
 #df$lbst=round(df$lbst, digits = -1)
 df$id=paste0(df$product,"_",df$run)
 b=df %>% gather (variable, value,-c(product,id,run)) %>% .[complete.cases(.),]
