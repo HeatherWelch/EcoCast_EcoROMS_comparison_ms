@@ -1,4 +1,5 @@
 source("load_functions.R")
+source("hindcast_ms/summarize/algorithm_comparison_multispecies.R")
 
 plotdir="hindcast_ms/summarize/plots/"
 csvdir="hindcast_ms/summarize/csvs/"
@@ -102,3 +103,23 @@ agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
 
 run="F.6"
 agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+## scenario G--> adding in bluesharks, a little bit more. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+run="G.1"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="G.2"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="G.3"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="G.4"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="G.5"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="G.6"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
