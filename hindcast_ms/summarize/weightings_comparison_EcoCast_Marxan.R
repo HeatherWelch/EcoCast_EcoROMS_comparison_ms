@@ -71,3 +71,16 @@ run="E"
 
 weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
 
+## scenario F--> adding in bluesharks. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+one=read.csv("hindcast_ms/extract/extractions/run_F.1.csv") %>% mutate(weighting="B.2")
+two=read.csv("hindcast_ms/extract/extractions/run_F.2.csv") %>% mutate(weighting="B.5")
+three=read.csv("hindcast_ms/extract/extractions/run_F.3.csv") %>% mutate(weighting="C.3")
+four=read.csv("hindcast_ms/extract/extractions/run_F.4.csv") %>% mutate(weighting="D.3")
+five=read.csv("hindcast_ms/extract/extractions/run_F.5.csv") %>% mutate(weighting="D.4")
+
+species_delta="swordfish/leatherback"
+weighting_delta=c("-0.3_0","-0.9_0","-0.5_0.5","-0.7_0.1","-0.7_0.3")
+run="F"
+
+weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
+

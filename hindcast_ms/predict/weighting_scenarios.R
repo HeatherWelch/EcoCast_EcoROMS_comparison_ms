@@ -51,6 +51,16 @@ weightings <-c(-0.05,-0.05,0,-0.7,0.1) #run F.4 (D.3)
 weightings <-c(-0.05,-0.05,0,-0.7,0.3) #run F.5 (D.4)
 weightings <-c(-0.05,-0.05,0,-0.3,0.7) #run F.6 (E.1)
 
+## scenario G--> adding in bluesharks, a little bit more. taking the best weightins from A-E and adding some blueshark to see how things change.
+#best runs EcoROMS: "EcoROMS_original_unscaled_D.3","EcoROMS_original_unscaled_D.1","EcoROMS_original_unscaled_B.5","EcoROMS_original_unscaled_D.4"
+#best runs Marxan: "Marxan_raw_unscaled_C.3","Marxan_raw_unscaled_E.1","Marxan_raw_unscaled_D.4","Marxan_raw_unscaled_B.2"
+weightings <-c(-0.25,-0.25,0,-0.3,0) #run G.1 (B.2)
+weightings <-c(-0.25,-0.25,0,-0.9,0) #run G.2 (B.5)
+weightings <-c(-0.25,-0.25,0,-0.5,0.5) #run G.3 (C.3)
+weightings <-c(-0.25,-0.25,0,-0.7,0.1) #run G.4 (D.3)
+weightings <-c(-0.25,-0.25,0,-0.7,0.3) #run G.5 (D.4)
+weightings <-c(-0.25,-0.25,0,-0.3,0.7) #run G.6 (E.1)
+
 
 
 

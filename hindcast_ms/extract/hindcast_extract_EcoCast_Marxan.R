@@ -144,3 +144,36 @@ M_weightings <-c(0,0,0,-0.7,0.9)
 run="E.5"
 hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
 
+## scenario F--> adding in bluesharks. taking the best weightins from A-E and adding some blueshark to see how things change (run) ####
+marxandir="marxan" 
+
+ER_weightings <-c(-0.05,-0.05,0,-0.3,0) #run F.1 (B.2)
+M_weightings <-c(-0.05,-0.05,0,-0.3,0) #run F.1 (B.2)
+run="F.1"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.05,-0.05,0,-0.9,0) #run F.2 (B.5)
+M_weightings <-c(-0.05,-0.05,0,-0.9,0) #run F.2 (B.5)
+run="F.2"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.05,-0.05,0,-0.5,0.5) #run F.3 (C.3)
+M_weightings <-c(-0.05,-0.05,0,-0.5,0.5) #run F.3 (C.3)
+run="F.3"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.05,-0.05,0,-0.7,0.1) #run F.4 (D.3)
+M_weightings <-c(-0.05,-0.05,0,-0.7,0.1) #run F.4 (D.3)
+run="F.4"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.05,-0.05,0,-0.7,0.3) #run F.5 (D.4)
+M_weightings <-c(-0.05,-0.05,0,-0.7,0.3) #run F.5 (D.4) 
+run="F.5"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.05,-0.05,0,-0.3,0.7) #run F.6 (E.1)
+M_weightings <-c(-0.05,-0.05,0,-0.3,0.7) #run F.6 (E.1)
+run="F.6"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+

@@ -204,7 +204,7 @@ for(d in dates){
 }
 
 
-## scenario F--> adding in bluesharks. taking the best weightins from A-E and adding some blueshark to see how things change. ####
+## scenario F--> adding in bluesharks. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
 outdir="~/Desktop/marxan/"
 weightings <-c(-0.05,-0.05,0,-0.3,0) #run F.1 (B.2)
 for(d in dates){
@@ -242,6 +242,51 @@ for(d in dates){
 }
 
 weightings <-c(-0.05,-0.05,0,-0.3,0.7) #run F.6 (E.1)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+
+## scenario G--> adding in bluesharks, a little bit more. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+outdir="~/Desktop/marxan/"
+weightings <-c(-0.25,-0.25,0,-0.3,0) #run G.1 (B.2)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.9,0) #run G.2 (B.5)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.5,0.5) #run G.3 (C.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.7,0.1) #run G.4 (D.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.7,0.3) #run G.5 (D.4)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.3,0.7) #run G.6 (E.1)
 for(d in dates){
   get_date=d
   print(get_date)
