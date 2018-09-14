@@ -34,7 +34,7 @@ dff=df %>% mutate(swor_blsh_casl=blueshark+casl+swor_inverse) %>% mutate(swor_bl
 #dff[order(dff$multi),]
 
 dff$id=paste0(dff$product,"_",dff$run) %>% as.character()
-b=dff %>% gather (variable, value,-c(product,id,run,swor_inverse,swor_blsh_casl,swor_blsh,swor2)) %>% .[complete.cases(.),] %>% rename(Product=product)
+b=dff %>% gather (variable, value,-c(product,id,run,swor_inverse,swor_blsh_casl,swor_blsh,swor2)) %>% .[complete.cases(.),] %>% dplyr::rename(Product=product)
 b$variable=factor(b$variable,levels=c("lbst","swor","blueshark","casl"))
 
 b=b[order(b$swor_blsh_casl),]
@@ -64,6 +64,7 @@ aa=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is impor
 
 aa
 
+c=b %>% filter(swor_blsh_casl==1)
 bb=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is important!
   geom_path(aes(color = as.factor(swor_blsh_casl),linetype=Product,size=as.factor(b$swor_blsh_casl)),
             alpha = 0.5,
