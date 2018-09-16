@@ -197,7 +197,7 @@ for(d in dates){
   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
 }
 
-## scenario F--> adding in bluesharks. taking the best weightins from A-E and adding some blueshark to see how things change. ####
+## scenario F--> adding in bluesharks. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
 # in the orginial analysis, this config should make marxan work better
 weightings <-c(-0.05,-0.05,0,-0.3,0) #run F.1 (B.2)
 for(d in dates){
@@ -235,6 +235,141 @@ for(d in dates){
 }
 
 weightings <-c(-0.05,-0.05,0,-0.3,0.7) #run F.6 (E.1)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+
+## scenario G--> adding in bluesharks, a little bit more. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+# in the orginial analysis, this config should make marxan work better
+weightings <-c(-0.25,-0.25,0,-0.3,0) #run G.1 (B.2)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.9,0) #run G.2 (B.5)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.5,0.5) #run G.3 (C.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.35,-0.35,0,-0.7,0.1) #run G.4 (D.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.7,0.3) #run G.5 (D.4)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.25,-0.25,0,-0.3,0.7) #run G.6 (E.1)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+
+## scenario H--> adding in bluesharks, a little bit more x2. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+# in the orginial analysis, this config should make marxan work better
+weightings <-c(-0.35,-0.35,0,-0.3,0) #run H.1 (B.2)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.35,-0.35,0,-0.9,0) #run H.2 (B.5)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.35,-0.35,0,-0.5,0.5) #run H.3 (C.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.35,-0.35,0,-0.7,0.1) #run H.4 (D.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.35,-0.35,0,-0.7,0.3) #run H.5 (D.4)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.35,-0.35,0,-0.3,0.7) #run H.6 (E.1)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+
+## scenario I--> adding in bluesharks, and then sealions to check multispecies. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+# in the orginial analysis, this config should make marxan work better
+weightings <-c(-0.05,-0.05,-0.1,-0.3,0) #run I.1 (B.2)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.05,-0.05,-0.1,-0.9,0) #run I.2 (B.5)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.05,-0.05,-0.1,-0.5,0.5) #run I.3 (C.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.05,-0.05,-0.1,-0.7,0.1) #run I.4 (D.3)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.05,-0.05,-0.1,-0.7,0.3) #run I.5 (D.4)
+for(d in dates){
+  get_date=d
+  print(get_date)
+  Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
+}
+
+weightings <-c(-0.05,-0.05,-0.1,-0.3,0.7) #run I.6 (E.1)
 for(d in dates){
   get_date=d
   print(get_date)
