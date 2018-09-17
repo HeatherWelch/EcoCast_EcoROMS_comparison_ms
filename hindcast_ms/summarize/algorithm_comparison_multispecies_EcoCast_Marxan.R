@@ -123,3 +123,21 @@ agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
 run="G.6"
 agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
 
+## scenario H--> adding in bluesharks, a little bit more x2. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+run="H.1"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="H.2"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="H.3"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="H.4"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="H.5"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
+
+run="H.6"
+agorithm_comparison_multispecies(run=run,csvdir=csvdir,datadir=datadir)
