@@ -27,11 +27,9 @@ for (file in file_list){
 fullon=do.call("rbind",master)
 df=fullon %>% dplyr::filter(limit_target=="leatherback")
 df$lbst=round(df$lbst, digits = -1)
-df=df %>% mutate(blueshark=(blshobs+blshtrk)/2) %>% select(product,lbst,swor,blueshark,casl,run) %>% filter(lbst==20)
+df=df %>% mutate(blueshark=(blshobs+blshtrk)/2) %>% select(product,lbst,swor,blueshark,casl,run) %>% filter(lbst==30)
 df=df %>% mutate(swor_inverse=100-swor)
-#dff=df %>% mutate(multi=rowSums(.[,c(blueshark,casl,swor_inverse)]))
-dff=df %>% mutate(swor_blsh_casl=blueshark+casl+swor_inverse) %>% mutate(swor_blsh=blueshark+swor_inverse) %>% mutate(swor2=swor)
-#dff[order(dff$multi),]
+dff=df %>% mutate(swor_blsh_casl=blueshark+casl+swor_inverse) %>% mutate(swor_blsh=blueshark+swor_inverse+(casl*.1)) %>% mutate(swor2=swor_inverse+(casl*.1)+(blueshark*.1))
 
 dff$id=paste0(dff$product,"_",dff$run) %>% as.character()
 b=dff %>% gather (variable, value,-c(product,id,run,swor_inverse,swor_blsh_casl,swor_blsh,swor2)) %>% .[complete.cases(.),] %>% dplyr::rename(Product=product)
@@ -45,7 +43,7 @@ b=b[order(b$swor_blsh),]
 a=b$id %>% unique() %>% .[1:10] 
 b=b %>% mutate(swor_blsh=ifelse(id %in% a,1,0))
 
-b=b[order(-b$swor2),]
+b=b[order(b$swor2),]
 a=b$id %>% unique() %>% .[1:10] 
 b=b %>% mutate(swor2=ifelse(id %in% a,1,0))
 
@@ -69,7 +67,7 @@ bb=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is impor
   geom_path(alpha = 0.5,
             lineend = 'round', linejoin = 'round', color="gray87") +
   scale_y_continuous(name="% of species available to catch",breaks = seq(0, 100, by = 10), expand = c(0, 0)) +scale_x_discrete(name="Species",labels=c("lbst"="Leatherback","swor"="Swordfish","blueshark"="Blueshark","casl"="California Sea Lion"), expand = c(0, 0))+
-  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if objective is to maximize swordfish catch and blueshark/sealion avoidance")+
+  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if management objective is to equally maximize swordfish catch and avoidance of blueshark and sea lion")+
   theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=8),plot.margin = margin(.3, 1, .3, .3, "cm"))+
   geom_vline(xintercept=c(2,3,4))
 
@@ -85,7 +83,7 @@ cc=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is impor
   geom_path(alpha = 0.5,
             lineend = 'round', linejoin = 'round', color="gray87") +
   scale_y_continuous(name="% of species available to catch",breaks = seq(0, 100, by = 10), expand = c(0, 0)) +scale_x_discrete(name="Species",labels=c("lbst"="Leatherback","swor"="Swordfish","blueshark"="Blueshark","casl"="California Sea Lion"), expand = c(0, 0))+
-  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if objective is to maximize swordfish catch and blueshark/sealion avoidance")+
+  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if management objective is to equally maximize swordfish catch and blueshark avoidance, with less emphasis on sea lion avoidance")+
   theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=8),plot.margin = margin(.3, 1, .3, .3, "cm"))+
   geom_vline(xintercept=c(2,3))
 
@@ -101,7 +99,7 @@ dd=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is impor
   geom_path(alpha = 0.5,
             lineend = 'round', linejoin = 'round', color="gray87") +
   scale_y_continuous(name="% of species available to catch",breaks = seq(0, 100, by = 10), expand = c(0, 0)) +scale_x_discrete(name="Species",labels=c("lbst"="Leatherback","swor"="Swordfish","blueshark"="Blueshark","casl"="California Sea Lion"), expand = c(0, 0))+
-  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if objective is to maximize swordfish catch and blueshark/sealion avoidance")+
+  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if management objective is to equally maximize swordfish catch, with less emphasis on blueshark and sea lion avoidance")+
   theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=8),plot.margin = margin(.3, 1, .3, .3, "cm"))+
   geom_vline(xintercept=c(2))
 
@@ -112,7 +110,7 @@ dd=dd+
 
 dd
 
-png(paste0(plotdir,"parellel_coordinate_plot2.png"),width=14, height=7, units="in", res=400)
+png(paste0(plotdir,"parellel_coordinate_plot2_20_new_mgmt.png"),width=14, height=7, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
@@ -146,8 +144,8 @@ c=c %>% mutate(id2=paste(id,best,sep="_"))
 c$sum=NA
 
 c=c %>% mutate(sum=ifelse(best=="swor_blsh_casl_id",((100-swor)+blueshark+casl+lbst),sum))
-c=c %>% mutate(sum=ifelse(best=="swor_blsh_id",((100-swor)+blueshark+lbst),sum))
-c=c %>% mutate(sum=ifelse(best=="swor2_id",((100-swor)+lbst),sum))
+c=c %>% mutate(sum=ifelse(best=="swor_blsh_id",((100-swor)+blueshark+lbst+(casl*.1)),sum))
+c=c %>% mutate(sum=ifelse(best=="swor2_id",((100-swor)+lbst+(casl*.1)+(blueshark*.1)),sum))
 
 write.csv(c,paste0(plotdir,"parellel_coordinate_table.csv"))
 
