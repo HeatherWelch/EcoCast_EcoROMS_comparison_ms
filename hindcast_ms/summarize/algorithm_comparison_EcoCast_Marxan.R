@@ -170,63 +170,94 @@ data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
 ## scenario G--> adding in bluesharks, a little bit more. taking the best weightins from A-E and adding some blueshark to see how things change. ####
-weightings <-c(-0.25,-0.25,0,-0.3,0) #run F.1 (B.2)
+weightings <-c(-0.25,-0.25,0,-0.3,0) #run G.1 (B.2)
 run="G.1"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.25,-0.25,0,-0.9,0) #run F.2 (B.5)
+weightings <-c(-0.25,-0.25,0,-0.9,0) #run G.2 (B.5)
 run="G.2"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.25,-0.25,0,-0.5,0.5) #run F.3 (C.3)
+weightings <-c(-0.25,-0.25,0,-0.5,0.5) #run G.3 (C.3)
 run="G.3"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.25,-0.25,0,-0.7,0.1) #run F.4 (D.3)
+weightings <-c(-0.25,-0.25,0,-0.7,0.1) #run G.4 (D.3)
 run="G.4"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.25,-0.25,0,-0.7,0.3) #run F.5 (D.4)
+weightings <-c(-0.25,-0.25,0,-0.7,0.3) #run G.5 (D.4)
 run="G.5"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.25,-0.25,0,-0.3,0.7) #run F.6 (E.1)
+weightings <-c(-0.25,-0.25,0,-0.3,0.7) #run G.6 (E.1)
 run="G.6"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
 ## scenario H--> adding in bluesharks, a little bit more x2. taking the best weightins from A-E and adding some blueshark to see how things change. ####
-weightings <-c(-0.35,-0.35,0,-0.3,0) #run F.1 (B.2)
+weightings <-c(-0.35,-0.35,0,-0.3,0) #run H.1 (B.2)
 run="H.1"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.35,-0.35,0,-0.9,0) #run F.2 (B.5)
+weightings <-c(-0.35,-0.35,0,-0.9,0) #run H.2 (B.5)
 run="H.2"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.35,-0.35,0,-0.5,0.5) #run F.3 (C.3)
+weightings <-c(-0.35,-0.35,0,-0.5,0.5) #run H.3 (C.3)
 run="H.3"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.35,-0.35,0,-0.7,0.1) #run F.4 (D.3)
+weightings <-c(-0.35,-0.35,0,-0.7,0.1) #run H.4 (D.3)
 run="H.4"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.35,-0.35,0,-0.7,0.3) #run F.5 (D.4)
+weightings <-c(-0.35,-0.35,0,-0.7,0.3) #run H.5 (D.4)
 run="H.5"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.35,-0.35,0,-0.3,0.7) #run F.6 (E.1)
+weightings <-c(-0.35,-0.35,0,-0.3,0.7) #run H.6 (E.1)
 run="H.6"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+## scenario I--> adding in bluesharks, and then sealions to check multispecies. taking the best weightins from A-E and adding some blueshark to see how things change. ####
+weightings <-c(-0.05,-0.05,-0.1,-0.3,0) #run I.1 (B.2)
+run="I.1"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.05,-0.05,-0.1,-0.9,0) #run I.2 (B.5)
+run="I.2"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.05,-0.05,-0.1,-0.5,0.5) #run I.3 (C.3)
+run="I.3"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.05,-0.05,-0.1,-0.7,0.1) #run I.4 (D.3)
+run="I.4"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.05,-0.05,-0.1,-0.7,0.3) #run I.5 (D.4)
+run="I.5"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.05,-0.05,-0.1,-0.3,0.7) #run I.6 (E.1)
+run="I.6"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
