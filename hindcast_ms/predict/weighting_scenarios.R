@@ -81,6 +81,16 @@ weightings <-c(-0.05,-0.05,-0.1,-0.7,0.1) #run I.4 (D.3)
 weightings <-c(-0.05,-0.05,-0.1,-0.7,0.3) #run I.5 (D.4)
 weightings <-c(-0.05,-0.05,-0.1,-0.3,0.7) #run I.6 (E.1)
 
+## scenario J--> adding in bluesharks a little bit more, and then sealions a little bit more to check multispecies. taking the best weightins from A-E and adding some blueshark to see how things change.
+#best runs EcoROMS: "EcoROMS_original_unscaled_D.3","EcoROMS_original_unscaled_D.1","EcoROMS_original_unscaled_B.5","EcoROMS_original_unscaled_D.4"
+#best runs Marxan: "Marxan_raw_unscaled_C.3","Marxan_raw_unscaled_E.1","Marxan_raw_unscaled_D.4","Marxan_raw_unscaled_B.2"
+weightings <-c(-0.25,-0.25,-0.5,-0.3,0) #run J.1 (B.2)
+weightings <-c(-0.25,-0.25,-0.5,-0.9,0) #run J.2 (B.5)
+weightings <-c(-0.25,-0.25,-0.5,-0.5,0.5) #run J.3 (C.3)
+weightings <-c(-0.25,-0.25,-0.5,-0.7,0.1) #run J.4 (D.3)
+weightings <-c(-0.25,-0.25,-0.5,-0.7,0.3) #run J.5 (D.4)
+weightings <-c(-0.25,-0.25,-0.5,-0.3,0.7) #run J.6 (E.1)
+
 
 
 
