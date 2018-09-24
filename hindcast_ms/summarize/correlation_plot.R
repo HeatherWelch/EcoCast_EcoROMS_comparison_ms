@@ -32,7 +32,7 @@ fullon=do.call("rbind",master)
 # pp=ggplot(a,aes(species,value))+geom_boxplot()
 # pp
 
-a=fullon %>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,lon,lat,dt,run,blshobs,blshtrk))
+a=fullon %>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,lon,lat,dt,run,blshobs,blshtrk)) %>% select(-c(EcoROMS_original,Marxan_raw))
 b=cor(a)
 corrplot(b, method="color",type="upper", 
          addCoef.col = "black")
