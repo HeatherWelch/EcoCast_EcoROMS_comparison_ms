@@ -281,3 +281,38 @@ run="I.6"
 hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
 
 
+
+## scenario J--> adding in bluesharks a little bit more, and then sealions a little bit more to check multispecies. taking the best weightins from A-E and adding some blueshark to see how things change.  (run) ####
+marxandir="marxan" 
+
+ER_weightings <-c(-0.25,-0.25,-0.5,-0.3,0) #run J.1 (B.2)
+M_weightings <-c(-0.25,-0.25,-0.5,-0.3,0) #run J.1 (B.2)
+run="J.1"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.25,-0.25,-0.5,-0.9,0) #run J.2 (B.5)
+M_weightings <-c(-0.25,-0.25,-0.5,-0.9,0) #run J.2 (B.5)
+run="J.2"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.25,-0.25,-0.5,-0.5,0.5) #run J.3 (C.3)
+M_weightings <-c(-0.25,-0.25,-0.5,-0.5,0.5) #run J.3 (C.3)
+run="J.3"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.25,-0.25,-0.5,-0.7,0.1) #run J.4 (D.3)
+M_weightings <-c(-0.25,-0.25,-0.5,-0.7,0.1) #run J.4 (D.3)
+run="J.4"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.25,-0.25,-0.5,-0.7,0.3) #run J.5 (D.4)
+M_weightings <-c(-0.25,-0.25,-0.5,-0.7,0.3) #run J.5 (D.4)
+run="J.5"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+ER_weightings <-c(-0.25,-0.25,-0.5,-0.3,0.7) #run J.6 (E.1)
+M_weightings <-c(-0.25,-0.25,-0.5,-0.3,0.7) #run J.6 (E.1)
+run="J.6"
+hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
+
+
