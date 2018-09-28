@@ -15,7 +15,143 @@ for (file in file_list){
 }
 
 fullon=do.call("rbind",master)
-master=fullon %>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,lon,lat,dt,blshobs,blshtrk)) %>% select(-c(EcoROMS_original,Marxan_raw)) %>% rename(EcoROMS=EcoROMS_original_unscaled) %>% rename(Marxan=Marxan_raw_unscaled) %>% rename(Swordfish=swor) %>% rename(Leatherback=lbst) %>% rename(Sealion=casl) %>% rename(Blueshark=blsh)
-mas=master %>% dplyr::gather(species,hab_suit,-c(EcoROMS,Marxan,run))
+master=fullon %>% as.data.frame()%>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,lon,lat,dt,blshobs,blshtrk)) %>% select(-c(EcoROMS_original,Marxan_raw)) %>% rename(EcoROMS=EcoROMS_original_unscaled) %>% rename(Marxan=Marxan_raw_unscaled) %>% rename(Swordfish=swor) %>% rename(Leatherback=lbst) %>% rename(Sealion=casl) %>% rename(Blueshark=blsh)
+detachPackage("bindrcpp")
 
-master$id=paste0(dff$product,"_",dff$run) %>% as.character()
+runs=as.factor(master$run) %>% unique() %>% as.character()
+empty=data.frame(Swordfish=NA,Leatherback=NA,Sealion=NA,Blueshark=NA,algorithm=NA,run=NA)
+for(i in 1:length(runs)){
+  runn=runs[i]
+  a=master %>% filter(run==runn) %>% select(-run) %>% cor() %>% .[1:2,3:6] %>% as.data.frame() %>% mutate(algorithm=c("EcoROMS","Marxan")) %>% mutate(run=runn)
+  empty=rbind(empty,a)
+}
+
+
+df=empty %>% mutate(swor_inverse=1-Swordfish) %>%  mutate(lbst_inverse=Leatherback+1) %>%  mutate(casl_inverse=Sealion+1) %>%  mutate(blsh_inverse=Blueshark+1) 
+dff=df %>% mutate(swor_blsh_casl=blsh_inverse+casl_inverse+swor_inverse+lbst_inverse) %>% mutate(swor_blsh=lbst_inverse+blsh_inverse+swor_inverse+(casl_inverse*.1)) %>% mutate(swor2=lbst_inverse+swor_inverse+(casl_inverse*.1)+(blsh_inverse*.1))
+
+dff$id=paste0(dff$algorithm,"_",dff$run) %>% as.character()
+b=dff %>% gather (variable, value,-c(algorithm,id,run,swor_inverse,lbst_inverse,casl_inverse,blsh_inverse,swor_blsh_casl,swor_blsh,swor2)) %>% .[complete.cases(.),] %>% dplyr::rename(Algorithm=algorithm)
+b$variable=factor(b$variable,levels=c("Leatherback","Swordfish","Blueshark","Sealion"))
+#b=b %>% filter(Product!="EcoROMS_original") %>% filter(Product!="Marxan_raw")
+
+b=b[order(b$swor_blsh_casl),]
+a=b$id %>% unique() %>% .[1:10] 
+b=b %>% mutate(swor_blsh_casl=ifelse(id %in% a,1,0))
+
+b=b[order(b$swor_blsh),]
+a=b$id %>% unique() %>% .[1:10] 
+b=b %>% mutate(swor_blsh=ifelse(id %in% a,1,0))
+
+b=b[order(b$swor2),]
+a=b$id %>% unique() %>% .[1:10] 
+b=b %>% mutate(swor2=ifelse(id %in% a,1,0))
+
+b$Algorithm=gsub("_"," ",b$Algorithm)
+b=with(b, b[order(variable),])
+
+## master
+aa=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is important!
+  geom_path(aes(color = Algorithm),
+            alpha = 0.5,
+            lineend = 'round', linejoin = 'round') +
+  scale_y_continuous(name="Correlation [r]",breaks = seq(-1, 1, by = .1), expand = c(.01, .01)) +scale_x_discrete(name="Species",labels=c("Leatherback"="Leatherback","Swordfish"="Swordfish","Blueshark"="Blueshark","Sealion"="California Sea Lion"), expand = c(.01, .01))+
+  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Comparison of species-algorithm correlations across runs")+
+  scale_color_manual("Product",values=c("EcoROMS"="cornflowerblue","Marxan"="aquamarine4"))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),legend.position=c(.2,1),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'),plot.title = element_text(hjust=0,size=5),plot.margin = margin(.3, 1, .3, .3, "cm"))+
+  geom_hline(yintercept = 0)+geom_point(aes(x=1,y=-1),size=2)+geom_point(aes(x=2,y=1),size=2)+geom_point(aes(x=3,y=-1),size=2)+geom_point(aes(x=4,y=-1),size=2)
+
+
+aa
+
+c=b %>% filter(swor_blsh_casl==1)
+bb=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is important!
+  geom_path(alpha = 0.5,
+            lineend = 'round', linejoin = 'round', color="gray87") +
+  scale_y_continuous(name="Correlation [r]",breaks = seq(-1, 1, by = .1), expand = c(.01, .01)) +scale_x_discrete(name="Species",labels=c("Leatherback"="Leatherback","Swordfish"="Swordfish","Blueshark"="Blueshark","Sealion"="California Sea Lion"), expand = c(.01, .01))+
+  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if management objective is to equally maximize swordfish catch and avoidance of leatherback, blueshark and sea lion")+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),plot.margin = margin(.3, 1, .3, .3, "cm"))+
+  geom_vline(xintercept=c(2,3,4))
+
+bb=bb+
+  geom_path(data=c,aes(x = variable, y = value, group = id,color = Algorithm))+
+  scale_color_manual("Product",values=c("EcoROMS"="cornflowerblue","Marxan"="aquamarine4"))+
+  guides(color=F)+
+  geom_hline(yintercept = 0)+geom_point(aes(x=1,y=-1),size=2)+geom_point(aes(x=2,y=1),size=2)+geom_point(aes(x=3,y=-1),size=2)+geom_point(aes(x=4,y=-1),size=2)
+
+bb
+
+c=b %>% filter(swor_blsh==1)
+cc=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is important!
+  geom_path(alpha = 0.5,
+            lineend = 'round', linejoin = 'round', color="gray87") +
+  scale_y_continuous(name="Correlation [r]",breaks = seq(-1, 1, by = .1), expand = c(.01, .01)) +scale_x_discrete(name="Species",labels=c("Leatherback"="Leatherback","Swordfish"="Swordfish","Blueshark"="Blueshark","Sealion"="California Sea Lion"), expand = c(.01, .01))+
+  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if management objective is to equally maximize swordfish catch and leatherback and blueshark avoidance, with less emphasis on sea lion avoidance")+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),plot.margin = margin(.3, 1, .3, .3, "cm"))+
+  geom_vline(xintercept=c(2,3))
+
+cc=cc+
+  geom_path(data=c,aes(x = variable, y = value, group = id,color = Algorithm))+
+  scale_color_manual("Product",values=c("EcoROMS"="cornflowerblue","Marxan"="aquamarine4"))+
+  guides(color=F)+
+  geom_hline(yintercept = 0)+geom_point(aes(x=1,y=-1),size=2)+geom_point(aes(x=2,y=1),size=2)+geom_point(aes(x=3,y=-1),size=2)
+
+cc
+
+c=b %>% filter(swor2==1)
+dd=ggplot(b, aes(x = variable, y = value, group = id)) +   # group = id is important!
+  geom_path(alpha = 0.5,
+            lineend = 'round', linejoin = 'round', color="gray87") +
+  scale_y_continuous(name="Correlation [r]",breaks = seq(-1, 1, by = .1), expand = c(.01, .01)) +scale_x_discrete(name="Species",labels=c("Leatherback"="Leatherback","Swordfish"="Swordfish","Blueshark"="Blueshark","Sealion"="California Sea Lion"), expand = c(.01, .01))+
+  scale_size(breaks = NULL, range = c(0, 100))+ggtitle("Top 10 runs if management objective is to equally maximize swordfish catch and leatherback avoidance, with less emphasis on blueshark and sea lion avoidance")+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),plot.margin = margin(.3, 1, .3, .3, "cm"))+
+  geom_vline(xintercept=c(2))
+
+dd=dd+
+  geom_path(data=c,aes(x = variable, y = value, group = id,color = Algorithm))+
+  scale_color_manual("Product",values=c("EcoROMS"="cornflowerblue","Marxan"="aquamarine4"))+
+  guides(color=F)+
+  geom_hline(yintercept = 0)+geom_point(aes(x=1,y=-1),size=2)+geom_point(aes(x=2,y=1),size=2)
+
+dd
+
+
+png(paste0(plotdir_ms,"parellel_coordinate_plot_10_new_mgmt_no_E_O_Mraw_correlations.png"),width=14, height=7, units="in", res=400)
+par(ps=10)
+par(cex=1)
+par(mar=c(4,4,1,1))
+plot_grid(aa,bb,cc,dd,nrow=2,ncol=2)
+dev.off()
+
+
+b=dff %>% gather (variable, value,-c(algorithm,id,run,swor_inverse,lbst_inverse,casl_inverse,blsh_inverse,swor_blsh_casl,swor_blsh,swor2)) %>% .[complete.cases(.),] %>% dplyr::rename(Algorithm=algorithm)
+b$variable=factor(b$variable,levels=c("Leatherback","Swordfish","Blueshark","Sealion"))
+#b=b %>% filter(Product!="EcoROMS_original") %>% filter(Product!="Marxan_raw")
+
+b=b[order(b$swor_blsh_casl),]
+a=b$id %>% unique() %>% .[1:10] 
+b=b %>% mutate(swor_blsh_casl_id=ifelse(id %in% a,1,0))
+
+b=b[order(b$swor_blsh),]
+a=b$id %>% unique() %>% .[1:10] 
+b=b %>% mutate(swor_blsh_id=ifelse(id %in% a,1,0))
+
+b=b[order(b$swor2),]
+a=b$id %>% unique() %>% .[1:10] 
+b=b %>% mutate(swor2_id=ifelse(id %in% a,1,0))
+
+#b$Product=gsub("_"," ",b$Product)
+c=b %>% select(-c(swor_inverse,swor_blsh_casl,swor_blsh,swor2))
+c=c %>% gather(best,best_value,-c(Algorithm,run,variable,value,id))
+c=c%>% filter(best_value==1)
+c=c %>% spread(variable,value)
+c=c %>% mutate(id2=paste(id,best,sep="_"))
+
+c$sum=NA
+
+c=c %>% mutate(sum=ifelse(best=="swor_blsh_casl_id",((1-Swordfish)+(Blueshark+1)+(Sealion+1)+(Leatherback+1)),sum))
+c=c %>% mutate(sum=ifelse(best=="swor_blsh_id",((1-Swordfish)+(Blueshark+1)+(Leatherback+1)+((Sealion+1)*.1)),sum))
+c=c %>% mutate(sum=ifelse(best=="swor2_id",((1-Swordfish)+(Leatherback+1)+((Sealion+1)*.1)+((Blueshark+1)*.1)),sum))
+
+write.csv(c,paste0(plotdir_ms,"parellel_coordinate_table_10_no_E_O_Mraw_correlations.csv"))
+
