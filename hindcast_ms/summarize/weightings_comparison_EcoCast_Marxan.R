@@ -136,5 +136,16 @@ run="J"
 
 weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
 
+## scenario K--> adding in bluesharks a little bit more x2, and then sealions a little bit more to check multispecies. taking the best weightins from A-E and adding some blueshark to see how things change. (run) ####
+one=read.csv("hindcast_ms/extract/extractions/run_K.1.csv") %>% mutate(weighting="K.2")
+two=read.csv("hindcast_ms/extract/extractions/run_K.2.csv") %>% mutate(weighting="K.5")
+three=read.csv("hindcast_ms/extract/extractions/run_K.3.csv") %>% mutate(weighting="K.3")
+four=read.csv("hindcast_ms/extract/extractions/run_K.4.csv") %>% mutate(weighting="K.3")
+five=read.csv("hindcast_ms/extract/extractions/run_K.5.csv") %>% mutate(weighting="K.4")
 
+species_delta="swordfish/leatherback"
+weighting_delta=c("-0.3_0","-0.9_0","-0.5_0.5","-0.7_0.1","-0.7_0.3")
+run="K"
+
+weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
 

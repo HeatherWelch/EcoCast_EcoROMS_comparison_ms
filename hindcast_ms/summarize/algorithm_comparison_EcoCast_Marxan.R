@@ -261,6 +261,7 @@ weightings <-c(-0.05,-0.05,-0.1,-0.3,0.7) #run I.6 (E.1)
 run="I.6"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
+
 ## scenario J--> adding in bluesharks a little bit more, and then sealions a little bit more to check multispecies. taking the best weightins from A-E and adding some blueshark to see how things change.. ####
 weightings <-c(-0.25,-0.25,-0.5,-0.3,0) #run J.1 (B.2)
 run="J.1"
@@ -289,5 +290,36 @@ agorithm_comparison(data=data,weightings=weightings,run=run)
 
 weightings <-c(-0.25,-0.25,-0.5,-0.3,0.7) #run J.6 (E.1)
 run="J.6"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+## scenario K--> adding in bluesharks a little bit more x2, and then sealions a little bit more to check multispecies. taking the best weightins from A-E and adding some blueshark to see how things change. ####
+weightings <-c(-0.35,-0.35,-0.7,-0.3,0) #run K.1 (B.2)
+run="K.1"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.35,-0.35,-0.7,-0.9,0) #run K.2 (B.5)
+run="K.2"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.35,-0.35,-0.7,-0.5,0.5) #run K.3 (C.3)
+run="K.3"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.35,-0.35,-0.7,-0.7,0.1) #run K.4 (D.3)
+run="K.4"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.35,-0.35,-0.7,-0.5,-0.7,0.3) #run K.5 (D.4)
+run="K.5"
+data=read.csv(paste0(datadir,"run_",run,".csv"))
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(-0.35,-0.35,-0.7,-0.3,0.7) #run K.6 (E.1)
+run="K.6"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
