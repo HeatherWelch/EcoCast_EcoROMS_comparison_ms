@@ -101,6 +101,16 @@ weightings <-c(-0.35,-0.35,-0.7,-0.7,0.1) #run K.4 (D.3)
 weightings <-c(-0.35,-0.35,-0.7,-0.5,-0.7,0.3) #run K.5 (D.4)
 weightings <-c(-0.35,-0.35,-0.7,-0.3,0.7) #run K.6 (E.1)
 
+## scenario L--> runs to match example mgmt objectives
+# weightings <-c(-0.25,-0.25,-0.5,-0.5,0.5) #run J.3 (C.3) RUN, example of caring about all species equally
+weightings <-c(-0.25,-0.25,-0.05,-0.5,0.5) #run L.1 CASL 10% as important
+weightings <-c(-0.025,-0.025,-0.05,-0.5,0.5) #run L.2 BLSH, CASL 10% as important
+weightings <-c(-0.15,-0.15,-0.3,-0.3,0.3) #run L.3 RUN, example of caring about all species equally
+weightings <-c(-0.15,-0.15,-0.03,-0.3,0.3) #run L.4 CASL 10% as important
+weightings <-c(-0.015,-0.015,-0.03,-0.3,0.3) #run L.5 BLSH, CASL 10% as important
+
+
+
 
 
 
