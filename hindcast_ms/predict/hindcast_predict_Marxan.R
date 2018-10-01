@@ -457,7 +457,7 @@ for(d in dates){
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
 
-weightings <-c(-0.35,-0.35,-0.7,-0.5,-0.7,0.3) #run K.5 (D.4)
+weightings <-c(-0.35,-0.35,-0.7,-0.7,0.3) #run K.5 (D.4)
 for(d in dates){
   get_date=d
   print(get_date)

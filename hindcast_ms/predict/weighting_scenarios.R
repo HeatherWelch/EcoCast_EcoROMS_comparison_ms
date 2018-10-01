@@ -98,7 +98,7 @@ weightings <-c(-0.35,-0.35,-0.7,-0.3,0) #run K.1 (B.2)
 weightings <-c(-0.35,-0.35,-0.7,-0.9,0) #run K.2 (B.5)
 weightings <-c(-0.35,-0.35,-0.7,-0.5,0.5) #run K.3 (C.3)
 weightings <-c(-0.35,-0.35,-0.7,-0.7,0.1) #run K.4 (D.3)
-weightings <-c(-0.35,-0.35,-0.7,-0.5,-0.7,0.3) #run K.5 (D.4)
+weightings <-c(-0.35,-0.35,-0.7,-0.7,0.3) #run K.5 (D.4)
 weightings <-c(-0.35,-0.35,-0.7,-0.3,0.7) #run K.6 (E.1)
 
 ## scenario L--> runs to match example mgmt objectives
