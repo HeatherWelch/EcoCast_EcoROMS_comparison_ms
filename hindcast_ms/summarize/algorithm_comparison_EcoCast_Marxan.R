@@ -314,7 +314,7 @@ run="K.4"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
 
-weightings <-c(-0.35,-0.35,-0.7,-0.5,-0.7,0.3) #run K.5 (D.4)
+weightings <-c(-0.35,-0.35,-0.7,-0.7,0.3) #run K.5 (D.4)
 run="K.5"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)

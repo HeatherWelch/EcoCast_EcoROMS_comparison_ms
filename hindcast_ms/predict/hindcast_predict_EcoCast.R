@@ -452,7 +452,7 @@ for(d in dates){
   Run_ecoroms_hindcast(get_date=get_date,moddir=moddir,dailypreddir = dailypreddir,outdir = outdir,EcoROMSdir = EcoROMSdir,namesrisk=namesrisk,weightings=weightings,studyarea=studyarea,staticdir=staticdir)
 }
 
-weightings <-c(-0.35,-0.35,-0.7,-0.5,-0.7,0.3) #run K.5 (D.4)
+weightings <-c(-0.35,-0.35,-0.7,-0.7,0.3) #run K.5 (D.4)
 for(d in dates){
   get_date=d
   print(get_date)
