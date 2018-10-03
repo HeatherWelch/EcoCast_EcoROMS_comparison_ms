@@ -149,3 +149,16 @@ run="K"
 
 weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
 
+## scenario L--> runs to match example mgmt objectives. (run) ####
+one=read.csv("hindcast_ms/extract/extractions/run_L.1.csv") %>% mutate(weighting="L.2")
+two=read.csv("hindcast_ms/extract/extractions/run_L.2.csv") %>% mutate(weighting="L.5")
+three=read.csv("hindcast_ms/extract/extractions/run_L.3.csv") %>% mutate(weighting="L.3")
+four=read.csv("hindcast_ms/extract/extractions/run_L.4.csv") %>% mutate(weighting="L.31")
+five=read.csv("hindcast_ms/extract/extractions/run_L.5.csv") %>% mutate(weighting="L.4")
+
+species_delta="swordfish/leatherback"
+weighting_delta=c("-0.3_0","-0.9_0","-0.5_0.5","-0.7_0.1","-0.7_0.3")
+run="L"
+
+weightings_comparison(species_delta = species_delta,weighting_delta = weighting_delta,plotdir = plotdir,csvdir = csvdir,run=run)
+
