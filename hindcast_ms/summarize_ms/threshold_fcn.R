@@ -3,17 +3,12 @@
 
 source("load_functions.R")
 
-plotdir="hindcast_ms/summarize_ms/plots/"
-csvdir="hindcast_ms/summarize/csvs/"
-
 library(ggalt)
 library(plotly)
 library(ggplot2)
 library(scales)
 library(DescTools)
 
-lbstRisk=10
-thresholds(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
 
 thresholds=function(csvdir,plotdir,lbstRisk){
 
@@ -123,7 +118,7 @@ png(paste0(plotdir,"parellel_coordinate_plot_thresholds_",lbstRisk,"_lbst.png"),
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
-plot_grid(aa,bb,cc,dd,nrow=2,ncol=2)
+print({plot_grid(aa,bb,cc,dd,nrow=2,ncol=2)})
 dev.off()
 
 #### table accompanying parallel coordinate plot ####
@@ -184,10 +179,13 @@ png(paste0(plotdir,"parellel_coordinate_boxplot_thresholds_",lbstRisk,"_lbst.png
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
-plot_grid(a)
+print({a})
 dev.off()
 
 }
 
-
-
+# ## demo
+# plotdir="hindcast_ms/summarize_ms/plots/"
+# csvdir="hindcast_ms/summarize/csvs/"
+# lbstRisk=30 ## numeric value for allowable lbst bycatch risk
+# thresholds(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
