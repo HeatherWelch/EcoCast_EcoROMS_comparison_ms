@@ -184,7 +184,7 @@ d=c %>% dplyr::group_by(best,species) %>% summarise(mean=mean(value))
 
 a=ggplot(data=c,aes(x=best,y=value,color=species))+geom_boxplot()
 a=a+scale_x_discrete(labels=c("Objective 1","Objective 2","Objective 3"))+ylab("Correlation coefficient [R]")+xlab("Management objective")+
-  scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"),labels=c("Blueshark", "Sealion", "Leatherback","Swordfish"))+
+  scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"))+
   geom_point(data=d,aes(x=best,y=mean,group=species),position = position_dodge(.75),color="black")+geom_text(data=d,aes(x=best,y=mean,group=species,label=round(mean,1)),position = position_dodge(.75),color="black",vjust=-1.5,hjust=1,size=2)+
   ggtitle(paste0("Comparison algorithm correlation with species habitat suitability for different runs"))+
   geom_hline(yintercept=0)+

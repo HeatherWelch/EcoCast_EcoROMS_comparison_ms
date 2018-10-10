@@ -24,6 +24,10 @@ datadir="hindcast_ms/extract/extractions/"
 correlations_unique(plotdir = plotdir,datadir = datadir)
 correlations_unique_constrained(plotdir = plotdir,datadir = datadir)
 
+lbstRisk=0
+thresholds_unique(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
+thresholds_unique_constrained(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
+
 lbstRisk=10
 thresholds_unique(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
 thresholds_unique_constrained(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
@@ -31,3 +35,4 @@ thresholds_unique_constrained(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdi
 lbstRisk=20
 thresholds_unique(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
 thresholds_unique_constrained(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
+
