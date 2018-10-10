@@ -11,7 +11,7 @@ library(fmsb)
 library(DescTools)
 
 
-correlations_unique=function(datadir,plotdir){
+correlations_unique_constrained=function(datadir,plotdir){
 
   file_list=list.files(datadir) %>% grep("run",.,value=T)
   master=list()
@@ -44,17 +44,20 @@ correlations_unique=function(datadir,plotdir){
   b$variable=factor(b$variable,levels=c("Leatherback","Swordfish","Blueshark","Sealion"))
   
   toMatch = c("EcoROMS_run_A.2","EcoROMS_run_A.3","EcoROMS_run_A.4","EcoROMS_run_A.5","EcoROMS_run_B.2","EcoROMS_run_B.3","EcoROMS_run_B.4","EcoROMS_run_B.5","EcoROMS_run_C.2","EcoROMS_run_C.3","EcoROMS_run_C.4","EcoROMS_run_C.5")
+  cons_obj1=c("run_G","run_H","run_I","run_J","run_K","run_L")
+  cons_obj2=c("run_F","run_G","run_H","run_I","run_L")
+  cons_obj3=c("run_A","run_B","run_C","run_D","run_E","run_F","run_I","run_L")
   
   b=b[order(b$swor_blsh_casl),]
-  a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+  a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj1,collapse="|"),.,value=F))] %>% .[1:10]
   b=b %>% mutate(swor_blsh_casl=ifelse(id %in% a,1,0))
   
   b=b[order(b$swor_blsh),]
-  a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+  a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj2,collapse="|"),.,value=F))] %>% .[1:10]
   b=b %>% mutate(swor_blsh=ifelse(id %in% a,1,0))
   
   b=b[order(b$swor2),]
-  a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+  a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj3,collapse="|"),.,value=F))] %>% .[1:10]
   b=b %>% mutate(swor2=ifelse(id %in% a,1,0))
   
   b$Algorithm=gsub("_"," ",b$Algorithm)
@@ -125,7 +128,7 @@ correlations_unique=function(datadir,plotdir){
   
   dd
 
-png(paste0(plotdir,"parellel_coordinate_plot_correlations_unique.png"),width=14, height=7, units="in", res=400)
+png(paste0(plotdir,"parellel_coordinate_plot_correlations_unique_constrained.png"),width=14, height=7, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
@@ -139,15 +142,15 @@ b=dff %>% gather (variable, value,-c(algorithm,id,run,swor_inverse,lbst_inverse,
 b$variable=factor(b$variable,levels=c("Leatherback","Swordfish","Blueshark","Sealion"))
 
 b=b[order(b$swor_blsh_casl),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj1,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor_blsh_casl_id=ifelse(id %in% a,1,0))
 
 b=b[order(b$swor_blsh),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj2,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor_blsh_id=ifelse(id %in% a,1,0))
 
 b=b[order(b$swor2),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj3,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor2_id=ifelse(id %in% a,1,0))
 
 c=b %>% select(-c(swor_inverse,swor_blsh_casl,swor_blsh,swor2))
@@ -166,7 +169,7 @@ c=c %>% select(-c(id,best_value,id2))
 c=c[with(c,order(best,sum)),]
 c=c %>% mutate(Rank=rep(1:10,3)) 
 
-write.csv(c,paste0(plotdir,"parellel_coordinate_table_correlations_unique.csv"))
+write.csv(c,paste0(plotdir,"parellel_coordinate_table_correlations_unique_constrained.csv"))
 
 ##### boxplot ####
 print("Making boxplot")
@@ -185,7 +188,7 @@ a=a+scale_x_discrete(labels=c("Objective 1","Objective 2","Objective 3"))+ylab("
 a
 
 
-png(paste0(plotdir_ms,"parellel_coordinate_plot_correlations_box_plot_unique.png"),width=7, height=3.5, units="in", res=400)
+png(paste0(plotdir_ms,"parellel_coordinate_plot_correlations_box_plot_unique_constrained.png"),width=7, height=3.5, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
@@ -198,4 +201,4 @@ dev.off()
 # ## demo
 # plotdir="hindcast_ms/summarize_ms/plots/"
 # datadir="hindcast_ms/extract/extractions/"
-# correlations_unique(plotdir = plotdir,datadir = datadir)
+# correlations_unique_constrained(plotdir = plotdir,datadir = datadir)

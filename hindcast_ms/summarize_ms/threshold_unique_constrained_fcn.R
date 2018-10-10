@@ -10,7 +10,7 @@ library(scales)
 library(DescTools)
 
 
-thresholds_unique=function(csvdir,plotdir,lbstRisk){
+thresholds_unique_constrained=function(csvdir,plotdir,lbstRisk){
 
 file_list=list.files(csvdir) %>% grep("availcatch_algorithm_comparison_multispecies",.,value=T)
 master=list()
@@ -39,17 +39,20 @@ b$variable=factor(b$variable,levels=c("lbst","swor","blueshark","casl"))
 b=b %>% filter(Product!="EcoROMS_original") %>% filter(Product!="Marxan_raw")
 
 toMatch = c("EcoROMS_original_unscaled_A.2","EcoROMS_original_unscaled_A.3","EcoROMS_original_unscaled_A.4","EcoROMS_original_unscaled_A.5","EcoROMS_original_unscaled_B.2","EcoROMS_original_unscaled_B.3","EcoROMS_original_unscaled_B.4","EcoROMS_original_unscaled_B.5","EcoROMS_original_unscaled_C.2","EcoROMS_original_unscaled_C.3","EcoROMS_original_unscaled_C.4","EcoROMS_original_unscaled_C.5")
+cons_obj1=c("unscaled_G","unscaled_H","unscaled_I","unscaled_J","unscaled_K","unscaled_L")
+cons_obj2=c("unscaled_F","unscaled_G","unscaled_H","unscaled_I","unscaled_L")
+cons_obj3=c("unscaled_A","unscaled_B","unscaled_C","unscaled_D","unscaled_E","unscaled_F","unscaled_I","unscaled_L")
 
 b=b[order(b$swor_blsh_casl),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj1,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor_blsh_casl=ifelse(id %in% a,1,0))
 
 b=b[order(b$swor_blsh),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))]  %>% .[c(grep(paste(cons_obj2,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor_blsh=ifelse(id %in% a,1,0))
 
 b=b[order(b$swor2),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))]  %>% .[c(grep(paste(cons_obj3,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor2=ifelse(id %in% a,1,0))
 
 b$Product=gsub("_"," ",b$Product)
@@ -116,7 +119,7 @@ dd=dd+
 
 dd
 
-png(paste0(plotdir,"parellel_coordinate_plot_thresholds_",lbstRisk,"_lbst_unique.png"),width=14, height=7, units="in", res=400)
+png(paste0(plotdir,"parellel_coordinate_plot_thresholds_",lbstRisk,"_lbst_unique_constrained.png"),width=14, height=7, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
@@ -131,15 +134,15 @@ b$variable=factor(b$variable,levels=c("lbst","swor","blueshark","casl"))
 b=b %>% filter(Product!="EcoROMS_original") %>% filter(Product!="Marxan_raw")
 
 b=b[order(b$swor_blsh_casl),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj1,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor_blsh_casl_id=ifelse(id %in% a,1,0))
 
 b=b[order(b$swor_blsh),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj2,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor_blsh_id=ifelse(id %in% a,1,0))
 
 b=b[order(b$swor2),]
-a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[1:10]
+a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj3,collapse="|"),.,value=F))] %>% .[1:10]
 b=b %>% mutate(swor2_id=ifelse(id %in% a,1,0))
 
 b$Product=gsub("_"," ",b$Product)
@@ -159,7 +162,7 @@ c=c %>% select(-c(id,best_value,id2))
 c=c[with(c,order(best,sum)),]
 c=c %>% mutate(Rank=rep(1:10,3)) %>% rename(Algorithm=Product) %>% rename(Leatherback=lbst) %>% rename(Swordfish=swor) %>% rename(Blueshark=blueshark) %>% rename(Sealion=casl) 
 
-write.csv(c,paste0(plotdir,"parellel_coordinate_table_thresholds_",lbstRisk,"_lbst_unique.csv"))
+write.csv(c,paste0(plotdir,"parellel_coordinate_table_thresholds_",lbstRisk,"_lbst_unique_constrained.csv"))
 
 ##### boxplot ####
 print("Making boxplot")
@@ -177,7 +180,7 @@ a=a+scale_x_discrete(labels=c("Objective 1","Objective 2","Objective 3"))+ylab("
   theme(text = element_text(size=5),axis.text = element_text(size=5),legend.key.size = unit(.5,'lines'),plot.title = element_text(hjust=0,size=5),axis.text.x = element_text(angle=45,hjust=1))
 a
 
-png(paste0(plotdir,"parellel_coordinate_boxplot_thresholds_",lbstRisk,"_lbst_unique.png"),width=7, height=3.5, units="in", res=400)
+png(paste0(plotdir,"parellel_coordinate_boxplot_thresholds_",lbstRisk,"_lbst_unique_constrained.png"),width=7, height=3.5, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
@@ -190,4 +193,4 @@ dev.off()
 # plotdir="hindcast_ms/summarize_ms/plots/"
 # csvdir="hindcast_ms/summarize/csvs/"
 # lbstRisk=30 ## numeric value for allowable lbst bycatch risk
-# thresholds_unique(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
+# thresholds_unique_constrained(lbstRisk=lbstRisk,plotdir = plotdir,csvdir = csvdir)
