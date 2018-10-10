@@ -11,6 +11,7 @@ library(DescTools)
 
 
 thresholds_unique_constrained=function(csvdir,plotdir,lbstRisk){
+  weightings=read.csv("hindcast_ms/predict/weighting_scenarios.csv")
 
 file_list=list.files(csvdir) %>% grep("availcatch_algorithm_comparison_multispecies",.,value=T)
 master=list()
@@ -161,11 +162,13 @@ c=c %>% mutate(sum=ifelse(best=="swor2_id",((100-swor)+lbst+(casl*.1)+(blueshark
 c=c %>% select(-c(id,best_value,id2))
 c=c[with(c,order(best,sum)),]
 c=c %>% mutate(Rank=rep(1:10,3)) %>% rename(Algorithm=Product) %>% rename(Leatherback=lbst) %>% rename(Swordfish=swor) %>% rename(Blueshark=blueshark) %>% rename(Sealion=casl) 
+c=left_join(c,weightings,by="run")
 
 write.csv(c,paste0(plotdir,"parellel_coordinate_table_thresholds_",lbstRisk,"_lbst_unique_constrained.csv"))
 
 ##### boxplot ####
 print("Making boxplot")
+c=c %>% select(-weighting)
 
 #c=c %>% gather(species,value,-c(Product,run,id,best,best_value,id2,sum))
 c=c %>% gather(species,value,-c(Algorithm,run,best,sum,Rank))

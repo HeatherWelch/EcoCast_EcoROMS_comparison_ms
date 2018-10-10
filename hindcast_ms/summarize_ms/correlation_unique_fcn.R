@@ -12,6 +12,7 @@ library(DescTools)
 
 
 correlations_unique=function(datadir,plotdir){
+  weightings=read.csv("hindcast_ms/predict/weighting_scenarios.csv")
 
   file_list=list.files(datadir) %>% grep("run",.,value=T)
   master=list()
@@ -164,12 +165,14 @@ c=c %>% mutate(sum=ifelse(best=="swor2_id",((1-Swordfish)+(Leatherback+1)+((Seal
 
 c=c %>% select(-c(id,best_value,id2))
 c=c[with(c,order(best,sum)),]
-c=c %>% mutate(Rank=rep(1:10,3)) 
+c=c %>% mutate(Rank=rep(1:10,3)) %>% mutate(run=gsub("run_","",run))
+c=left_join(c,weightings,by="run")
 
 write.csv(c,paste0(plotdir,"parellel_coordinate_table_correlations_unique.csv"))
 
 ##### boxplot ####
 print("Making boxplot")
+c=c %>% select(-weighting)
 
 c=c %>% gather(species,value,-c(Algorithm,run,best,sum,Rank))
 c$best=as.factor(c$best)
@@ -185,7 +188,7 @@ a=a+scale_x_discrete(labels=c("Objective 1","Objective 2","Objective 3"))+ylab("
 a
 
 
-png(paste0(plotdir_ms,"parellel_coordinate_plot_correlations_box_plot_unique.png"),width=7, height=3.5, units="in", res=400)
+png(paste0(plotdir,"parellel_coordinate_plot_correlations_box_plot_unique.png"),width=7, height=3.5, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
