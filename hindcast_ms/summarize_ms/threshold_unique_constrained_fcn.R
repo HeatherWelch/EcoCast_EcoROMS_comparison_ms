@@ -10,7 +10,7 @@ library(scales)
 library(DescTools)
 
 
-thresholds_unique_constrained=function(csvdir,plotdir,lbstRisk){
+thresholds_unique_constrained=function(csvdir,plotdir,lbstRisk,cons_obj1,cons_obj2,cons_obj3,type){
   weightings=read.csv("hindcast_ms/predict/weighting_scenarios.csv")
 
 file_list=list.files(csvdir) %>% grep("availcatch_algorithm_comparison_multispecies",.,value=T)
@@ -40,9 +40,6 @@ b$variable=factor(b$variable,levels=c("lbst","swor","blueshark","casl"))
 b=b %>% filter(Product!="EcoROMS_original") %>% filter(Product!="Marxan_raw")
 
 toMatch = c("EcoROMS_original_unscaled_A.2","EcoROMS_original_unscaled_A.3","EcoROMS_original_unscaled_A.4","EcoROMS_original_unscaled_A.5","EcoROMS_original_unscaled_B.2","EcoROMS_original_unscaled_B.3","EcoROMS_original_unscaled_B.4","EcoROMS_original_unscaled_B.5","EcoROMS_original_unscaled_C.2","EcoROMS_original_unscaled_C.3","EcoROMS_original_unscaled_C.4","EcoROMS_original_unscaled_C.5")
-cons_obj1=c("unscaled_G","unscaled_H","unscaled_I","unscaled_J","unscaled_K","unscaled_L")
-cons_obj2=c("unscaled_F","unscaled_G","unscaled_H","unscaled_I","unscaled_L")
-cons_obj3=c("unscaled_A","unscaled_B","unscaled_C","unscaled_D","unscaled_E","unscaled_F","unscaled_I","unscaled_L")
 
 b=b[order(b$swor_blsh_casl),]
 a=b$id %>% unique() %>% .[-c(grep(paste(toMatch,collapse="|"),.,value=F))] %>% .[c(grep(paste(cons_obj1,collapse="|"),.,value=F))] %>% .[1:10]
@@ -120,7 +117,7 @@ dd=dd+
 
 dd
 
-png(paste0(plotdir,"parellel_coordinate_plot_thresholds_",lbstRisk,"_lbst_unique_constrained.png"),width=14, height=7, units="in", res=400)
+png(paste0(plotdir,"parellel_coordinate_plot_thresholds_",lbstRisk,"_lbst_unique_constrained_",type,".png"),width=14, height=7, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))
@@ -164,7 +161,7 @@ c=c[with(c,order(best,sum)),]
 c=c %>% mutate(Rank=rep(1:10,3)) %>% rename(Algorithm=Product) %>% rename(Leatherback=lbst) %>% rename(Swordfish=swor) %>% rename(Blueshark=blueshark) %>% rename(Sealion=casl) 
 c=left_join(c,weightings,by="run")
 
-write.csv(c,paste0(plotdir,"parellel_coordinate_table_thresholds_",lbstRisk,"_lbst_unique_constrained.csv"))
+write.csv(c,paste0(plotdir,"parellel_coordinate_table_thresholds_",lbstRisk,"_lbst_unique_constrained_",type,".csv"))
 
 ##### boxplot ####
 print("Making boxplot")
@@ -183,7 +180,7 @@ a=a+scale_x_discrete(labels=c("Objective 1","Objective 2","Objective 3"))+ylab("
   theme(text = element_text(size=5),axis.text = element_text(size=5),legend.key.size = unit(.5,'lines'),plot.title = element_text(hjust=0,size=5),axis.text.x = element_text(angle=45,hjust=1))
 a
 
-png(paste0(plotdir,"parellel_coordinate_boxplot_thresholds_",lbstRisk,"_lbst_unique_constrained.png"),width=7, height=3.5, units="in", res=400)
+png(paste0(plotdir,"parellel_coordinate_boxplot_thresholds_",lbstRisk,"_lbst_unique_constrained_",type,".png"),width=7, height=3.5, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))

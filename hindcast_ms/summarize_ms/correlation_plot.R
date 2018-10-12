@@ -42,6 +42,12 @@ a.1=cor(a.1)
 corrplot(a.1, method="color",type="upper", 
          addCoef.col = "black",tl.col="black",title="All runs")
 
+png(paste0(plotdir_ms,"master_correl_plots.png"),width=4, height=4, units="in", res=400)
+par(ps=10)
+corrplot(a.1, method="color",type="upper", 
+         addCoef.col = "black",tl.col="black",title="All runs",order="hclust")
+dev.off()
+
 b.1=master[grep("run_A",master$run),] %>% select(-run)
 b.1=cor(b.1)
 corrplot(b.1, method="color",type="upper", 
