@@ -11,6 +11,8 @@ source("hindcast_ms/summarize_ms/correlation_unique_constrained_fcn.R")
 
 source("hindcast_ms/summarize_ms/threshold_unique_constrained_fcn_nopt1.R")
 source("hindcast_ms/summarize_ms/correlation_unique_constrained_fcn_nopt1.R")
+source("hindcast_ms/summarize_ms/correlation_unique_fcn_nopt1.R")
+source("hindcast_ms/summarize_ms/correlation_unique_fcn_nopt1_algorithm_split.R")
 
 library(ggalt)
 library(plotly)
@@ -26,6 +28,8 @@ datadir="hindcast_ms/extract/extractions/"
 
 
 correlations_unique(plotdir = plotdir,datadir = datadir)
+correlations_unique_nopt1(plotdir = plotdir,datadir = datadir)
+correlations_unique_nopt1_algorithm_split(plotdir = plotdir,datadir = datadir)
 
 type="lenient"
 cons_obj1=c("run_G","run_H","run_I","run_J","run_K","run_L")
