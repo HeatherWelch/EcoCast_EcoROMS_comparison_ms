@@ -284,6 +284,58 @@ scp_swor=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
   
 }
 
+scp_swor_targetsMet=function(get_date,biofeats,cost,dailypreddir,weightings,namesrisk){
+  
+  ## prepare biodiversity features and costs
+  fullnames=lapply(biofeats,function(x)paste0(dailypreddir,x,"/",x,"_",get_date,"_mean.grd")) %>% stack() ## biodiversity features
+  #names(fullnames)=biofeats
+  fullnames[[5]]=1-fullnames[[5]]
+  
+  ## costs
+  cost=paste0(dailypreddir,cost,"/",cost,"_",get_date,"_mean.grd") %>% raster()  ## costs
+  a=rasterToPolygons(cost)
+  a@data$id=1:nrow(a) 
+  a@data$cost=1
+  a@data$status=0L
+  a@data=a@data[,2:4]
+  
+  
+  if(weightings[5]!=0){
+    
+    targets=weightings[1:4]
+    targets=unlist(lapply(targets,function(x)x*-1)) %>% lapply(.,function(x)x*100) %>% unlist() %>% lapply(.,function(x)paste0(x,"%")) %>% unlist()
+    
+    targets2=((1-weightings[5])*100) %>% paste0(.,"%")
+    targets=list(targets,targets2) %>% unlist()
+    
+    spf=4
+    
+    ## run marxan
+    print("running marxan algorithm")
+    results<-marxan(a, fullnames, targets=targets, spf=spf, NUMREPS=1000L, NCORES=2L, BLM=0, lengthFactor=1e-5)
+    
+    
+  }
+  if(weightings[5]==0){
+    
+    targets=weightings[1:4]
+    targets=unlist(lapply(targets,function(x)x*-1)) %>% lapply(.,function(x)x*100) %>% unlist() %>% lapply(.,function(x)paste0(x,"%")) %>% unlist()
+    
+    targets2=(weightings[5]*100) %>% paste0(.,"%")
+    targets=list(targets,targets2) %>% unlist()
+    
+    ## format targets for cost
+    spf=4
+    
+    ## run marxan
+    print("running marxan algorithm")
+    results<-marxan(a, fullnames, targets=targets, spf=spf, NUMREPS=1000L, NCORES=2L, BLM=0, lengthFactor=1e-5)
+    
+  }
+  return(results)
+  
+}
+
 ##### demo run ####
 # get_date="2011-09-01"
 # biofeats=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat","swor")

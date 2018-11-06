@@ -46,11 +46,11 @@ A1=ggplot(dataframelist,aes(x=swor,y=EcoROMS_original_unscaled,group=weighting,c
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=1,"2005"=.3))+
   scale_color_manual("Weighting",values=c("0.1"="darkgoldenrod","0.3"="cornflowerblue","0.5"="coral1","0.7"="aquamarine4","0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.1,.9),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.07,.95),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(color=NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Relationship between EcoCast values and swordfish habitat suitability values under increasing swordfish weightings")+
   #ggtitle("Effect of increasing swordfish weighting on the relationship between EcoCast values and swordfish habitat suitability values")+
-  ylab("EcoCast")+xlab("Swordfish habitat suitability")
+  ylab("EcoCast output")+xlab("Swordfish habitat suitability")+ylim(-.8,.8)
 
 A1
 
@@ -58,10 +58,10 @@ A2=ggplot(dataframelist,aes(x=swor,y=Marxan_raw_unscaled,group=weighting,color=w
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=.6,"2005"=.3))+
   scale_color_manual("Weighting",values=c("0.1"="darkgoldenrod","0.3"="cornflowerblue","0.5"="coral1","0.7"="aquamarine4","0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.1,.9),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.07,.95),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(color=NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Effect of increasing swordfish weighting on the relationship between Marxan values and swordfish habitat suitability values")+
-  ylab("Marxan")+xlab("Swordfish habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
+  ylab("Marxan output")+xlab("Swordfish habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
 
 A2
 ## B
@@ -69,56 +69,56 @@ B1=ggplot(dataframelistB,aes(x=lbst,y=EcoROMS_original_unscaled,group=weighting,
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=.6,"2005"=.3))+
   scale_color_manual("Weighting",values=c("-0.1"="darkgoldenrod","-0.3"="cornflowerblue","-0.5"="coral1","-0.7"="aquamarine4","-0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.1,.35),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.07,.3),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(colour = NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Effect of decreasing leatherback weighting on the relationship between EcoCast values and leatherback habitat suitability values")+
-  ylab("EcoCast")+xlab("Leatherback habitat suitability")
+  ylab("EcoCast output")+xlab("Leatherback habitat suitability")+ylim(-.8,.8)
 
 B2=ggplot(dataframelistB,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Year))+geom_point(aes(alpha=Year),size=1)+stat_smooth(se=F)+
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=.6,"2005"=.3))+
   scale_color_manual("Weighting",values=c("-0.1"="darkgoldenrod","-0.3"="cornflowerblue","-0.5"="coral1","-0.7"="aquamarine4","-0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.9,.9),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.07,.3),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(colour = NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Effect of decreasing leatherback weighting on the relationship between Marxan values and leatherback habitat suitability values")+
-  ylab("Marxan")+xlab("Leatherback habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
+  ylab("Marxan output")+xlab("Leatherback habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
 
 ## C
 C1=ggplot(dataframelistC,aes(x=swor,y=EcoROMS_original_unscaled,group=weighting,color=weighting,shape=Year))+geom_point(aes(alpha=Year),size=1)+stat_smooth(se=F)+
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=.6,"2005"=.3))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","+/-0.3"="cornflowerblue","+/-0.5"="coral1","+/-0.7"="aquamarine4","+/-0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.1,.9),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.07,.95),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(colour = NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings on the relationship between EcoCast values and swordfish habitat suitability values")+
-  ylab("EcoCast")+xlab("Swordfish habitat suitability")
+  ylab("EcoCast output")+xlab("Swordfish habitat suitability")+ylim(-.8,.8)
 
 C2=ggplot(dataframelistC,aes(x=swor,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Year))+geom_point(aes(alpha=Year),size=1)+stat_smooth(se=F)+
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=.6,"2005"=.3))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","+/-0.3"="cornflowerblue","+/-0.5"="coral1","+/-0.7"="aquamarine4","+/-0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.1,.9),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.07,.95),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(colour = NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings between Marxan values and swordfish habitat suitability values")+
-  ylab("Marxan")+xlab("Swordfish habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
+  ylab("Marxan output")+xlab("Swordfish habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
 
 C3=ggplot(dataframelistC,aes(x=lbst,y=EcoROMS_original_unscaled,group=weighting,color=weighting,shape=Year))+geom_point(aes(alpha=Year),size=1)+stat_smooth(se=F)+
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=.6,"2005"=.3))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","+/-0.3"="cornflowerblue","+/-0.5"="coral1","+/-0.7"="aquamarine4","+/-0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.1,.35),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.07,.3),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(colour = NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings on the relationship between EcoCast values and leatherback habitat suitability values")+
-  ylab("EcoCast")+xlab("Leatherback habitat suitability")
+  ylab("EcoCast output")+xlab("Leatherback habitat suitability")+ylim(-.8,.8)
 
 C4=ggplot(dataframelistC,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Year))+geom_point(aes(alpha=Year),size=1)+stat_smooth(se=F)+
   scale_alpha_manual("Year",values = c("1997"=.3,"2003"=.6,"2005"=.3))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","+/-0.3"="cornflowerblue","+/-0.5"="coral1","+/-0.7"="aquamarine4","+/-0.9"="dimgray"))+
   scale_shape_manual("Year",values=c("1997"=3,"2003"=15,"2005"=4))+
-  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.9,.9),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
+  theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),legend.position=c(.95,.95),legend.justification = c(.9,.9),legend.key.size = unit(.5,'lines'))+
   theme(legend.background = element_blank(),legend.box.background = element_rect(colour = NA),legend.margin=unit(0.3, "lines"))+
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings between Marxan values and leatherback habitat suitability values")+
-  ylab("Marxan")+xlab("Leatherback habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
+  ylab("Marxan output")+xlab("Leatherback habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
 
 png(paste0(plotdir_ms,"histograms3.1.png"),width=20, height=8, units="in", res=400)
 par(ps=10)
