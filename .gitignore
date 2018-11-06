@@ -2,4 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-
+EcoCast_EcoROMS_comparison_ms.Rproj
+plots
+raw_data
+hindcast_app_metadata/metadata_files
+hindcast_app_metadata/metadata2_files
