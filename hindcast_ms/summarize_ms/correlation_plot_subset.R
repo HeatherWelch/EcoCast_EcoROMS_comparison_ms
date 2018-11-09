@@ -200,7 +200,7 @@ input_file_newRT <- getvarROMS(ROMS_files_newNRT[7], 'sst', input_file, desired.
 
 b=input_file_newRT %>%select(-Marxan) %>%  spread(run,EcoROMS) %>%rename(EcoCast_B.5=run_B.5)%>% rename(EcoCast_B.1=run_B.1)%>% rename(EcoCast_B.2=run_B.2)%>% rename(EcoCast_B.3=run_B.3)%>% rename(EcoCast_B.4=run_B.4) %>% rename(EcoCast_C.5=run_C.5)%>% rename(EcoCast_C.1=run_C.1)%>% rename(EcoCast_C.2=run_C.2)%>% rename(EcoCast_C.3=run_C.3)%>% rename(EcoCast_C.4=run_C.4) %>% select(-c(lat,lon,dt))
 c=input_file_newRT %>%select(-EcoROMS) %>%  spread(run,Marxan)%>%  rename(Marxan_B.5=run_B.5)%>%rename(Marxan_B.1=run_B.1)%>% rename(Marxan_B.2=run_B.2)%>% rename(Marxan_B.3=run_B.3)%>% rename(Marxan_B.4=run_B.4) %>% rename(Marxan_C.5=run_C.5)%>%   rename(Marxan_C.1=run_C.1)%>% rename(Marxan_C.2=run_C.2)%>% rename(Marxan_C.3=run_C.3)%>% rename(Marxan_C.4=run_C.4) %>% select(-c(lat,lon,dt))
-a=cbind(b,c[,6:15]) %>% .[complete.cases(.),]
+a=cbind(b,c[,6:15]) %>% .[complete.cases(.),] %>% select(-c(Sealion,Blueshark))
 a=cor(a)
 png(paste0(plotdir_ms,"correl_plots_Q1_BCs.png"),width=12, height=8, units="in", res=400)
 par(ps=10)
@@ -232,13 +232,13 @@ ROMS_files_hist <- list.files("~/Dropbox/Eco-ROMS/ROMS & Bathym Data/wcra31_dail
 ROMS_files_newNRT <- list.files("~/Dropbox/Eco-ROMS/ROMS & Bathym Data/WCNRT",pattern=".nc", full.names=T)
 
 master=fullon %>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,blshobs,blshtrk)) %>% select(-c(EcoROMS_original,Marxan_raw)) %>% rename(EcoROMS=EcoROMS_original_unscaled) %>% rename(Marxan=Marxan_raw_unscaled) %>% rename(Swordfish=swor) %>% rename(Leatherback=lbst) %>% rename(Sealion=casl) %>% rename(Blueshark=blsh)
-a=master %>% filter(run=="run_A.3"|run=="run_B.3"|run=="run_C.3"|run=="run_G.3"|run=="run_J.3")
+a=master %>% filter(run=="run_B.3"|run=="run_C.3"|run=="run_G.3"|run=="run_J.3")
 input_file <- getvarROMS(ROMS_files_hist[7], 'sst', a, desired.resolution = 0.1, mean, 'mean_0.1')
 input_file_newRT <- getvarROMS(ROMS_files_newNRT[7], 'sst', input_file, desired.resolution = 0.1, mean, 'mean_0.1')
 
-b=input_file_newRT %>%select(-Marxan) %>%  spread(run,EcoROMS) %>% rename(EcoCast_A.3=run_A.3)%>% rename(EcoCast_B.3=run_B.3)%>% rename(EcoCast_C.3=run_C.3)%>% rename(EcoCast_G.3=run_G.3)%>% rename(EcoCast_J.3=run_J.3) %>% select(-c(lat,lon,dt))
-c=input_file_newRT %>%select(-EcoROMS) %>%  spread(run,Marxan)%>% rename(Marxan_A.3=run_A.3)%>% rename(Marxan_B.3=run_B.3)%>% rename(Marxan_C.3=run_C.3)%>% rename(Marxan_G.3=run_G.3)%>% rename(Marxan_J.3=run_J.3) %>% select(-c(lat,lon,dt))
-a=cbind(b,c[,6:10]) %>% .[complete.cases(.),]
+b=input_file_newRT %>%select(-Marxan) %>%  spread(run,EcoROMS) %>% rename(EcoCast_B.3=run_B.3)%>% rename(EcoCast_C.3=run_C.3)%>% rename(EcoCast_G.3=run_G.3)%>% rename(EcoCast_J.3=run_J.3) %>% select(-c(lat,lon,dt))
+c=input_file_newRT %>%select(-EcoROMS) %>%  spread(run,Marxan) %>% rename(Marxan_B.3=run_B.3)%>% rename(Marxan_C.3=run_C.3)%>% rename(Marxan_G.3=run_G.3)%>% rename(Marxan_J.3=run_J.3) %>% select(-c(lat,lon,dt))
+a=cbind(b,c[,6:9]) %>% .[complete.cases(.),]
 a=cor(a)
 png(paste0(plotdir_ms,"correl_plots_Q2.png"),width=12, height=8, units="in", res=400)
 par(ps=10)

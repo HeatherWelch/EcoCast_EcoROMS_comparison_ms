@@ -70,6 +70,37 @@ ecocast=list.files(ecodir,full.names = T) %>% grep(paste0(paste(weightings,colla
 file.copy(marxan,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
 file.copy(ecocast,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
 
+## other option figure 2 (Bs)
+weightings <-c(0,0,0,-0.1,0) #run B.1
+marxan=list.files(marxdir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date),.,value=T)%>% grep("raw_unscaled",.,value=T)
+ecocast=list.files(ecodir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date,"_mean"),.,value=T)%>% grep("unscaled",.,value=T)
+file.copy(marxan,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+file.copy(ecocast,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+
+weightings <-c(0,0,0,-0.3,0) #run B.2
+marxan=list.files(marxdir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date),.,value=T)%>% grep("raw_unscaled",.,value=T)
+ecocast=list.files(ecodir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date,"_mean"),.,value=T)%>% grep("unscaled",.,value=T)
+file.copy(marxan,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+file.copy(ecocast,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+
+weightings <-c(0,0,0,-0.5,0) #run B.3
+marxan=list.files(marxdir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date),.,value=T)%>% grep("raw_unscaled",.,value=T)
+ecocast=list.files(ecodir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date,"_mean"),.,value=T)%>% grep("unscaled",.,value=T)
+file.copy(marxan,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+file.copy(ecocast,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+
+weightings <-c(0,0,0,-0.7,0) #run B.4
+marxan=list.files(marxdir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date),.,value=T)%>% grep("raw_unscaled",.,value=T)
+ecocast=list.files(ecodir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date,"_mean"),.,value=T)%>% grep("unscaled",.,value=T)
+file.copy(marxan,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+file.copy(ecocast,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+
+weightings <-c(0,0,0,-0.9,0) #run B.5
+marxan=list.files(marxdir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date),.,value=T)%>% grep("raw_unscaled",.,value=T)
+ecocast=list.files(ecodir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date,"_mean"),.,value=T)%>% grep("unscaled",.,value=T)
+file.copy(marxan,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+file.copy(ecocast,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+
 ## other option figure 2
 weightings <-c(0,0,0,-0.1,0.1) #run C.1
 marxan=list.files(marxdir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date),.,value=T)%>% grep("raw_unscaled",.,value=T)
@@ -100,6 +131,7 @@ marxan=list.files(marxdir,full.names = T) %>% grep(paste0(paste(weightings,colla
 ecocast=list.files(ecodir,full.names = T) %>% grep(paste0(paste(weightings,collapse ="_"),"_",date,"_mean"),.,value=T)%>% grep("unscaled",.,value=T)
 file.copy(marxan,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
 file.copy(ecocast,"/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/example_runs")
+
 
 ## Fig 5. Marxan + EcoCast for different # species
 blshobs=list.files(blshobsdir,full.names = T) %>% grep(date,.,value=T) %>% grep("mean",.,value=T)

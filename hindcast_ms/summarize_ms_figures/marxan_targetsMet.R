@@ -155,3 +155,14 @@ write_rds(results,"~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_obje
 ####### CORRELATIONS
 dailypreddir="~/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/"
 speciesdirs=c("blshobs","blshtrk_nolat","casl_noLat","lbst_nolat","swor")
+empty=data.frame(blshtrk=NA,blshobs=NA,casl=NA,lbst=NA,swor=NA,run=NA)
+
+a=list.files("~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/marxan_objects/")
+for(file in a){
+  name=gsub(".rds","",file)
+  print(name)
+  b=readRDS(file) 
+  c=b%>% targetsmet() %>% as.data.frame() %>% colMeans() %>% as.character() %>% as.data.frame() %>% t() %>% as.data.frame() %>% dplyr::mutate(run=name)
+  colnames(c)=c("blshtrk","blshobs","casl","lbst","swor","run")
+  empty=rbind(empty,c)
+}
