@@ -32,7 +32,7 @@ master=fullon %>% as.data.frame()%>% mutate(blsh=(blshobs+blshtrk)/2) %>% select
 detachPackage("bindrcpp")
 master=master %>% mutate(y_m=strtrim(dt,7))
 
-### finding the best run for species and temp
+### finding the best run for species and temp ####
 runs=as.factor(master$run) %>% unique() %>% as.character
 times=master$y_m %>% as.factor() %>% unique()
 empty=data.frame(Swordfish=NA,Leatherback=NA,Sealion=NA,Blueshark=NA,algorithm=NA,run=NA,time=NA)
@@ -56,19 +56,21 @@ dff=dff %>% group_by(time,algorithm) %>% filter(eval==min(eval))
 summary(dff %>% filter(algorithm=="EcoROMS"))
 summary(dff %>% filter(algorithm=="Marxan"))
 
-### finding the best runs for species
+### finding the best runs for species ####
 runs=as.factor(master$run) %>% unique() %>% as.character
 empty=data.frame(Swordfish=NA,Leatherback=NA,Sealion=NA,Blueshark=NA,algorithm=NA,run=NA)
 for(i in 1:length(runs)){
-    timess=times[ii]
     runn=runs[i]
     a=master %>% filter(run==runn) %>% select(-c(run,dt,y_m)) %>% cor() %>% .[1:2,3:6] %>% as.data.frame() %>% mutate(algorithm=c("EcoROMS","Marxan")) %>% mutate(run=runn) 
     empty=rbind(empty,a)
   }
 
+corP=empty %>% mutate(id=paste0(algorithm,"_",run) %>% as.character()) %>% filter(id=="EcoROMS_run_J.3"|id=="Marxan_run_J.3"|id=="EcoROMS_run_J.5"|id=="Marxan_run_I.6")
+
+
 df=empty %>% mutate(swor_inverse=1-Swordfish) %>%  mutate(lbst_inverse=Leatherback+1) %>%  mutate(casl_inverse=Sealion+1) %>%  mutate(blsh_inverse=Blueshark+1) 
 dff=df %>% mutate(eval=blsh_inverse+casl_inverse+swor_inverse+lbst_inverse) %>% .[complete.cases(.),]
-dff=dff %>% group_by(algorithm) %>% filter(eval==min(eval)) #I.6, #J.5
+dff=dff %>% group_by(algorithm) %>% filter(eval==min(eval)) #I.6 (Marxan), #J.5 (EcoROMS)
 
 weightings=read.csv("hindcast_ms/predict/weighting_scenarios.csv")
 datadir="hindcast_ms/extract/extractions/"
@@ -121,7 +123,7 @@ dev.off()
 
 
 a=master %>% filter(run=="I.6") %>% select(-c(dt,EcoROMS,run,Year))
-b=master %>% filter(run=="J.5")%>% select(-c(dt,Marxan,run,Year,Swordfish,Leatherback,Sealion,Blueshark))
+b=master %>% filter(run=="J.5") %>% select(-c(dt,Marxan,run,Year,Swordfish,Leatherback,Sealion,Blueshark))
 c=cbind(a,b) %>% .[,c(6,1,2,3,4,5)]
 
 png(paste0(plotdir_ms,"correl_plots_sp_best.png"),width=12, height=8, units="in", res=400)
@@ -130,7 +132,7 @@ c=cor(c)
  corrplot(c, method="color",type="upper", 
           addCoef.col = "black",tl.col="black",title="Fig 7. Correl plot best species",mar=c(1,1,1,1),number.cex=1)
 
- dev.off()
+dev.off()
  
  
 #### finding the best run for species and temperature
