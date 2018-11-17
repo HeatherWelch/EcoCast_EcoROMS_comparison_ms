@@ -348,3 +348,19 @@ weightings <-c(-0.015,-0.015,-0.03,-0.3,0.3) #run L.5 BLSH, CASL 10% as importan
 run="L.5"
 data=read.csv(paste0(datadir,"run_",run,".csv"))
 agorithm_comparison(data=data,weightings=weightings,run=run)
+
+## scenario M-->  three extra ecroms runs to meet mike's new add to 1 thing' ####
+weightings <-c(0,0,0,0,1) #run M.1
+run="M.1"
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled) # jenky hacks bc didn't run for marxan
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-1,0) #run M.2
+run="M.2"
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled) # jenky hacks bc didn't run for marxan
+agorithm_comparison(data=data,weightings=weightings,run=run)
+
+weightings <-c(0,0,0,-1,1) #run M.3
+run="M.3"
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled) # jenky hacks bc didn't run for marxan
+agorithm_comparison(data=data,weightings=weightings,run=run)

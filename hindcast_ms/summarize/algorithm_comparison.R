@@ -51,7 +51,7 @@ agorithm_comparison=function(data,weightings,outdir,run){
       group_by(species,product) %>% summarise(num_presences=n()) %>% left_join(tablecaughtMEuS,.) %>% mutate(Percent_caught=num_presences_caught/num_presences*100) %>% dplyr::select(-c(num_presences,num_presences_caught)) %>% spread(species,Percent_caught) 
     
     if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
-    if(("lbst"%in%colnames(tabletotal))==F){tabletotal$lbst=0}
+    if(("swor"%in%colnames(tabletotal))==F){tabletotal$swor=0}
     
     tabletotal=tabletotal %>% dplyr::select(product,swor,lbst) %>% as.data.frame()
     tabletotal[is.na(tabletotal)]<-0
