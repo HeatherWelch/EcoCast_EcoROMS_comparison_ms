@@ -109,15 +109,15 @@ weightings <-c(-0.15,-0.15,-0.3,-0.3,0.3) #run L.3 RUN, example of caring about 
 weightings <-c(-0.15,-0.15,-0.03,-0.3,0.3) #run L.4 CASL 10% as important
 weightings <-c(-0.015,-0.015,-0.03,-0.3,0.3) #run L.5 BLSH, CASL 10% as important
 
+## scenario M-->  three extra ecroms runs to meet mike's new add to 1 thing'
+## !!!!! these were run for EcoCast only
+weightings <-c(0,0,0,0,1) #run M.1
+weightings <-c(0,0,0,-1,0) #run M.2
+weightings <-c(0,0,0,-1,1) #run M.3 ## this one is junk
+weightings <-c(-0.16,-0.16,0,-0.33,0.33) #run M.4
+weightings <-c(-0.125,-0.125,-0.25,-0.25,0.25) #run M.5
 
 
 
 
 
-## scenario D--> testing the ability to manage swordfish and bluesharks (lbst weighting to be determined in scenarios 1-3)
-M_weightings <-c(-0.1,-0.1,0,"lbst",0) #run D.1
-M_weightings <-c(-0.5,-0.5,0,"lbst",0) #run D.2
-M_weightings <-c(-0.9,-0.9,0,"lbst",0) #run D.3
-E_weightings <-c(-0.3,-0.3,0,"lbst",0) #run D.1
-E_weightings <-c(-1.5,-1.5,0,"lbst",0) #run D.2
-E_weightings <-c(-2.7,-2.7,0,"lbst",0) #run D.3

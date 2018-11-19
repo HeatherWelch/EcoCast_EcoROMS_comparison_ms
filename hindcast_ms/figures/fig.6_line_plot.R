@@ -255,7 +255,11 @@ a=a %>% gather(variable,value,-c(algorithm,run,weighting,id)) %>% rename(Algorit
 a$variable=factor(a$variable,levels=c("Leatherback","Swordfish","Blueshark","Sealion"))
 a$Algorithm=gsub("_"," ",a$Algorithm)
 a=with(a, a[order(variable),]) ### stuff to plot for seasonal bests
-
+a <- within(a, Algorithm[Algorithm == 'EcoROMS'] <- 'EcoCast')
+c <- within(c, Algorithm[Algorithm == 'EcoROMS'] <- 'EcoCast')
+b <- within(b, Algorithm[Algorithm == 'EcoROMS'] <- 'EcoCast')
+t=rbind(c,a)
+t$weighting=factor(t$weighting,levels=c("Equivalent","Flexible","Cold","Warm"))
 
 ### making the plot ####
 bb=ggplot(b, aes(x = variable, y = value, group = id,linetype=Algorithm)) +   # group = id is important!
@@ -266,16 +270,16 @@ bb=ggplot(b, aes(x = variable, y = value, group = id,linetype=Algorithm)) +   # 
   theme(text = element_text(size=5),axis.text = element_text(size=5),plot.title = element_text(hjust=0,size=5),plot.margin = margin(.3, 1, .3, .3, "cm"))+
   geom_vline(xintercept=c(2,3,4))
 
-bb=bb+
-  geom_path(data=c,aes(x = variable, y = value, group = id,color = weighting,linetype=Algorithm))+
-  scale_color_manual("Weighting type",values=c("Equivalent"="black","Flexible"="darkgoldenrod","Warm"="coral1","Cold"="aquamarine4"))+
-  #scale_linetype_manual("Algorithm",values=c("Marxan"="solid","EcoROMS"="dashed"))+
-  geom_hline(yintercept = 0)+geom_point(aes(x=1,y=-1),size=2)+geom_point(aes(x=2,y=1),size=2)+geom_point(aes(x=3,y=-1),size=2)+geom_point(aes(x=4,y=-1),size=2)
+# bb=bb+
+#   geom_path(data=c,aes(x = variable, y = value, group = id,color = weighting,linetype=Algorithm))+
+#   scale_color_manual("Weighting type",values=c("Equivalent"="black","Flexible"="darkgoldenrod","Warm"="coral1","Cold"="aquamarine4"))+
+#   #scale_linetype_manual("Algorithm",values=c("Marxan"="solid","EcoCast"="dashed"))+
+#   geom_hline(yintercept = 0)+geom_point(aes(x=1,y=-1),size=2)+geom_point(aes(x=2,y=1),size=2)+geom_point(aes(x=3,y=-1),size=2)+geom_point(aes(x=4,y=-1),size=2)
 
 bb=bb+
-  geom_path(data=a,aes(x = variable, y = value, group = id,color = weighting,linetype=Algorithm))+
-  scale_linetype_manual("Algorithm",values=c("Marxan"="solid","EcoROMS"="dashed"))+
-  scale_color_manual("Weighting type",values=c("Equivalent"="black","Flexible"="darkgoldenrod","Warm"="coral1","Cold"="aquamarine4"))+guides(color=guide_legend(override.aes = list(
+  geom_path(data=t,aes(x = variable, y = value, group = id,color = weighting,linetype=Algorithm))+
+  scale_linetype_manual("Algorithm",values=c("Marxan"="solid","EcoCast"="dashed"))+
+  scale_color_manual("Weighting type",values=c("Warm"="coral1","Equivalent"="black","Flexible"="darkgoldenrod","Cold"="aquamarine4"))+guides(color=guide_legend(override.aes = list(
     linetype = c(rep("solid", 4)),
     shape = c(16,16,16,16))))+
   guides(shape = guide_legend(override.aes = list( shape = c(16,16,16,16))))+
@@ -291,6 +295,15 @@ par(cex=1)
 par(mar=c(4,4,1,1))
 print({plot_grid(bb,nrow=1,ncol=1)})
 dev.off()
+
+#### table accompanying parallel coordinate plot ####
+
+t=rbind(c,a)
+
+d=t %>% mutate(run=gsub("run_","",run))
+d=left_join(d,weightings,by="run")
+
+write.csv(d,paste0(plotdir,"fig.6_line_plot.csv"))
 
 # weightings=read.csv("hindcast_ms/predict/weighting_scenarios.csv")
 # datadir="hindcast_ms/extract/extractions/"
