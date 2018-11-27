@@ -78,7 +78,7 @@ library(DescTools)
   B1=a
   
   c.1=c %>% filter(objective=="three species_EcoCast")
-  a=ggplot(c.1,aes(x=sp_value,y=EcoROMS,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F)+
+  a=ggplot(c.1,aes(x=sp_value,y=EcoROMS,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
     scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=.6))+
     scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"))+
     scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -88,7 +88,7 @@ library(DescTools)
   C1=a
   
   c.1=c %>% filter(objective=="four species_EcoCast")
-  a=ggplot(c.1,aes(x=sp_value,y=EcoROMS,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F)+
+  a=ggplot(c.1,aes(x=sp_value,y=EcoROMS,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
     scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=.6))+
     scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"))+
     scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -98,7 +98,7 @@ library(DescTools)
   D1=a
   
   c.1=c %>% filter(objective=="one species_Marxan")
-  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F)+
+  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
     scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=.6))+
     scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"))+
     scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -108,7 +108,7 @@ library(DescTools)
   E1=a
   
   c.1=c %>% filter(objective=="two species_E_M")
-  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F)+
+  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
     scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=.6))+
     scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"))+
     scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -118,7 +118,7 @@ library(DescTools)
   F1=a
   
   c.1=c %>% filter(objective=="three species_Marxan")
-  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F)+
+  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
     scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=.6))+
     scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"))+
     scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -128,7 +128,7 @@ library(DescTools)
   G1=a
   
   c.1=c %>% filter(objective=="four species_Marxan")
-  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F)+
+  a=ggplot(c.1,aes(x=sp_value,y=Marxan,group=species,color=species,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
     scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=.6))+
     scale_color_manual("Species",values=c("Leatherback"="darkgoldenrod","Swordfish"="cornflowerblue","Blueshark"="coral1","Sealion"="aquamarine4"))+
     scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -137,7 +137,7 @@ library(DescTools)
     ylab("Marxan output")+xlab("Habitat suitability")+ylim(-1000,0)
   H1=a
   
-  png(paste0(plotdir_ms,"figure4_changing_species.png"),width=20, height=8, units="in", res=400)
+  png(paste0(plotdir_ms,"figure4_changing_species_lm.png"),width=20, height=8, units="in", res=400)
   par(ps=10)
   par(cex=1)
   par(mar=c(4,4,1,1))
@@ -148,7 +148,7 @@ library(DescTools)
   library(magick)
   templateDir="/Volumes/SeaGate/EcoCast_EcoROMS_comparison_ms/EcoCast_EcoROMS_comparison_ms/hindcast_ms/summarize_ms/plots/"
   
-  file=paste0(plotdir_ms,"figure4_changing_species.png")
+  file=paste0(plotdir_ms,"figure4_changing_species_lm.png")
   template=paste0(templateDir,"template_#sp.png")
   
   hist=image_read(file)
@@ -159,6 +159,6 @@ library(DescTools)
   
   a=image_composite(template2,hist2,offset = "+200+190")
   a
-  image_write(a,path = paste0(plotdir_ms,"figure4_changing_species.png"))
+  image_write(a,path = paste0(plotdir_ms,"figure4_changing_species_lm.png"))
   
   
