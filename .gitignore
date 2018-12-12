@@ -2,4 +2,11 @@
 .Rhistory
 .RData
 .Ruserdata
-
+EcoCast_EcoROMS_comparison_ms.Rproj
+.DS_Store
+hindcast_ms/summarize/csvs
+hindcast_ms/summarize/plots/*
+dataframelist.rds
+empty.rds
+hindcast_ms/summarize_ms/plots/*
+hindcast_ms/summarize_ms_figures/plots/*
