@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 EcoCast_EcoROMS_comparison_ms.Rproj
+<<<<<<< HEAD
 .DS_Store
 hindcast_ms/summarize/csvs
 hindcast_ms/summarize/plots/*
@@ -10,3 +11,9 @@ dataframelist.rds
 empty.rds
 hindcast_ms/summarize_ms/plots/*
 hindcast_ms/summarize_ms_figures/plots/*
+=======
+plots
+raw_data
+hindcast_app_metadata/metadata_files
+hindcast_app_metadata/metadata2_files
+>>>>>>> f8909122afbfc247a8ac3542cd7dd2bddb5743a3

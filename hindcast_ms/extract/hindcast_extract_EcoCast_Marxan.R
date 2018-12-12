@@ -381,3 +381,36 @@ M_weightings <-c(-0.015,-0.015,-0.03,-0.3,0.3) #run L.5 BLSH, CASL 10% as import
 run="L.5"
 hindcast_extracto(points=points,outdir=outdir,ER_weightings=ER_weightings,M_weightings=M_weightings,preddir=preddir,run=run,marxandir=marxandir)
 
+
+## scenario M-->  three extra ecroms runs to meet mike's new add to 1 thing'  (run) ####
+ER_weightings <-c(0,0,0,0,1) #run M.1
+run="M.1"
+hindcast_extracto_EcoROMS_only(points=points,outdir=outdir,ER_weightings=ER_weightings,preddir=preddir,run=run)
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled) %>% .[,3:ncol(.)] ## giving it a bullshit marxan column, even tho marxan w.n. run!
+write.csv(data,paste0(datadir,"run_",run,".csv"))
+
+ER_weightings <-c(0,0,0,-1,0) #run M.2
+run="M.2"
+hindcast_extracto_EcoROMS_only(points=points,outdir=outdir,ER_weightings=ER_weightings,preddir=preddir,run=run)
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled)%>% .[,3:ncol(.)]
+write.csv(data,paste0(datadir,"run_",run,".csv"))
+
+ER_weightings <-c(0,0,0,-1,1) #run M.3
+run="M.3"
+hindcast_extracto_EcoROMS_only(points=points,outdir=outdir,ER_weightings=ER_weightings,preddir=preddir,run=run)
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled)%>% .[,3:ncol(.)]
+write.csv(data,paste0(datadir,"run_",run,".csv"))
+
+ER_weightings <-c(-0.16,-0.16,0,-0.33,0.33) #run M.4
+run="M.4"
+hindcast_extracto_EcoROMS_only(points=points,outdir=outdir,ER_weightings=ER_weightings,preddir=preddir,run=run)
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled)%>% .[,2:ncol(.)]
+write.csv(data,paste0(datadir,"run_",run,".csv"))
+
+ER_weightings <-c(-0.125,-0.125,-0.25,-0.25,0.25) #run M.5
+run="M.5"
+hindcast_extracto_EcoROMS_only(points=points,outdir=outdir,ER_weightings=ER_weightings,preddir=preddir,run=run)
+data=read.csv(paste0(datadir,"run_",run,".csv")) %>% mutate(Marxan_raw=EcoROMS_original) %>% mutate(Marxan_raw_unscaled=EcoROMS_original_unscaled)%>% .[,2:ncol(.)]
+write.csv(data,paste0(datadir,"run_",run,".csv"))
+
+

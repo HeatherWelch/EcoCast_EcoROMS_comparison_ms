@@ -36,6 +36,32 @@ hindcast_extracto=function(points,outdir,ER_weightings,M_weightings,preddir,run,
   write.csv(master,paste0(outdir,"run_",run,".csv"))
 }
 
+hindcast_extracto_EcoROMS_only=function(points,outdir,ER_weightings,preddir,run){
+  ##### c. run extracto (ecoroms scaled) ####
+  ecoroms_original=list.files(paste0(preddir,"mean"),pattern=".grd",full.names = T) %>% grep(paste0(paste0(ER_weightings,collapse="_"),"_"),.,value=T)%>% grep("original",.,value=T) %>% grep("_unscaled_",.,value=T,invert=T)
+  a=extracto_raster(pts=points,algorithm="EcoROMS_original",solution_list = ecoroms_original,weightings = ER_weightings)
+  
+  ##### c. run extracto (ecoroms unscaled) ####
+  ecoroms_original=list.files(paste0(preddir,"mean"),pattern=".grd",full.names = T) %>% grep(paste0(paste0(ER_weightings,collapse="_"),"_"),.,value=T)%>% grep("original",.,value=T) %>% grep("_unscaled_",.,value=T)
+  a=extracto_raster(pts=a,algorithm="EcoROMS_original_unscaled",solution_list = ecoroms_original,weightings = ER_weightings)
+  
+  ##### c. run extracto (species habitat suitability layers) ####
+  swor=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/swor/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)
+  lbst=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/lbst_nolat/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)
+  casl=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/casl_nolat/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)
+  blshobs=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshobs/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)
+  blshtrk=list.files("/Users/heatherwelch/Dropbox/Eco-ROMS/Model Prediction Plots/daily_predictions/blshtrk_nolat/",pattern=".grd",full.names = T) %>% grep("mean",.,value=T)
+  
+  a=extracto_raster(pts=a,algorithm="swor",solution_list = swor,weightings = ER_weightings)
+  a=extracto_raster(pts=a,algorithm="lbst",solution_list = lbst,weightings = ER_weightings)
+  a=extracto_raster(pts=a,algorithm="casl",solution_list = casl,weightings = ER_weightings)
+  a=extracto_raster(pts=a,algorithm="blshobs",solution_list = blshobs,weightings = ER_weightings)
+  master=extracto_raster(pts=a,algorithm="blshtrk",solution_list = blshtrk,weightings = ER_weightings) %>% .[complete.cases(.),]
+  
+  ################## -------------------- write out
+  write.csv(master,paste0(outdir,"run_",run,".csv"))
+}
+
 # #demo run
 # preddir="~/Dropbox/Eco-ROMS/EcoROMSruns/output/hindcast_ms/"
 # outdir="hindcast_ms/extract/extractions/"

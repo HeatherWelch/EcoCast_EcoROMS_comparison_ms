@@ -149,13 +149,14 @@ for(d in dates){
   print(get_date)
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
 }
-
+dates=dates[1]
 weightings <-c(0,0,0,-0.7,0.3) #run D.4
+a=system.time({
 for(d in dates){
   get_date=d
   print(get_date)
   scp_swor(get_date = get_date,biofeats = biofeats,cost=cost,dailypreddir = dailypreddir,weightings = weightings,namesrisk = namesrisk)
-}
+}})
 
 weightings <-c(0,0,0,-0.7,0.5) #run D.5
 for(d in dates){
