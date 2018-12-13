@@ -7,3 +7,14 @@ plots
 raw_data
 hindcast_app_metadata/metadata_files
 hindcast_app_metadata/metadata2_files
+hindcast_ms/summarize_ms/._*
+hindcast_ms/summarize_ms_figures/._*
+hindcast_ms/summarize/._*
+hindcast_ms/summarize/csvs/
+hindcast_ms/figures/._*
+hindcast_ms/figures/plots
+hindcast_ms/figures/plots/
+hindcast_ms/figures/plots/*
+hindcast_ms/figures/example_runs_fig1/*
+hindcast_ms/figures/example_runs_fig1/
+hindcast_ms/figures/example_runs_fig1
