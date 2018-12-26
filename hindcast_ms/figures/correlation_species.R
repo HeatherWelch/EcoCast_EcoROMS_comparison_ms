@@ -19,6 +19,17 @@ for (file in file_list){
 }
 
 fullon=do.call("rbind",master)
+
+master=fullon %>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,blshobs,blshtrk)) %>% select(-c(EcoROMS_original,Marxan_raw)) %>% rename(EcoROMS=EcoROMS_original_unscaled) %>% rename(Marxan=Marxan_raw_unscaled) %>% rename(Swordfish=swor) %>% rename(Leatherback=lbst) %>% rename(Sealion=casl) %>% rename(Blueshark=blsh)
+master=master %>% select(-c(lon,lat,dt,EcoROMS,Marxan,run))
+a=cor(master)
+png(paste0(plotdir_ms,"sp_cor.png"),width=4, height=4, units="in", res=400)
+par(ps=10)
+corrplot(a, method="color",type="upper", 
+         addCoef.col = "white",tl.col="black",mar=c(0,0,0,0),number.cex=1,cl.pos="n")
+dev.off()
+
+
 #master=fullon %>% mutate(Year=as.factor(substr(dt,1,4))) %>% filter(Year=="1997"|Year=="2005") %>% select(-Year)
 master=fullon %>% mutate(Year=as.factor(substr(dt,1,4))) %>% filter(Year=="2003") %>% select(-Year)
 

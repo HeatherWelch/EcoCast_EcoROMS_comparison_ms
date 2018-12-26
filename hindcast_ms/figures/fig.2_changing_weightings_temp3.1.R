@@ -71,7 +71,7 @@ A1=ggplot(EcoA,aes(x=swor,y=EcoROMS_original_unscaled,group=weighting,color=weig
 
 A1
 
-A2=ggplot(dataframelist,aes(x=swor,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state,color=weighting),size=1)+stat_smooth(se=F,method = "lm")+
+A2=ggplot(dataframelist,aes(x=swor,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state,color=weighting),size=1)+stat_smooth(se=F,method = "gam",formula = y~s(x,bs = "cr"))+
   scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=1))+
   scale_color_manual("Weighting",values=c("0.1"="darkgoldenrod","0.3"="cornflowerblue","0.5"="coral1","0.7"="aquamarine4","0.9"="dimgray"))+
   scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -92,7 +92,7 @@ B1=ggplot(EcoB,aes(x=lbst,y=EcoROMS_original_unscaled,group=weighting,color=weig
   #ggtitle("Effect of decreasing leatherback weighting on the relationship between EcoCast values and leatherback habitat suitability values")+
   ylab("EcoCast output")+xlab("Leatherback habitat suitability")+ylim(-1,1)
 
-B2=ggplot(dataframelistB,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
+B2=ggplot(dataframelistB,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "gam",formula = y~s(x, bs = "cr"))+
   scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=1))+
   scale_color_manual("Weighting",values=c("-0.1"="darkgoldenrod","-0.3"="cornflowerblue","-0.5"="coral1","-0.7"="aquamarine4","-0.9"="dimgray"))+
   scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -101,8 +101,10 @@ B2=ggplot(dataframelistB,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=
   #ggtitle("Effect of decreasing leatherback weighting on the relationship between Marxan values and leatherback habitat suitability values")+
   ylab("Marxan output")+xlab("Leatherback habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
 
+B2
+
 ## C
-C1=ggplot(EcoC,aes(x=swor,y=EcoROMS_original_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
+C1=ggplot(EcoC,aes(x=swor,y=EcoROMS_original_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "gam",formula = y~s(x, bs="cr"))+
   scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=1))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","-0.3/0.7"="darkgoldenrod","+/-0.5"="coral1","-0.7/0.3"="dimgray","+/-0.9"="dimgray"))+
   scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -111,7 +113,7 @@ C1=ggplot(EcoC,aes(x=swor,y=EcoROMS_original_unscaled,group=weighting,color=weig
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings on the relationship between EcoCast values and swordfish habitat suitability values")+
   ylab("EcoCast output")+xlab("Swordfish habitat suitability")+ylim(-1,1)
 
-C2=ggplot(EcoC,aes(x=swor,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
+C2=ggplot(EcoC,aes(x=swor,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "gam",formula = y~s(x, bs="cr"))+
   scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=1))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","-0.3/0.7"="darkgoldenrod","+/-0.5"="coral1","-0.7/0.3"="dimgray","+/-0.9"="dimgray"))+
   scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -120,7 +122,7 @@ C2=ggplot(EcoC,aes(x=swor,y=Marxan_raw_unscaled,group=weighting,color=weighting,
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings between Marxan values and swordfish habitat suitability values")+
   ylab("Marxan output")+xlab("Swordfish habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
 
-C3=ggplot(EcoC,aes(x=lbst,y=EcoROMS_original_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
+C3=ggplot(EcoC,aes(x=lbst,y=EcoROMS_original_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "gam",formula = y~s(x, bs="cr"))+
   scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=1))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","-0.3/0.7"="darkgoldenrod","+/-0.5"="coral1","-0.7/0.3"="dimgray","+/-0.9"="dimgray"))+
   scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -129,7 +131,9 @@ C3=ggplot(EcoC,aes(x=lbst,y=EcoROMS_original_unscaled,group=weighting,color=weig
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings on the relationship between EcoCast values and leatherback habitat suitability values")+
   ylab("EcoCast output")+xlab("Leatherback habitat suitability")+ylim(-1,1)
 
-C4=ggplot(EcoC,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "lm")+
+C3
+
+C4=ggplot(EcoC,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=weighting,shape=Ocean_state))+geom_point(aes(alpha=Ocean_state),size=1)+stat_smooth(se=F,method = "gam",formula = y~s(x, bs="cr"))+
   scale_alpha_manual("Ocean State",values = c("Warm"=.3,"Cold"=1))+
   scale_color_manual("Weighting",values=c("+/-0.1"="darkgoldenrod","-0.3/0.7"="darkgoldenrod","+/-0.5"="coral1","-0.7/0.3"="dimgray","+/-0.9"="dimgray"))+
   scale_shape_manual("Ocean State",values=c("Warm"=3,"Cold"=15))+
@@ -138,7 +142,9 @@ C4=ggplot(EcoC,aes(x=lbst,y=Marxan_raw_unscaled,group=weighting,color=weighting,
   #ggtitle("Effect of equal opposing swordfish/leatherback weightings between Marxan values and leatherback habitat suitability values")+
   ylab("Marxan output")+xlab("Leatherback habitat suitability")+scale_y_continuous(limits = c(-1000, 0))
 
-png(paste0(plotdir_ms,"figure2_changing_weightings_temp_lm.png"),width=20, height=8, units="in", res=400)
+C4
+
+png(paste0(plotdir_ms,"figure2_changing_weightings_temp_gam2.png"),width=20, height=8, units="in", res=400)
 par(ps=10)
 par(cex=1)
 par(mar=c(4,4,1,1))

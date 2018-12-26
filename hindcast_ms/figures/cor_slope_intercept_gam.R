@@ -17,30 +17,31 @@ for (file in file_list){
   master[[name]]<-a
 }
 
+
 fullon=do.call("rbind",master)
 master=fullon %>% as.data.frame()%>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,lon,lat,blshobs,blshtrk)) %>% select(-c(EcoROMS_original,Marxan_raw)) %>% rename(EcoROMS=EcoROMS_original_unscaled) %>% rename(Marxan=Marxan_raw_unscaled) %>% rename(Swordfish=swor) %>% rename(Leatherback=lbst) %>% rename(Sealion=casl) %>% rename(Blueshark=blsh)
 detachPackage("bindrcpp")
-master=master %>% mutate(y_m=strtrim(dt,7)) %>% #mutate(EcoROMS=normalize(EcoROMS,method="range",range=c(0,1)))%>% mutate(Marxan=normalize(Marxan,method="range",range=c(0,1)))
+master=master %>% mutate(y_m=strtrim(dt,7)) %>% mutate(EcoROMS=normalize(EcoROMS,method="range",range=c(0,1)))%>% mutate(Marxan=normalize(Marxan,method="range",range=c(0,1)))
 
 runs=as.factor(master$run) %>% unique() %>% as.character
 empty=data.frame(Swordfish=NA,Leatherback=NA,Sealion=NA,Blueshark=NA,algorithm=NA,run=NA,stat=NA)
-for(i in 1:length(runs)){
+for(i in 69:length(runs)){
   runn=runs[i]
   print(runn)
   #a=master %>% dplyr::filter(run==runn) %>% select(-c(run,dt,y_m)) %>% cor() %>% .[1:2,3:6] %>% as.data.frame() %>% mutate(algorithm=c("EcoROMS","Marxan")) %>% mutate(run=runn) %>% mutate(stat="Cor")
   b=master %>% filter(run==runn) %>% select(-c(run,dt,y_m))
   c= apply(b[,3:6],2,function(x)lm(Marxan~x,b)$coefficients) %>% as.data.frame() %>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("Intercept","Slope"))
   d= apply(b[,3:6],2,function(x)lm(EcoROMS~x,b)$coefficients) %>% as.data.frame() %>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("Intercept","Slope"))
-  e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
-  f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
-  g=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
-  h=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
+  e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x,bs = "cr"),method="REML")) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
+  f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x,bs = "cs"))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
+  g=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x,bs = "cs"))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
+  h=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x,bs = "cs"),method="REML")) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
   empty=do.call("rbind",list(empty,c,d,e,f,g,h))
 }
 
 # e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
-# f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
-# g=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
+# f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x),method="REML")) #%>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
+#  g=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x,bs="cr"),method="REML")) #%>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
 # h=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
 
 b=empty %>% filter(run=="run_M.2"|run=="run_C.3"|run=="run_E.1"|run=="run_D.4") %>%filter(algorithm!="Marxan") 
@@ -63,7 +64,7 @@ big_guy=do.call("rbind",list(eco,mar,mar_sp,eco_sp)) %>% mutate(run=gsub("run_",
 d=left_join(big_guy,weightings,by="run")
 weightings=read.csv("hindcast_ms/predict/weighting_scenarios.csv")
 
-write.csv(d,paste0(plotdir,"cor_slope_intercept_gam.csv"))
+write.csv(d,paste0(plotdir,"cor_slope_intercept_gam_cs.csv"))
 
 ##### testing out new method to determine best
 # ##### this is for inter-species correaltions only ####
