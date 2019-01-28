@@ -19,7 +19,7 @@ for (file in file_list){
 
 
 fullon=do.call("rbind",master)
-master=fullon %>% as.data.frame()%>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,lon,lat,blshobs,blshtrk)) %>% select(-c(EcoROMS_original,Marxan_raw)) %>% rename(EcoROMS=EcoROMS_original_unscaled) %>% rename(Marxan=Marxan_raw_unscaled) %>% rename(Swordfish=swor) %>% rename(Leatherback=lbst) %>% rename(Sealion=casl) %>% rename(Blueshark=blsh)
+master=fullon %>% as.data.frame()%>% mutate(blsh=(blshobs+blshtrk)/2) %>% select(-c(X,lon,lat,blshobs,blshtrk)) %>% select(-c(EcoROMS_original_unscaled,Marxan_raw_unscaled)) %>% rename(EcoROMS=EcoROMS_original) %>% rename(Marxan=Marxan_raw) %>% rename(Swordfish=swor) %>% rename(Leatherback=lbst) %>% rename(Sealion=casl) %>% rename(Blueshark=blsh)
 detachPackage("bindrcpp")
 #master=master %>% mutate(y_m=strtrim(dt,7)) %>% mutate(EcoROMS=normalize(EcoROMS,method="range",range=c(0,1)))%>% mutate(Marxan=normalize(Marxan,method="range",range=c(0,1)))
 master=master %>% mutate(y_m=strtrim(dt,7)) %>% mutate(EcoROMS=rescale(EcoROMS,to=c(0,1))) %>% mutate(Marxan=rescale(Marxan,to=c(0,1)))
@@ -34,10 +34,10 @@ for(i in 1:length(runs)){
   b=master %>% filter(run==runn) %>% select(-c(run,dt,y_m))
   c= apply(b[,3:6],2,function(x)lm(Marxan~x,b)$coefficients) %>% as.data.frame() %>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("Intercept","Slope"))
   d= apply(b[,3:6],2,function(x)lm(EcoROMS~x,b)$coefficients) %>% as.data.frame() %>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("Intercept","Slope"))
-  e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
-  f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
-  g=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
-  h=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
+  e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
+  f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
+  g=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
+  h=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
   empty=do.call("rbind",list(empty,c,d,e,f,g,h))
 }
 
@@ -79,7 +79,7 @@ master <- within(master, weighting[run == 'M.5'] <- 'Four-species')
 
 d=rbind(a,master)
 
-write.csv(d,paste0(plotdir,"cor_slope_intercept_gam_cr.csv"))
+write.csv(d,paste0(plotdir,"cor_slope_intercept_gam_scaled.csv"))
 
 ##### testing out new method to determine best
 # ##### this is for inter-species correaltions only ####

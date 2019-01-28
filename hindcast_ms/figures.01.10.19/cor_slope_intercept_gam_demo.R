@@ -1,6 +1,7 @@
 ### calculating correlation, slope, intercept for each run (tool output/species input)
 library(tidyverse)
 library(mgcv)
+library(scales)
 
 weightings=read.csv("hindcast_ms/predict/weighting_scenarios.csv")
 datadir="hindcast_ms/extract/extractions/"
@@ -23,23 +24,45 @@ master=fullon %>% as.data.frame()%>% mutate(blsh=(blshobs+blshtrk)/2) %>% select
 detachPackage("bindrcpp")
 #master=master %>% mutate(y_m=strtrim(dt,7)) %>% mutate(EcoROMS=normalize(EcoROMS,method="range",range=c(0,1)))%>% mutate(Marxan=normalize(Marxan,method="range",range=c(0,1)))
 master=master %>% mutate(y_m=strtrim(dt,7)) %>% mutate(EcoROMS=rescale(EcoROMS,to=c(0,1))) %>% mutate(Marxan=rescale(Marxan,to=c(0,1)))
-
+master=master %>% filter(run=="run_C.3"|run=="run_E.1"|run=="run_D.4"|run=="run_B.3"|run=="run_C.3"|run=="run_G.3"|run=="run_J.3"|run=="run_M.2"|run=="run_M.4"|run=="run_M.5")
 
 runs=as.factor(master$run) %>% unique() %>% as.character
-empty=data.frame(Swordfish=NA,Leatherback=NA,Sealion=NA,Blueshark=NA,algorithm=NA,run=NA,stat=NA)
+data=seq(0,1,by=.001) %>% as.data.frame()
+colnames(data)="x"
+#empty=data.frame(Swordfish=NA,Leatherback=NA,Sealion=NA,Blueshark=NA,algorithm=NA,run=NA,stat=NA)
 for(i in 1:length(runs)){
   runn=runs[i]
   print(runn)
   #a=master %>% dplyr::filter(run==runn) %>% select(-c(run,dt,y_m)) %>% cor() %>% .[1:2,3:6] %>% as.data.frame() %>% mutate(algorithm=c("EcoROMS","Marxan")) %>% mutate(run=runn) %>% mutate(stat="Cor")
   b=master %>% filter(run==runn) %>% select(-c(run,dt,y_m))
-  c= apply(b[,3:6],2,function(x)lm(Marxan~x,b)$coefficients) %>% as.data.frame() %>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("Intercept","Slope"))
-  d= apply(b[,3:6],2,function(x)lm(EcoROMS~x,b)$coefficients) %>% as.data.frame() %>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("Intercept","Slope"))
-  e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
-  f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
-  g=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
-  h=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x,bs = "cr"))) %>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="EcoROMS")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
-  empty=do.call("rbind",list(empty,c,d,e,f,g,h))
+  e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)predict(x,data)) %>% as.data.frame(.) 
+  colnames(e)=paste0(colnames(e),"_",runn,"_marxan")
+  h=apply(b[,3:6],2,function(x)gam(b$EcoROMS~s(x))) %>% lapply(.,function(x)predict(x,data)) %>% as.data.frame(.) 
+  colnames(h)=paste0(colnames(h),"_",runn,"_ecocast")
+  data=do.call("cbind",list(data,e,h))
 }
+
+a=data
+b.3=a %>% select(c(Leatherback_run_B.3_marxan)) # fig 4 marxan 1 species
+m.2=a %>% select(c(Leatherback_run_M.2_ecocast)) # weightings <-c(0,0,0,-1,0) #run M.2
+c.3=a %>% select(c(Leatherback_run_C.3_ecocast,Swordfish_run_C.3_ecocast,Leatherback_run_C.3_marxan,Swordfish_run_C.3_marxan)) ## fig 2
+e.1=a %>% select(c(Swordfish_run_E.1_marxan,Leatherback_run_E.1_marxan,Swordfish_run_E.1_ecocast,Leatherback_run_E.1_ecocast)) ## fig 2
+d.4=a %>% select(c(Swordfish_run_D.4_marxan,Leatherback_run_D.4_marxan,Swordfish_run_D.4_ecocast,Leatherback_run_D.4_ecocast)) ## fig 2
+g.3=a %>% select(c(Swordfish_run_G.3_marxan,Leatherback_run_G.3_marxan,Blueshark_run_G.3_marxan)) # weightings <-c(-0.25,-0.25,0,-0.5,0.5) #run G.3 (C.3)
+j.3=a %>% select(c(Swordfish_run_J.3_marxan,Leatherback_run_J.3_marxan,Blueshark_run_J.3_marxan,Sealion_run_J.3_marxan)) # weightings <-c(-0.25,-0.25,-0.5,-0.5,0.5) #run J.3 (C.3)
+m.4=a %>% select(c(Leatherback_run_M.4_ecocast,Swordfish_run_M.4_ecocast,Blueshark_run_M.4_ecocast)) # weightings <-c(-0.16,-0.16,0,-0.33,0.33) #run M.4
+m.5=a %>% select(c(Leatherback_run_M.5_ecocast,Swordfish_run_M.5_ecocast,Blueshark_run_M.5_ecocast,Sealion_run_M.5_ecocast)) # weightings <-c(-0.125,-0.125,-0.25,-0.25,0.25) #run M.5
+
+data2=seq(0,1,by=.001) %>% as.data.frame()
+colnames(data2)="x"
+master=do.call("cbind",list(data2,b.3,m.2,c.3,e.1,d.4,g.3,j.3,m.4,m.5))
+write.csv(master,"pred.csv")
+
+data=seq(0,1,by=.001) %>% as.data.frame()
+colnames(data)="x"
+pred=predict(a,data) 
+write.csv(pred,"pred.csv")
+
 
 # e=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x))) %>% lapply(.,function(x)summary(x)$r.sq)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("rsq"))
 # f=apply(b[,3:6],2,function(x)gam(b$Marxan~s(x),method="REML")) #%>% lapply(.,function(x)summary(x)$edf)%>% as.data.frame()%>% mutate(algorithm="Marxan")%>% mutate(run=runn) %>% mutate(stat=c("edf"))
